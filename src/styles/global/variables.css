@@ -1,0 +1,56 @@
+:root {
+  --color-mode: 'dark';
+  --color-black: #1c1a22;
+  --color-light: #ffffff;  
+  --color-dark: #1a1a1a;
+  --color-light-alpha: rgba(255, 255, 255, 0.82);
+  --color-dark-alpha: rgba(0, 0, 0, 0.1);
+
+  --color-primary: #C4605E;
+
+  --color-mid: #191919;
+  --color-mid-light: #cdcad5;
+
+  --color-onyx: #3a3b3f;
+
+  --background: var(--color-black);
+  --text-color: var(--color-light);
+
+  --icon-sun-filter: invert(0.61) sepia(0.8) saturate(5) hue-rotate(0deg) brightness(0.92);
+  --icon-moon-filter: invert(0.75);
+  --button-icon: var(--icon-moon);
+  --button-icon-filter: var(--icon-moon-filter);
+  --button-background: var(--color-primary);  
+  --button-color: var(--color-light);
+  --border-color: var(--color-mid);
+  --subheadings-color: var(--color-primary);
+
+  /* Global variables */
+  --gutter: var(--space-s-m);
+  --border-radius: 0.75rem;
+  --border-radius-inner: 0.5rem;
+
+  --menu-border-radius: 2.25rem;
+
+  --wrapper-width: clamp(16rem, 93vw, 85rem);
+  --snippet-width: clamp(16rem, 88vw, 35rem);
+
+  /* BORDER */
+  --border: 1px solid var(--border-color);
+
+  /* LINE HEIGHTS */
+  --lh100: 100%;
+  --lh140: 140%;
+  --lh160: 160%;
+
+
+  /* TRANSITIONS */
+  --t: 250ms linear;
+  --t-fast: 200ms linear;
+  --t-slow: 330ms linear;
+
+  --t-base: 250ms ease;
+  --t-movement: 200ms linear;
+  --t-fade: 200ms ease;
+  --t-bounce: 500ms cubic-bezier(0.5, 0.05, 0.2, 1.5);
+}

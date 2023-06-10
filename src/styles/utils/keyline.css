@@ -1,0 +1,4 @@
+.u-keyline {
+    border-top: 1px solid var(--border-color, #fff);
+    padding-top: var(--space-s-m);
+}

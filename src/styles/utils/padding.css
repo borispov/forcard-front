@@ -1,0 +1,48 @@
+.p-s-l {
+    padding: clamp(1.125rem,.41rem + 3.45vw,3rem);
+}
+
+.p-s-xl {
+    padding: clamp(1.125rem,-.16rem + 6.21vw,4.5rem);
+}
+
+.p-m {
+    padding: clamp(1.6875rem,1.47rem + 1.03vw,2.25rem);
+}
+
+.p-s {
+    padding: clamp(1.125rem,.98rem + .69vw,1.5rem);
+}
+
+.pb-l-xl {
+    padding-bottom: clamp(2.25rem,1.4rem + 4.14vw,4.5rem);
+}
+
+.pt-l-xl {
+    padding-top: clamp(2.25rem,1.4rem + 4.14vw,4.5rem);
+}
+
+.pb-s-l {
+    padding-bottom: clamp(1.125rem,.41rem + 3.45vw,3rem);
+}
+
+.py-s {
+  padding-top: clamp(1.125rem,.98rem + .69vw,1.5rem);
+  padding-bottom: clamp(1.125rem,.98rem + .69vw,1.5rem);
+}
+
+.py-m {
+  padding-top: clamp(1.6875rem,1.47rem + 1.03vw,2.25rem);
+  padding-bottom: clamp(1.6875rem,1.47rem + 1.03vw,2.25rem);
+}
+
+
+.px-s {
+  padding-left: clamp(1.125rem,.98rem + .69vw,1.5rem);
+  padding-right: clamp(1.125rem,.98rem + .69vw,1.5rem);
+}
+
+.px-m {
+  padding-left: clamp(1.6875rem,1.47rem + 1.03vw,2.25rem);
+  padding-right: clamp(1.6875rem,1.47rem + 1.03vw,2.25rem);
+}
