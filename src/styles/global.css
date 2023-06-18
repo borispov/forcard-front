@@ -1,7 +1,9 @@
 @import "global/reset.css";
+@import "global/utopia.css";
 @import "global/variables.css";
 @import "global/global-styles.css";
 
+@import "composition/sidebar.scss";
 @import "composition/cluster.css";
 @import "composition/repel.css";
 
