@@ -1,0 +1,78 @@
+[
+    {
+        "name": "Omolon",
+        "colors": ["#091E3A", "#2F80ED", "#2D9EE0"]
+    },
+    {
+        "name": "Farhan",
+        "colors": ["#9400D3", "#4B0082"]
+    }, 
+    {
+        "name": "Purple",
+        "colors": ["#c84e89", "#F15F79"]
+    },
+    {
+        "name": "Ibtesam",
+        "colors": ["#00F5A0", "#00D9F5"]
+    },
+    {
+        "name": "Candies",
+        "colors": ["#00B09B", "#96C93D"]
+    }, 
+    {
+        "name": "Limade Cooler",
+        "colors": ["#A1FFCE", "#FAFFD1"]
+    }, 
+    {
+        "name": "Cinnamint Flav",
+        "colors": ["#4AC29A", "#BDFFF3"]
+    }, 
+    {
+        "name": "Maldives Holiday",
+        "colors": ["#B2FEFA", "#0ED2F7"]
+    }, 
+    {
+        "name": "Chitty Bang",
+        "colors": ["#007991", "#78FFD6"]
+    }, 
+    {
+        "name": "Blue Skies",
+        "colors": ["#56CCF2", "#2F80ED"]
+    }, 
+    {
+        "name": "Grandeur",
+        "colors": ["#000046", "#1CB5E0"]
+    }, 
+    {
+        "name": "Black Rose",
+        "colors": ["#F4C4F3", "#FC67FG"]
+    }, 
+    {
+        "name": "Azure Pop",
+        "colors": ["#EF32D9", "#89FFFD"]
+    }, 
+    {
+        "name": "Fused Passion",
+        "colors": ["#800080", "#FFC0CB"]
+    }, 
+    {
+        "name": "Purpink",
+        "colors": ["#7F00FF", "#E100FF"]
+    }, 
+    {
+        "name": "Pinpurpish",
+        "colors": ["#FF00CC", "#333399"]
+    }, 
+    {
+        "name": "Roseanna",
+        "colors": ["#FFAFBD", "#FFC3A0"]
+    }, 
+    {
+        "name": "Orangada",
+        "colors": ["#FC4A1A", "#F7B733"]
+    }, 
+    {
+        "name": "What's Good",
+        "colors": ["#EE0979", "#FF6A00"]
+    }
+]

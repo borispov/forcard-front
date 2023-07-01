@@ -15,8 +15,6 @@
 	let getElementByIndex = (id: string) => {
 		return components[findElementIndex(id)];
 	};
-
-	$: console.log(component);
 </script>
 
 <div style={getStyles(component.type, component.design)}>

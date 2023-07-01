@@ -1,7 +1,27 @@
 import type { StyleProperties } from "../../types/components";
 
+const STEPPED_VALUES = [
+	"0",
+	"var(--space-2xs)",
+	"var(--space-xs)",
+	"var(--space-s)",
+	"var(--space-m)",
+	"var(--space-l)",
+	"var(--space-xl)",
+	"var(--space-2xl)",
+	"var(--space-3xl)",
+];
+
 let getBackgroundStyle = (bgObject: any) => {
 	let r: string;
+
+	if (bgObject.type === "gradient") {
+		r = `${bgObject.gradient};`
+		if (bgObject.opacity) {
+			r += `opacity: ${bgObject.opacity};\n`;
+		}
+	}
+
 	if (bgObject.type === "color") {
 		r = `background-color: ${bgObject.color};`;
 		if (bgObject.opacity) {
@@ -20,13 +40,16 @@ let getSpaceStyle = (spaceObject: {
 
 	for (const [k, v] of Object.entries(spaceObject)) {
 		if (Object.hasOwn(v, "x") && v["x"]) {
-			r += `${k}-inline: ${v["x"]};\n`;
+			r += `${k}-inline: ${STEPPED_VALUES[v["x"]]};\n`;
 		}
 
 		if (Object.hasOwn(v, "y") && v["y"]) {
-			r += `${k}-block: ${v["y"]};\n`;
+			r += `${k}-block: ${STEPPED_VALUES[v["y"]]};\n`;
 		}
 	}
+
+	console.log(`r for space is \n: ${r}`)
+
 	return r;
 };
 
@@ -59,7 +82,6 @@ export function getStyles(type: string, stylesObject: StyleProperties) {
 	}
 
 	if (type == "container" && stylesObject.display ) {
-		console.log("got a display object")
 		r += getContainerStyle(stylesObject.display);
 	}
 

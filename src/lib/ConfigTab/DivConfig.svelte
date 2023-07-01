@@ -1,5 +1,7 @@
 <script lang="ts">
 	import Header from "./Header.svelte";
+	import { gradientsChoice } from "../utils/generateGradient";
+	import gradients from "../global/gradients.json";
 
 	import type { Component } from "../../types/components";
 
@@ -7,13 +9,84 @@
 
 	type spaceType = "margin" | "padding" | "gutter";
 
+	// TODO: show those values instead of RANGE numbers for space style
+	// properties such as Margins & Paddings.
+	const UI_STEPPED_VALUES = [
+		"None",
+		"2XS",
+		"Extra Small",
+		"Small",
+		"Medium",
+		"Large",
+		"XL",
+		"2XL",
+		"3XL",
+	];
+
+	const STEPPED_VALUES = [
+		"0",
+		"--space-2xs",
+		"--space-xs",
+		"--space-s",
+		"--space-m",
+		"--space-l",
+		"--space-xl",
+		"--space-2xl",
+		"--space-3xl",
+	];
+
 	let setMargins = (val: string, vec: string) => {
-		console.log(vec);
+		// let transformedValue = UI_STEPPED_VALUES[val];
 		divConfig.design.space.margin[vec] = val;
 	};
 
 	let setPaddings = (val: string, vec: string) => {
+		// let transformedValue = UI_STEPPED_VALUES[val];
 		divConfig.design.space.padding[vec] = val;
+	};
+
+	// Tbind:ODO: When We'll expand the collection of gradients, we can offer
+	// gradients based on a color like in https://uigradients.com
+	let onGradientColorChoice = (e) => {
+		const id = e.target.value;
+		if (id) {
+			let gradientCss = gradientsChoice("", id);
+
+			divConfig.design.background = {
+				...divConfig.design.background,
+				type: "gradient",
+				gradient: gradientCss,
+			};
+		}
+	};
+
+	let setBackgroundColor = (val: string) => {
+		let { type, color } = divConfig.design.background;
+
+		if (type !== "color") {
+			type = "color";
+		}
+
+		if (type == "gradient") {
+			let gradientCss = gradientsChoice("", val);
+			divConfig.design.background = {
+				...divConfig.design.background,
+				type: "gradient",
+				gradient: gradientCss,
+			};
+		}
+
+		if (color != val) {
+			color = val;
+		} else {
+			return;
+		}
+
+		divConfig.design.background = {
+			...divConfig.design.background,
+			type: type,
+			color: color,
+		};
 	};
 
 	let spaceHandler = (type: spaceType, vec: string, val: string) => {
@@ -28,11 +101,34 @@
 		isImage: false,
 		isColor: false,
 		isGradient: false,
+		data: {
+			bgColor: "",
+		},
 	};
 
-	let onSelect = () => {
-		console.log("selecting...");
-		backgroundSettings = { ...backgroundSettings, isBackground: true };
+	let onSelectBackground = (e) => {
+		const p = e.target.value;
+
+		let none = p !== "isNone";
+		let gradient = p === "isGradient";
+		let color = p === "isColor";
+		let image = p === "isImage";
+
+		if (gradient) {
+			divConfig.design.background.type = "gradient";
+		}
+
+		if (color) {
+			divConfig.design.background.type = "color";
+		}
+
+		backgroundSettings = {
+			...backgroundSettings,
+			isBackground: none,
+			isGradient: gradient,
+			isColor: color,
+			isImage: image,
+		};
 	};
 
 	let onFileSelect = (e) => {
@@ -53,15 +149,45 @@
 			<!-- BEGINNING OF BACKGROUND GROUP -->
 			<div class="field">
 				<label for="div-design_bg_style">Background</label>
-				<select
-					id="div-design_bg_style"
-					on:select={() => (backgroundSettings.isBackground = true)}
-				>
-					<option value="none">None</option>
-					<option value="standard">Color</option>
-					<option value="gradient">Gradient</option>
-					<option value="image">Image</option>
+				<select id="div-design_bg_style" on:change={onSelectBackground}>
+					<option value="isNone">None</option>
+					<option value="isColor">Color</option>
+					<option value="isGradient">Gradient</option>
+					<option value="isImage">Image</option>
 				</select>
+
+				{#if backgroundSettings.isBackground}
+					{#if backgroundSettings.isColor}
+						<div class="[ field-group flow ]">
+							<div class="field field-row">
+								<input
+									bind:value={divConfig.design.background.color}
+									type="text"
+									on:change={(e) => setBackgroundColor(e.currentTarget.value)}
+								/>
+							</div>
+						</div>
+					{/if}
+				{/if}
+
+				{#if backgroundSettings.isBackground}
+					{#if backgroundSettings.isGradient}
+						<div class="[ field-group flow ] pt-s">
+							<div class="field field-row">
+								<label for="div-gradient">Gradient Color</label>
+								<select
+									id="div-gradient"
+									on:change={(e) => setBackgroundColor(e.currentTarget.value)}
+								>
+									{#each gradients as gradient, id}
+										<option value={id}>{gradient.name}</option>
+									{/each}
+									<option value="isNone">Reds</option>
+								</select>
+							</div>
+						</div>
+					{/if}
+				{/if}
 
 				<!-- render fields based on user's select  -->
 				{#if backgroundSettings.isBackground}
@@ -88,7 +214,7 @@
 				<div class="field-row repel">
 					<label for="margin_vertical">X-Axis</label>
 					<div class="indicator">
-						{divConfig.design.space.margin["x"] || "0"}
+						{UI_STEPPED_VALUES[divConfig.design.space.margin["x"]] || "None"}
 					</div>
 				</div>
 				<div class="[ field-group ]">
@@ -96,25 +222,25 @@
 						id="margin_vertical"
 						name="margin_vertical"
 						type="range"
-						min="-3"
-						max="6"
+						min="0"
+						max="8"
 						step="1"
-						on:change={(e) =>
-							spaceHandler("margin", "x", e.currentTarget.value)}
+						on:input={(e) => spaceHandler("margin", "x", e.currentTarget.value)}
 					/>
 				</div>
 				<div class="[ field-group ]">
 					<label for="margin_horizontal">Y-Axis</label>
 					<div class="indicator">
-						{divConfig.design.space.margin["y"] || "0"}
+						{UI_STEPPED_VALUES[divConfig.design.space.margin["y"]] || "None"}
 					</div>
 					<input
 						id="margin_horizontal"
 						name="margin_horizontal"
 						type="range"
-						min="-3"
-						max="6"
+						min="0"
+						max="8"
 						step="1"
+						on:input={(e) => spaceHandler("margin", "y", e.currentTarget.value)}
 						on:change={(e) =>
 							spaceHandler("margin", "y", e.currentTarget.value)}
 					/>
@@ -132,11 +258,11 @@
 						id="padding_vertical"
 						name="padding_vertical"
 						type="range"
-						min="-3"
-						max="6"
+						min="0"
+						max="8"
 						step="1"
 						on:change={(e) =>
-							spaceHandler("margin", "x", e.currentTarget.value)}
+							spaceHandler("padding", "x", e.currentTarget.value)}
 					/>
 				</div>
 				<div class="[ field-group ]">
@@ -146,11 +272,11 @@
 						id="padding_horizontal"
 						name="padding_horizontal"
 						type="range"
-						min="-3"
-						max="6"
+						min="0"
+						max="8"
 						step="1"
 						on:change={(e) =>
-							spaceHandler("margin", "y", e.currentTarget.value)}
+							spaceHandler("padding", "y", e.currentTarget.value)}
 					/>
 				</div>
 				<!-- END OF PADDING GROUP -->

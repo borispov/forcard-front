@@ -2,7 +2,7 @@ export type StyleProperty = { [key: string]: string | {} | number | { [key:strin
 
 export type StyleProperties = {
 	background: { 
-		[key:string]: number | string | { gradient: any }
+		[key:string]: number | string 
 	};
 	display?: {
 		display: string;

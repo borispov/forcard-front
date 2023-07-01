@@ -18,6 +18,10 @@
     padding-bottom: clamp(2.25rem,1.4rem + 4.14vw,4.5rem);
 }
 
+.pt-s {
+  padding-top: clamp(1.125rem,.98rem + .69vw,1.5rem);
+}
+
 .pt-l-xl {
     padding-top: clamp(2.25rem,1.4rem + 4.14vw,4.5rem);
 }

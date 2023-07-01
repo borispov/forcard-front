@@ -82,7 +82,7 @@
 	</div>
 
 	<div class="sidebar">
-		<DivConfig divConfig={$site.components[0]} />
+		<DivConfig bind:divConfig={$site.components[0]} />
 		<!-- <ConfigTab type="div" /> -->
 
 		<div class="picked">

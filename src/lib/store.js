@@ -32,13 +32,11 @@ export const site = writable({
 						direction: "column",
 					},
 					background: {
-					opacity: 1,
-					blur: 0,
-					type: "color",
-					color: "var(--background)",
-					gradient: {
-						data: "",
-					},
+						type: "color",
+						opacity: 1,
+						blur: 0,
+						color: "var(--background)",
+						gradient: ""
 				},
 				space: {
 					margin: {y: '--space-s', x: '0'},
@@ -109,21 +107,11 @@ export const site = writable({
 					blur: 0,
 					type: "color",
 					color: "var(--background)",
-					gradient: {
-						data: "",
-					},
+					gradient: ""
 				},
 				space: {
-					margin: {y: '--space-s', x: '0'},
-					padding: {y: '--space-s', x: '0'},
-				},
-				margin: {
-					'block': "0",
-					'inline': "auto",
-				},
-				padding: {
-					'block': "--space-s",
-					'inline': "--space-s",
+					margin: {y: '5', x: '0'},
+					padding: {y: '5', x: '0'},
 				},
 				height: "auto",
 				width: "auto",

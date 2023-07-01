@@ -20,3 +20,26 @@ npm run build
 You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+
+
+### Current Challenges
+
+1. How to represent design :root values like var(--space-x);
+
+
+### Solution to #1
+Build a transformer helper that will represent values as STEPS, i.e
+step 1, step 0 but store them as their actual values.
+*OR* 
+Just name them differently under the hood to begin with.
+
+like this: 
+```css
+  :root {
+    --space-0: clamp...
+  ]
+```
+
+On the other hand, I'd like to MAYBE represent the values in different
+languages, so it would make sense to have different representational
+values - but not actual values.
