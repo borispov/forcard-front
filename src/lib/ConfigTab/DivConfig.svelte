@@ -1,13 +1,17 @@
 <script lang="ts">
+	// IMPORTS
 	import Header from "./Header.svelte";
+	import Switch from "../common/Switch.svelte";
 	import { gradientsChoice } from "../utils/generateGradient";
 	import gradients from "../global/gradients.json";
 
 	import type { Component } from "../../types/components";
+	type spaceType = "margin" | "padding" | "gutter";
 
 	export let divConfig: Component;
 
-	type spaceType = "margin" | "padding" | "gutter";
+	// settings variables
+	let borderOn = Object.entries(divConfig.design.border).length > 0;
 
 	// TODO: show those values instead of RANGE numbers for space style
 	// properties such as Margins & Paddings.
@@ -43,6 +47,44 @@
 	let setPaddings = (val: string, vec: string) => {
 		// let transformedValue = UI_STEPPED_VALUES[val];
 		divConfig.design.space.padding[vec] = val;
+	};
+
+	let setShadow = (val: string) => {
+		// let transformedValue = UI_STEPPED_VALUES[val];
+		// divConfig.design.shadow = val;
+		// TODO: Shadow
+	};
+
+	let borderHandler = (type: string, val = "") => {
+		if (type == "borderOn") {
+			borderOn = val === "on" ? true : false;
+		}
+
+		if (type == "border") {
+			let r = "1px solid black";
+			return r;
+		}
+
+		if (type == "radius") {
+			switch (val) {
+				case "5":
+					divConfig.design.border["radius"] = "50%";
+				case "0":
+					divConfig.design.border["radius"] = "4px";
+				case "1":
+					divConfig.design.border["radius"] = "8px";
+				case "2":
+					divConfig.design.border["radius"] = "12px";
+				case "3":
+					divConfig.design.border["radius"] = "16px";
+				case "4":
+					divConfig.design.border["radius"] = "24px";
+
+				default:
+					break;
+			}
+			divConfig.design.border["radius"] = val;
+		}
 	};
 
 	// Tbind:ODO: When We'll expand the collection of gradients, we can offer
@@ -280,6 +322,46 @@
 					/>
 				</div>
 				<!-- END OF PADDING GROUP -->
+
+				<!-- BEGINNING OF BORDER GROUP -->
+				<div class="[ field-group ]">
+					<div class="field-row repel">
+						<label for="">Border</label>
+						<Switch label="" bind:value={borderOn} />
+					</div>
+
+					<div class="field-row repel">
+						<label for="border-radius">Border Radius</label>
+						<div class="indicator">
+							{(divConfig.design.border.hasOwnProperty("radius") &&
+								divConfig.design.border["radius"]) ||
+								0}
+						</div>
+					</div>
+					<div class="[ field-group ]">
+						<input
+							id="border-radius"
+							name="border-radius"
+							type="range"
+							min="0"
+							max="5"
+							step="1"
+							value={divConfig.design.border["radius"] || "0"}
+							on:change={(e) => borderHandler("radius", e.currentTarget.value)}
+						/>
+					</div>
+
+					{#if borderOn}
+						<div class="[ field-group ]">
+							<input
+								id="border"
+								name="border"
+								type="text"
+								value="BORDERRRRRRRR"
+							/>
+						</div>
+					{/if}
+				</div>
 			</div>
 		</div>
 	</div>
@@ -341,5 +423,9 @@
 
 	.field-row {
 		width: 80%;
+	}
+
+	.repel {
+		--repel-vertical-alignment: baseline;
 	}
 </style>
