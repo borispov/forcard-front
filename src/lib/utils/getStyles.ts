@@ -1,5 +1,7 @@
 import type { StyleProperties } from "../../types/components";
 
+import { parseWidth } from "./styleParser";
+
 const STEPPED_VALUES = [
 	"0",
 	"var(--space-2xs)",
@@ -11,6 +13,8 @@ const STEPPED_VALUES = [
 	"var(--space-2xl)",
 	"var(--space-3xl)",
 ];
+
+const ALIGNMENT_VALUES = {start: "flex-start", center: "center", end: "flex-end", stretch: "stretch", baseline: "baseline" };
 
 let getBackgroundStyle = (bgObject: any) => {
 	let r: string;
@@ -48,22 +52,48 @@ let getSpaceStyle = (spaceObject: {
 		}
 	}
 
-	console.log(`r for space is \n: ${r}`)
-
 	return r;
 };
 
 let getContainerStyle = (displayObject: {
-	display: string | '';
+	type: string | '';
 	direction: string | '';
 }) => {
+	// console.log('we got it', displayObject)
 	let r = "";
-	r += `display: ${displayObject.display || 'block'};\n`;
+	r += `display: ${displayObject.type || 'block'};\n`;
+
+	if (displayObject.type === 'flex') {
+		r += `flex-direction: ${displayObject['direction']};\n`;
+		r += `align-items: ${ALIGNMENT_VALUES[displayObject['align']]};\n`;
+	}
+
 	if (displayObject.direction) {
 		r += `flex-direction: ${displayObject.direction};\n`
 	}
+
 	return r;
 }
+
+let getDimensions = (width: 'auto' | number, height: string) => {
+	let r: string = '';
+
+	if (width !== 'auto') {
+		r += parseWidth(width);
+	} else {
+		r += `width: ${width};\n`;
+	}
+
+	if (height !== 'auto') {
+		r += `height: ${height};\n`;
+	}
+
+	console.log(`fetching DIMENSIONS now`);
+	console.log(`${r}`);
+
+	return r;
+}
+
 
 // Show UP
 export function getStyles(type: string, stylesObject: StyleProperties) {
@@ -83,10 +113,13 @@ export function getStyles(type: string, stylesObject: StyleProperties) {
 
 	if (type == "container" && stylesObject.display ) {
 		r += getContainerStyle(stylesObject.display);
+		r += getDimensions(stylesObject.width, stylesObject.height);
 	}
 
 	// encapsulate DIV settings
 	r += getBackgroundStyle(stylesObject.background) + "\n";
+
+
 	for (const [k, v] of a) {
 		if (k == "space") {
 			r += getSpaceStyle(v) + "\n";
