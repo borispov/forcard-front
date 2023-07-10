@@ -193,23 +193,9 @@
 		border-radius: 12px;
 	}
 
-	.config {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-	}
-
-	.label-wrap {
-		display: flex;
-	}
-
-	label {
-		display: inline-block;
-	}
-
-	select {
-		width: 50px;
-		display: inline-block;
+	.sidebar {
+		height: 100vh;
+		overflow-y: scroll;
 	}
 
 	.bar {
