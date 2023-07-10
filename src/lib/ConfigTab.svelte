@@ -1,5 +1,10 @@
 <script>
+	import DivConfig from "./ConfigTab/DivConfig.svelte";
+	// import TextConfig from "./ConfigTab/TextConfig.svelte";
+	// import ButtonConfig from "./ConfigTab/ButtonConfig.svelte";
+
 	export let type;
+	export let component;
 
 	$: activePane = "";
 
@@ -55,30 +60,10 @@
 				},
 			},
 			background: {
+				type: "",
 				blur: 0,
 				style: "image",
 				color: "#fff",
-				gradient: {
-					angle: 0,
-					height: 0,
-					left: 0,
-					reverse: false,
-					style: "linear",
-					top: 50,
-					width: 50,
-					stop1: {
-						color: "",
-						position: 0,
-					},
-					stop2: {
-						color: "",
-						position: 60,
-					},
-					stop2: {
-						color: "",
-						position: 100,
-					},
-				},
 			},
 			overlay: {
 				style: "color",
@@ -264,25 +249,10 @@
 				Design
 			</li>
 		</ul>
-		{#each Object.entries(divConf) as [k, val]}
-			<section
-				class={((!activePane && k == "display") || k == activePane) && "active"}
-				data-name="display"
-			>
-				<h2>{k}</h2>
-				{#each Object.entries(val) as [props, values]}
-					<div>
-						<label for={props}>{props}</label>
-						<input
-							bind:value={values}
-							name={props}
-							type="text"
-							placeholder={""}
-						/>
-					</div>
-				{/each}
-			</section>
-		{/each}
+
+		<section>
+			<DivConfig bind:divConfig={component} />
+		</section>
 	{/if}
 
 	<!-- Render Settings For Text Elements -->
@@ -301,17 +271,8 @@
 				on:click={() => (activePane = "design")}
 			/>
 		</ul>
-		{#each Object.entries(divConf) as [k, val]}
-			<section class="panel-tab" data-name="content">
-				<h2>{k}</h2>
-				{#each Object.entries(val) as [props, values]}
-					<!-- FIX/ED -->
-					<label for={props}>{props}</label>
-					<input name={props} type="text" placeholder={values} />
-				{/each}
-				<input type="text" value="" placeholder={val} />
-			</section>
-		{/each}
+
+		<!-- <TextConfig /> -->
 	{/if}
 
 	<!-- Settings For Buttons -->
@@ -330,16 +291,8 @@
 				on:click={() => (activePane = "design")}
 			/>
 		</ul>
-		{#each Object.entries(buttonConf) as [k, val]}
-			<section class="panel-tab" data-name="content">
-				<h2>{k}</h2>
-				{#each Object.entries(val) as [props, values]}
-					<label for={props}>{props}</label>
-					<input name={props} type="text" placeholder={values} />
-				{/each}
-				<input type="text" value="" placeholder={val} />
-			</section>
-		{/each}
+
+		<!-- <ButtonConfig /> -->
 	{/if}
 </div>
 

@@ -1,6 +1,6 @@
-import type { StyleProperties } from "../../types/components";
+import type { CssBorder, StyleProperties } from "../../types/components";
 
-import { parseWidth } from "./styleParser";
+import { parseWidth, parseBorder } from "./styleParser";
 
 const STEPPED_VALUES = [
 	"0",
@@ -55,6 +55,15 @@ let getSpaceStyle = (spaceObject: {
 	return r;
 };
 
+const getBorderStyle = (borderObject: CssBorder) => {
+	let r = "";
+	if (borderObject.radius) {
+		let parsedRadius = parseBorder(borderObject.radius);
+		r += `border-radius: ${parsedRadius};\n`
+	}
+	return r;
+}
+
 let getContainerStyle = (displayObject: {
 	type: string | '';
 	direction: string | '';
@@ -88,9 +97,6 @@ let getDimensions = (width: 'auto' | number, height: string) => {
 		r += `height: ${height};\n`;
 	}
 
-	console.log(`fetching DIMENSIONS now`);
-	console.log(`${r}`);
-
 	return r;
 }
 
@@ -114,6 +120,10 @@ export function getStyles(type: string, stylesObject: StyleProperties) {
 	if (type == "container" && stylesObject.display ) {
 		r += getContainerStyle(stylesObject.display);
 		r += getDimensions(stylesObject.width, stylesObject.height);
+		if (Object.entries(stylesObject.border).length) {
+			console.log("setting border radius of : ", stylesObject.border["radius"])
+			r += getBorderStyle(stylesObject.border);
+		}
 	}
 
 	// encapsulate DIV settings

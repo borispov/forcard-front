@@ -3,6 +3,7 @@
 	import Wrapper from "./Wrapper.svelte";
 
 	export let components: Component[];
+	export let hoverHandler: any;
 
 	let childrenIds = components?.reduce((acc, component) => {
 		if (component.children) {
@@ -31,7 +32,7 @@
 		component.type !== undefined ? component : getElementByIndex(component.id)}
 
 	{#if el.children && !childrenIds.includes(el.id)}
-		<Wrapper component={el} {components} {childrenIds} />
+		<Wrapper component={el} {components} {childrenIds} {hoverHandler} />
 	{/if}
 {/each}
 

@@ -14,3 +14,27 @@ export const parseWidth = (widthValue: number) => {
 
 	return r;
 }
+
+export const parseBorder = (radius: string | number) => {
+
+	let rad = typeof radius === 'string' && radius || String(radius);
+
+	switch (rad) {
+		case "5":
+			return "50%";
+		case "0":
+			return "var(--space-3xs, 4px)";
+		case "1":
+			return "var(--space-xs, 8px)";
+		case "2":
+			return "var(--space-s, 12px)";
+		case "3":
+			return "var(--space-m, 16px)";
+		case "4":
+			return "var(--space-l, 24px)";
+
+		default:
+			break;
+	}
+
+}

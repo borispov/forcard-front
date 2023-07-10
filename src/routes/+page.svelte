@@ -7,9 +7,38 @@
 
 	let currentSelected = "";
 
+	let selectedComponentId = 0;
+
 	let addMenuOpened = false;
 
 	let toggleAddMenu = () => (addMenuOpened = !addMenuOpened);
+
+	// I WORK ON SELECTING ELEMENTS ----------->>>>>>>>>>>>>>>>>>>>>>>>
+	let componentsHoverHandler = (e) => {
+		// select clicked Element
+		if (e.type == "click") {
+			let elementId = e.target.getAttribute("data-id");
+			selectedComponentId = elementId;
+
+			if (!e.target.classList.contains("active-element")) {
+				e.target.classList.add("active-element");
+
+				// remove previously selected element
+				document.querySelectorAll(".active-element").forEach((el) => {
+					const isActive = el.getAttribute("data-id") != selectedComponentId;
+					isActive && el.classList.remove("active-element");
+				});
+			}
+		}
+
+		// on hover effects
+		if (e.type === "mouseenter" || e.type == "mouseover") {
+			e.currentTarget.classList.add("hovered-element");
+		}
+		if (e.type === "mouseleave" || e.type == "mouseout") {
+			e.target.classList.remove("hovered-element");
+		}
+	};
 
 	const setElementId = (type, elementsList) => {
 		const latestTypeId =
@@ -20,6 +49,8 @@
 		return latestTypeId !== -1 ? latestTypeId + 1 : 1;
 	};
 
+	// TODO: Need to update default settings according to Component type
+	// and settings
 	const setDefaultProps = (elementType) => {
 		return {
 			type: elementType,
@@ -95,92 +126,25 @@
 				{/each}
 			</ul>
 		</div>
+	</div>
 
-		<div class="config">
-			<p>Element Configurations:</p>
-			{#if typeof $site.components[currentSelected] == "object"}
-				<p>Element: {$site.components[currentSelected].type}</p>
-
-				<p>Element ID: {$site.components[currentSelected].id}</p>
-
-				<p>Parent: {$site.components[currentSelected].parent}</p>
-
-				<!-- Select Parent  -->
-				<div class="label-wrap">
-					<label for="parent">Select Parent: </label>
-					<select
-						name="parent"
-						id="parent-select"
-						bind:value={$site.components[currentSelected].parent}
-					>
-						<option value="body">body</option>
-						{#each $site.components as el}
-							<option value={`#${el.type}-${el.id}`}
-								>{`#${el.type}-${el.id}`}</option
-							>
-						{/each}
-					</select>
-				</div>
-
-				<label for="content">Text: </label>
-				<input
-					bind:value={$site.components[currentSelected].content}
-					name="content"
-				/>
-
-				<label for="color">Color: </label>
-				<input
-					on:change={(e) => {
-						if ($site.components[currentSelected].props.styles) {
-							$site.components[currentSelected].props.styles["color"] =
-								e.target.value;
-						}
-					}}
-					name="color"
-				/>
-
-				{#if $site.components[currentSelected].type[0] === "h"}
-					<label for="font-size">Font Size: </label>
-					<input
-						on:change={(e) => {
-							if ($site.components[currentSelected].props.styles) {
-								$site.components[currentSelected].props.styles["font-size"] =
-									e.target.value;
-							}
-						}}
-						name="font-size"
-					/>
-				{/if}
-
-				<label for="class">Class: </label>
-				<input
-					bind:value={$site.components[currentSelected].props.class}
-					name="class"
-				/>
-
-				{#if $site.components[currentSelected].type[0] === "h"}
-					<label for="level">Heading Level: </label>
-					<select
-						name="level"
-						id="level"
-						on:change={setHeadingLevel}
-						bind:value={$site.components[currentSelected].props.level}
-					>
-						<option value={1}>1</option>
-						<option value={2}>2</option>
-						<option value={3}>3</option>
-						<option value={4}>4</option>
-						<option value={5}>5</option>
-						<option value={6}>6</option>
-					</select>
-				{/if}
-			{/if}
+	<div style={$site.site.utopia}>
+		<div
+			class="canvas-site-wrapper"
+			style={"max-width: " + $site.site.pageSettings.width + ";"}
+		>
+			<Canvas
+				hoverHandler={componentsHoverHandler}
+				components={$site.components}
+			/>
 		</div>
 	</div>
-	<Canvas components={$site.components} />
 </main>
 
 <style>
+	.canvas-site-wrapper {
+		overflow-x: hidden;
+	}
 	.layout {
 		background: var(--color-light);
 		box-sizing: border-box;
@@ -265,5 +229,13 @@
 		background: rgb(40, 30, 66);
 		border: none;
 		color: white;
+	}
+
+	:global(.hovered-element) {
+		border: 3px dotted rgb(99, 64, 213);
+	}
+
+	:global(.active-element) {
+		border: 3px solid rgb(99, 64, 213);
 	}
 </style>

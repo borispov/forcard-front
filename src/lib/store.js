@@ -9,6 +9,9 @@ export const site = writable({
 		title: 'MySite',
 		description: 'Welcome to mySite, it is best in class',
 		colorScheme: COLOR_SCHEME,
+		pageSettings: {
+			width: "100%",
+		},
 	},
 	components: [
 		{
@@ -28,8 +31,9 @@ export const site = writable({
 			],
 			design: {
 					display: {
-						display: "flex",
+						type: "flex",
 						direction: "column",
+						align: "stretch"
 					},
 					background: {
 						type: "color",
@@ -39,20 +43,13 @@ export const site = writable({
 						gradient: ""
 				},
 				space: {
-					margin: {y: '--space-s', x: '0'},
-					padding: {y: '--space-s', x: '0'},
-				},
-				margin: {
-					'block': "0",
-					'inline': "auto",
-				},
-				padding: {
-					'block': "--space-s",
-					'inline': "--space-s",
+					margin: {y: '4', x: '0'},
+					padding: {y: '4', x: '0'},
 				},
 				height: "auto",
 				width: "auto",
-				border: "",
+				border: {
+				},
 			}
 		},
 		{
@@ -66,7 +63,7 @@ export const site = writable({
 				space: {
 					padding: { y: '--space-l', x: '0' },
 				},
-				border: "",
+				border: {},
 			}
 
 		},
@@ -81,7 +78,7 @@ export const site = writable({
 				space: {
 					padding: { y: '--space-l', x: '0' },
 				},
-				border: "",
+				border: {},
 			}
 
 		},
@@ -99,8 +96,9 @@ export const site = writable({
 			],
 			design: {
 				display: {
-					display: 'flex',
+					type: 'flex',
 					direction: 'row',
+					align: "stretch"
 				},
 				background: {
 					opacity: 1,
@@ -115,7 +113,7 @@ export const site = writable({
 				},
 				height: "auto",
 				width: "auto",
-				border: "",
+				border: {},
 			}
 		},
 		{
@@ -130,7 +128,7 @@ export const site = writable({
 				space: {
 					padding: { y: '--space-s', x: '0' },
 				},
-				border: "",
+				border: {},
 			}
 		},
 		{
@@ -145,7 +143,7 @@ export const site = writable({
 				space: {
 					padding: { y: '--space-s', x: '0' },
 				},
-				border: "1px solid black",
+				border: {},
 			}
 		},
 	]

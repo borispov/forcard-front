@@ -13,6 +13,8 @@
 	// settings variables
 	let borderOn = Object.entries(divConfig.design.border).length > 0;
 
+	let widthIndicator: string = divConfig.design.width || "";
+
 	// TODO: show those values instead of RANGE numbers for space style
 	// properties such as Margins & Paddings.
 	const UI_STEPPED_VALUES = [
@@ -25,18 +27,6 @@
 		"XL",
 		"2XL",
 		"3XL",
-	];
-
-	const STEPPED_VALUES = [
-		"0",
-		"--space-2xs",
-		"--space-xs",
-		"--space-s",
-		"--space-m",
-		"--space-l",
-		"--space-xl",
-		"--space-2xl",
-		"--space-3xl",
 	];
 
 	let setMargins = (val: string, vec: string) => {
@@ -66,23 +56,6 @@
 		}
 
 		if (type == "radius") {
-			switch (val) {
-				case "5":
-					divConfig.design.border["radius"] = "50%";
-				case "0":
-					divConfig.design.border["radius"] = "4px";
-				case "1":
-					divConfig.design.border["radius"] = "8px";
-				case "2":
-					divConfig.design.border["radius"] = "12px";
-				case "3":
-					divConfig.design.border["radius"] = "16px";
-				case "4":
-					divConfig.design.border["radius"] = "24px";
-
-				default:
-					break;
-			}
 			divConfig.design.border["radius"] = val;
 		}
 	};
@@ -180,6 +153,34 @@
 		reader.readAsDataURL(image);
 		reader.onload = (e) => (files[0] = e.target.result);
 	};
+
+	// figure out the best way to set maxWidth if at all.. offer pre-defined
+	// settings ? or let user free-roll this
+	let setMaxWidth = (e: Event) => {
+		const { target } = e;
+		const { value } = target as HTMLInputElement;
+	};
+
+	let onWidthCustom = (e: Event) => {
+		// maybe store values above 100% as max1, max2, max3?
+		const { target } = e;
+		const { value } = target as HTMLInputElement;
+
+		const numValue = Number(value);
+
+		if (numValue < 100) widthIndicator = value;
+		else if (numValue >= 100 && numValue < 110) widthIndicator = "Full Width";
+		else if (numValue >= 105 && numValue < 120) widthIndicator = "Edge";
+		else widthIndicator = "Full Bleed";
+
+		divConfig.design.width = numValue;
+	};
+
+	let onAlignmentSelect = (e: Event) => {
+		const { target } = e;
+		const { value } = target as HTMLInputElement;
+		divConfig.design.display["align"] = value;
+	};
 </script>
 
 <section data-name="div-config" class="config-section flow">
@@ -188,6 +189,35 @@
 	<div class="panel">
 		<!-- make it a component Field Group -->
 		<div class="[ field-group flow ] [ flex ]">
+			<div class="field">
+				<div class="field-row repel">
+					<label for="div-design_bg_style">Width</label>
+					<div class="indicator">
+						{widthIndicator}
+					</div>
+				</div>
+
+				<input
+					id="container-width"
+					name="container-width"
+					type="range"
+					min="15"
+					max="120"
+					step="1"
+					bind:value={divConfig.design.width}
+					on:input={onWidthCustom}
+				/>
+			</div>
+
+			<div class="field">
+				<label for="div-design_bg_style">Alignment</label>
+				<select id="div-design_bg_style" on:change={onAlignmentSelect}>
+					<option value="start">Left</option>
+					<option value="center">Center</option>
+					<option value="end">Right</option>
+				</select>
+			</div>
+
 			<!-- BEGINNING OF BACKGROUND GROUP -->
 			<div class="field">
 				<label for="div-design_bg_style">Background</label>
@@ -261,6 +291,7 @@
 				</div>
 				<div class="[ field-group ]">
 					<input
+						bind:value={divConfig.design.space.margin["x"]}
 						id="margin_vertical"
 						name="margin_vertical"
 						type="range"
@@ -271,11 +302,14 @@
 					/>
 				</div>
 				<div class="[ field-group ]">
-					<label for="margin_horizontal">Y-Axis</label>
-					<div class="indicator">
-						{UI_STEPPED_VALUES[divConfig.design.space.margin["y"]] || "None"}
+					<div class="field-row repel">
+						<label for="margin_horizontal">Y-Axis</label>
+						<div class="indicator">
+							{UI_STEPPED_VALUES[divConfig.design.space.margin["y"]] || "None"}
+						</div>
 					</div>
 					<input
+						bind:value={divConfig.design.space.margin["y"]}
 						id="margin_horizontal"
 						name="margin_horizontal"
 						type="range"
@@ -294,8 +328,10 @@
 			<div class="[ field-group ]">
 				<label for="">Padding</label>
 				<div class="[ field-group ]">
-					<label for="padding_vertical">X-Axis</label>
-					<div class="indicator">0</div>
+					<div class="field-row repel">
+						<label for="padding_vertical">X-Axis</label>
+						<div class="indicator">{divConfig.design.space.padding["x"]}</div>
+					</div>
 					<input
 						id="padding_vertical"
 						name="padding_vertical"
@@ -308,8 +344,10 @@
 					/>
 				</div>
 				<div class="[ field-group ]">
-					<label for="padding_horizontal">Y-Axis</label>
-					<div class="indicator">0</div>
+					<div class="field-row repel" data-nowrap>
+						<label for="padding_horizontal">Y-Axis</label>
+						<div class="indicator">{divConfig.design.space.padding["y"]}</div>
+					</div>
 					<input
 						id="padding_horizontal"
 						name="padding_horizontal"
