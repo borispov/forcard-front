@@ -29,6 +29,11 @@
 		"3XL",
 	];
 
+	let setDirection = (e: any) => {
+		const { value } = e.target;
+		divConfig.design.display.direction = value;
+	};
+
 	let setMargins = (val: string, vec: string) => {
 		// let transformedValue = UI_STEPPED_VALUES[val];
 		divConfig.design.space.margin[vec] = val;
@@ -208,6 +213,19 @@
 					on:input={onWidthCustom}
 				/>
 			</div>
+
+			{#if divConfig.design.display.type == "flex"}
+				<div class="field">
+					<label for="div-design_bg_style">Direction</label>
+					<select
+						bind:value={divConfig.design.display.direction}
+						id="div-design_bg_style"
+					>
+						<option value="column">Column</option>
+						<option value="row">Row</option>
+					</select>
+				</div>
+			{/if}
 
 			<div class="field">
 				<label for="div-design_bg_style">Alignment</label>
