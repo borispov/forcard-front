@@ -1,4 +1,4 @@
-import type { CssBorder, StyleProperties } from "../../types/components";
+import type { CssBorder, CssSpace, CssFont, StyleProperties } from "../../types/components";
 
 import { parseWidth, parseBorder } from "./styleParser";
 
@@ -14,9 +14,35 @@ const STEPPED_VALUES = [
 	"var(--space-3xl)",
 ];
 
+const STEPPED_TEXT_VALUES = [
+	"var(--step--1)",
+	"var(--step--2)",
+	"var(--step-1)",
+	"var(--step-2)",
+	"var(--step-3)",
+	"var(--step-4)",
+	"var(--step-5)",
+	"var(--step-6)",
+];
+
+
 const ALIGNMENT_VALUES = {start: "flex-start", center: "center", end: "flex-end", stretch: "stretch", baseline: "baseline" };
 
-let getBackgroundStyle = (bgObject: any) => {
+const getFontStyles = (fontObject: CssFont) => {
+	let r: string = '';
+
+	const fontSize = STEPPED_TEXT_VALUES[Number(fontObject["font-size"])]
+	r += `font-size: ${fontSize};\n`;
+
+	if (fontObject.weight) {
+		r += `font-weight: ${fontObject.weight};\n`
+	}
+
+	console.log('font : ', r)
+	return r;
+}
+
+const getBackgroundStyle = (bgObject: any) => {
 	let r: string;
 
 	if (bgObject.type === "gradient") {
@@ -36,10 +62,7 @@ let getBackgroundStyle = (bgObject: any) => {
 };
 
 //  UGLY sorry.
-let getSpaceStyle = (spaceObject: {
-	margin: { y: string; x: string } | {};
-	padding: { y: string; x: string } | {};
-}) => {
+const getSpaceStyle = (spaceObject: CssSpace ) => {
 	let r = "";
 
 	for (const [k, v] of Object.entries(spaceObject)) {
@@ -64,7 +87,7 @@ const getBorderStyle = (borderObject: CssBorder) => {
 	return r;
 }
 
-let getContainerStyle = (displayObject: {
+const getContainerStyle = (displayObject: {
 	type: string | '';
 	direction: string | '';
 }) => {
@@ -84,7 +107,7 @@ let getContainerStyle = (displayObject: {
 	return r;
 }
 
-let getDimensions = (width: 'auto' | number, height: string) => {
+const getDimensions = (width: 'auto' | number, height: string) => {
 	let r: string = '';
 
 	if (width !== 'auto') {
@@ -107,9 +130,9 @@ export function getStyles(type: string, stylesObject: StyleProperties) {
 	let a = Object.entries(stylesObject);
 
 	if (type == "text" || type == "button") {
+		r += getFontStyles(stylesObject.font);
 		for (const [k, v] of a) {
 			if (k == "space") {
-				r += getSpaceStyle(v) + "\n";
 			} else {
 				r += `${k}: ${v};\n`;
 			}

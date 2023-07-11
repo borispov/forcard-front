@@ -58,10 +58,12 @@ export const site = writable({
 			content: "I'm child; #2",
 			id: "2",
 			design: {
+				font: {
+					'font-size': "6",
+				},
 				color: "var(--text-color)",
-				"font-size": "var(--step-6)",
 				space: {
-					padding: { y: '--space-l', x: '0' },
+					padding: { y: '2', x: '0' },
 				},
 				border: {},
 			}
@@ -74,9 +76,11 @@ export const site = writable({
 			id: "3",
 			design: {
 				color: "var(--text-color)",
-				"font-size": "var(--step-6)",
+				font: {
+					'font-size': "6",
+				},
 				space: {
-					padding: { y: '--space-l', x: '0' },
+					padding: { y: '3', x: '0' },
 				},
 				border: {},
 			}
@@ -124,9 +128,11 @@ export const site = writable({
 			design: {
 				background: "blue",
 				color: "white",
-				"font-size": "var(--step-2)",
+				font: {
+					'font-size': "6",
+				},
 				space: {
-					padding: { y: '--space-s', x: '0' },
+					padding: { y: '3', x: '0' },
 				},
 				border: {},
 			}
@@ -139,9 +145,11 @@ export const site = writable({
 			design: {
 				background: "white",
 				color: "black",
-				"font-size": "var(--step-2)",
+				font: {
+					'font-size': "6",
+				},
 				space: {
-					padding: { y: '--space-s', x: '0' },
+					padding: { y: '3', x: '0' },
 				},
 				border: {},
 			}

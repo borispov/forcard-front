@@ -1,3 +1,63 @@
+const divConf = {
+	display: {
+		stack: "",
+		columns: "",
+	},
+	design: {
+		"text-alignment": "var(--g-text-alignment)",
+		"margin-top": "var(--mt)",
+		"margin-bottom": "var(--mb)",
+		"padding-top": "var(--pt)",
+		"padding-bottom": "var(--pb)",
+		gap: "1",
+		background: "#fff",
+		border: "none",
+		"box-shadow": "0",
+	},
+};
+
+const textConf = {
+	content: {
+		text: "",
+	},
+	design: {
+		color: "var(--g-text-color)",
+		"font-family": "var(--g-ff)",
+		"font-size": "var(--g-fs)",
+		"font-weight": "var(--g-fw)",
+		"line-height": "var(--g-line-height)",
+		"letter-spacing": "var(--g-ls)",
+		"text-alignment": "var(--g-text-alignment)",
+		"margin-top": "",
+		"margin-bottom": "",
+		"padding-top": "",
+		"padding-bottom": "",
+	},
+};
+
+const pageConf = {
+	design: {
+		"padding-top": "var(--pt)",
+		"padding-bottom": "var(--pb)",
+		dir: "rtl",
+		background: "var(--g-bg-color)",
+		color: "var(--g-text-color)",
+		"font-family": "var(--g-ff)",
+		"font-size": "var(--g-fs)",
+		"font-weight": "var(--g-fw)",
+		"line-height": "var(--g-line-height)",
+		"letter-spacing": "var(--g-ls)",
+		"text-alignment": "var(--g-text-alignment)",
+		"margin-top": "",
+		"margin-bottom": "",
+		"padding-top": "",
+		"padding-bottom": "",
+	},
+};
+
+
+
+
 
 const divConfig = {
 	id: "div-" + id,

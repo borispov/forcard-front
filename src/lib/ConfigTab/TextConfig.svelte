@@ -2,183 +2,42 @@
 	// IMPORTS
 	import Header from "./Header.svelte";
 	import Switch from "../common/Switch.svelte";
-	import { gradientsChoice } from "../utils/generateGradient";
-	import gradients from "../global/gradients.json";
 
-	import type { Component } from "../../types/components";
-	type spaceType = "margin" | "padding" | "gutter";
+	import type { TextElement } from "../../types/components";
 
-	export let divConfig: Component;
+	export let textConfig: TextElement;
 
-	// settings variables
-	let borderOn = Object.entries(divConfig.design.border).length > 0;
-
-	// TODO: show those values instead of RANGE numbers for space style
-	// properties such as Margins & Paddings.
-	const UI_STEPPED_VALUES = [
-		"None",
-		"2XS",
-		"Extra Small",
-		"Small",
-		"Medium",
-		"Large",
-		"XL",
-		"2XL",
-		"3XL",
+	const UI_STEPPED_TEXT_SIZES = [
+		"Step -2",
+		"Step -1",
+		"Step 1",
+		"Step 2",
+		"Step 3",
+		"Step 4",
+		"Step 5",
+		"Step 6",
 	];
 
-	const STEPPED_VALUES = [
-		"0",
-		"--space-2xs",
-		"--space-xs",
-		"--space-s",
-		"--space-m",
-		"--space-l",
-		"--space-xl",
-		"--space-2xl",
-		"--space-3xl",
-	];
+	const UI_STEPPED_TEXT_WEIGHTS = ["Thin", "Regular", "Bold"];
 
-	let setMargins = (val: string, vec: string) => {
-		// let transformedValue = UI_STEPPED_VALUES[val];
-		divConfig.design.space.margin[vec] = val;
+	let fsIndicator = UI_STEPPED_TEXT_SIZES[textConfig.design.font["font-size"]];
+	let fwIndicator =
+		UI_STEPPED_TEXT_WEIGHTS[textConfig.design.font["font-weight"]] || "DEFAULT";
+
+	const fontWeightHandler = (e: any) => {
+		const { value } = e.target;
+		if (value) textConfig.design.font["font-size"] = value;
+
+		fwIndicator = UI_STEPPED_TEXT_WEIGHTS[Number(value)];
+		textConfig.design.font["font-weight"] = value;
 	};
 
-	let setPaddings = (val: string, vec: string) => {
-		// let transformedValue = UI_STEPPED_VALUES[val];
-		divConfig.design.space.padding[vec] = val;
-	};
+	const fontSizeHandler = (e: any) => {
+		const { value } = e.target;
+		if (value) textConfig.design.font["font-size"] = value;
 
-	let setShadow = (val: string) => {
-		// let transformedValue = UI_STEPPED_VALUES[val];
-		// divConfig.design.shadow = val;
-		// TODO: Shadow
-	};
-
-	let borderHandler = (type: string, val = "") => {
-		if (type == "borderOn") {
-			borderOn = val === "on" ? true : false;
-		}
-
-		if (type == "border") {
-			let r = "1px solid black";
-			return r;
-		}
-
-		if (type == "radius") {
-			switch (val) {
-				case "5":
-					divConfig.design.border["radius"] = "50%";
-				case "0":
-					divConfig.design.border["radius"] = "4px";
-				case "1":
-					divConfig.design.border["radius"] = "8px";
-				case "2":
-					divConfig.design.border["radius"] = "12px";
-				case "3":
-					divConfig.design.border["radius"] = "16px";
-				case "4":
-					divConfig.design.border["radius"] = "24px";
-
-				default:
-					break;
-			}
-			divConfig.design.border["radius"] = val;
-		}
-	};
-
-	// Tbind:ODO: When We'll expand the collection of gradients, we can offer
-	// gradients based on a color like in https://uigradients.com
-	let onGradientColorChoice = (e) => {
-		const id = e.target.value;
-		if (id) {
-			let gradientCss = gradientsChoice("", id);
-
-			divConfig.design.background = {
-				...divConfig.design.background,
-				type: "gradient",
-				gradient: gradientCss,
-			};
-		}
-	};
-
-	let setBackgroundColor = (val: string) => {
-		let { type, color } = divConfig.design.background;
-
-		if (type !== "color") {
-			type = "color";
-		}
-
-		if (type == "gradient") {
-			let gradientCss = gradientsChoice("", val);
-			divConfig.design.background = {
-				...divConfig.design.background,
-				type: "gradient",
-				gradient: gradientCss,
-			};
-		}
-
-		if (color != val) {
-			color = val;
-		} else {
-			return;
-		}
-
-		divConfig.design.background = {
-			...divConfig.design.background,
-			type: type,
-			color: color,
-		};
-	};
-
-	let spaceHandler = (type: spaceType, vec: string, val: string) => {
-		type === "margin" && setMargins(val, vec);
-		type === "padding" && setPaddings(val, vec);
-	};
-
-	let files: File;
-
-	let backgroundSettings = {
-		isBackground: false,
-		isImage: false,
-		isColor: false,
-		isGradient: false,
-		data: {
-			bgColor: "",
-		},
-	};
-
-	let onSelectBackground = (e) => {
-		const p = e.target.value;
-
-		let none = p !== "isNone";
-		let gradient = p === "isGradient";
-		let color = p === "isColor";
-		let image = p === "isImage";
-
-		if (gradient) {
-			divConfig.design.background.type = "gradient";
-		}
-
-		if (color) {
-			divConfig.design.background.type = "color";
-		}
-
-		backgroundSettings = {
-			...backgroundSettings,
-			isBackground: none,
-			isGradient: gradient,
-			isColor: color,
-			isImage: image,
-		};
-	};
-
-	let onFileSelect = (e) => {
-		// TODO: Check/Validate File Size Is below a certain threshold
-		let image = e.target.files[0];
-		let reader = new FileReader(image);
-		reader.readAsDataURL(image);
-		reader.onload = (e) => (files[0] = e.target.result);
+		fsIndicator = UI_STEPPED_TEXT_SIZES[Number(value)];
+		textConfig.design.font["font-size"] = value;
 	};
 </script>
 
@@ -190,10 +49,50 @@
 		<div class="[ field-group flow ] [ flex ]">
 			<!-- BEGINNING OF BORDER GROUP -->
 			<div class="[ field-group ]">
+				<label for="text-content">Content</label>
+				<input bind:value={textConfig.content} type="text" id="text-content" />
+			</div>
+		</div>
+
+		<div class="[ field-group flow ] [ flex ]">
+			<!-- BEGINNING OF BORDER GROUP -->
+			<div class="[ field-group ]">
 				<div class="field-row repel">
-					<label for="">Content</label>
-					<input type="text" />
+					<label for="text-content">Font Size</label>
+					<div class="indicator">
+						{fsIndicator}
+					</div>
 				</div>
+				<input
+					type="range"
+					step="1"
+					min="0"
+					max="7"
+					bind:value={textConfig.design.font["font-size"]}
+					id="text-content"
+					on:input={fontSizeHandler}
+				/>
+			</div>
+		</div>
+
+		<div class="[ field-group flow ] [ flex ]">
+			<!-- BEGINNING OF BORDER GROUP -->
+			<div class="[ field-group ]">
+				<div class="field-row repel">
+					<label for="text-content">Font Weight</label>
+					<div class="indicator">
+						{fwIndicator}
+					</div>
+				</div>
+				<input
+					type="range"
+					step="1"
+					min="0"
+					max="2"
+					bind:value={textConfig.design.font["font-weight"]}
+					id="text-content"
+					on:input={fontWeightHandler}
+				/>
 			</div>
 		</div>
 	</div>

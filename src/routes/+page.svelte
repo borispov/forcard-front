@@ -1,16 +1,17 @@
-<script>
+<script lang="ts">
 	import { fade } from "svelte/transition";
 	import { site } from "../lib/store.js";
 	import Canvas from "../lib/Canvas/Canvas.svelte";
 	import ConfigTab from "../lib/ConfigTab.svelte";
-	import DivConfig from "../lib/ConfigTab/DivConfig.svelte";
 
-	let currentSelected = "";
-
-	let selectedComponentId = 0;
+	let selectedComponentId = "0";
+	function getComponentIndex(id: string): number {
+		return $site.components.findIndex((comp) => comp.id === id);
+	}
+	$: selectedComponentIndex =
+		selectedComponentId !== "0" && getComponentIndex(selectedComponentId);
 
 	let addMenuOpened = false;
-
 	let toggleAddMenu = () => (addMenuOpened = !addMenuOpened);
 
 	// I WORK ON SELECTING ELEMENTS ----------->>>>>>>>>>>>>>>>>>>>>>>>
@@ -25,7 +26,8 @@
 
 				// remove previously selected element
 				document.querySelectorAll(".active-element").forEach((el) => {
-					const isActive = el.getAttribute("data-id") != selectedComponentId;
+					const isActive =
+						Number(el.getAttribute("data-id")) != Number(selectedComponentId);
 					isActive && el.classList.remove("active-element");
 				});
 			}
@@ -69,16 +71,12 @@
 	// Elements are {TYPE, ID} pairs - convenience
 	$: elements = $site.components.map((element) => [element.type, element.id]);
 
-	function selectElement(element, id) {
-		currentSelected =
+	function selectElementFromNavigation(element, id) {
+		let selected =
 			$site.components.findIndex((a) => a.type === element && a.id === id) ||
-			currentSelected;
-		return currentSelected;
-	}
+			-1;
 
-	function setHeadingLevel(e) {
-		let value = e.target.value;
-		$site.components[currentSelected].type = "h" + value;
+		return $site.components[selected];
 	}
 
 	function addElement(element) {
@@ -113,14 +111,18 @@
 	</div>
 
 	<div class="sidebar">
-		<DivConfig bind:divConfig={$site.components[0]} />
-		<!-- <ConfigTab type="div" /> -->
+		<!-- <DivConfig bind:divConfig={$site.components[0]} /> -->
+		<ConfigTab bind:component={$site.components[selectedComponentIndex]} />
 
+		<!-- todo: move this to a floating pane or something collapsible like in Elementor maybe? -->
 		<div class="picked">
-			<h2>Selected Elements:</h2>
+			<h2>Navigation:</h2>
 			<ul>
 				{#each elements as [el, id]}
-					<li on:keydown={() => {}} on:click={() => selectElement(el, id)}>
+					<li
+						on:keydown={() => {}}
+						on:click={() => selectElementFromNavigation(el, id)}
+					>
 						Element: {el}<span>></span>
 					</li>
 				{/each}
