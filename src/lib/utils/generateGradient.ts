@@ -41,10 +41,9 @@ const detectColor = (color: HexColor) => {
 export const gradientsChoice = (color: string, id = '') => {
 
 	if (id) {
-		console.log('here is a CSS for your chosen Magnificent Gradient: \n');
-		let cssGradient = generateGradientCss('right', gradients[id].colors)
-		console.log(cssGradient);
-		return cssGradient
+		const gradient = gradients[id];
+		const cssGradient = generateGradientCss('right', gradient.colors)
+		return [gradient.name, cssGradient]
 	}
 	return ''
 

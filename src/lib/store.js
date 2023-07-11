@@ -1,5 +1,5 @@
 import { UTOPIA_DEFAULT } from './global/utopia';
-import { COLOR_SCHEME, GLOBAL_STYLES } from './global/global-styles';
+import { COLOR_SCHEME_CSS, COLOR_SCHEME, GLOBAL_STYLES } from './global/global-styles';
 import { writable } from 'svelte/store';
 
 export const site = writable({
@@ -8,6 +8,7 @@ export const site = writable({
 		globalCss: GLOBAL_STYLES,
 		title: 'MySite',
 		description: 'Welcome to mySite, it is best in class',
+		cssColorScheme: COLOR_SCHEME_CSS,
 		colorScheme: COLOR_SCHEME,
 		pageSettings: {
 			width: "100%",
@@ -40,7 +41,9 @@ export const site = writable({
 						opacity: 1,
 						blur: 0,
 						color: "var(--background)",
-						gradient: ""
+						gradient: "",
+						gradientName: "",
+						gradientId: ""
 				},
 				space: {
 					margin: {y: '4', x: '0'},
@@ -109,7 +112,9 @@ export const site = writable({
 					blur: 0,
 					type: "color",
 					color: "var(--background)",
-					gradient: ""
+					gradient: "",
+					gradientName: "",
+					gradientId: ""
 				},
 				space: {
 					margin: {y: '5', x: '0'},

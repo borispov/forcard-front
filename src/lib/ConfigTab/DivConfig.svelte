@@ -10,13 +10,14 @@
 
 	export let divConfig: Component;
 
+	let gradientName = divConfig.design.background.gradientName;
+	$: console.log(gradientName);
+
 	// settings variables
 	let borderOn = Object.entries(divConfig.design.border).length > 0;
 
 	let widthIndicator: string = divConfig.design.width || "";
 
-	// TODO: show those values instead of RANGE numbers for space style
-	// properties such as Margins & Paddings.
 	const UI_STEPPED_VALUES = [
 		"None",
 		"2XS",
@@ -35,12 +36,10 @@
 	};
 
 	let setMargins = (val: string, vec: string) => {
-		// let transformedValue = UI_STEPPED_VALUES[val];
 		divConfig.design.space.margin[vec] = val;
 	};
 
 	let setPaddings = (val: string, vec: string) => {
-		// let transformedValue = UI_STEPPED_VALUES[val];
 		divConfig.design.space.padding[vec] = val;
 	};
 
@@ -70,30 +69,37 @@
 	let onGradientColorChoice = (e) => {
 		const id = e.target.value;
 		if (id) {
-			let gradientCss = gradientsChoice("", id);
+			let [gradientName, gradientCss] = gradientsChoice("", id);
 
 			divConfig.design.background = {
 				...divConfig.design.background,
 				type: "gradient",
 				gradient: gradientCss,
+				gradientName: gradientName,
+				gradientId: id,
 			};
+			console.log(`g: ${gradientCss}`);
 		}
 	};
 
 	let setBackgroundColor = (val: string) => {
 		let { type, color } = divConfig.design.background;
+		console.log(`type is: ${type}`);
 
-		if (type !== "color") {
-			type = "color";
-		}
+		// if (type !== "color") {
+		// 	type = "color";
+		// }
 
 		if (type == "gradient") {
-			let gradientCss = gradientsChoice("", val);
+			let [gradientName, gradientCss] = gradientsChoice("", val);
 			divConfig.design.background = {
 				...divConfig.design.background,
 				type: "gradient",
 				gradient: gradientCss,
+				gradientName: gradientName,
+				gradientId: val,
 			};
+			return;
 		}
 
 		if (color != val) {
@@ -102,6 +108,7 @@
 			return;
 		}
 
+		console.log(`I REACHED HERE`);
 		divConfig.design.background = {
 			...divConfig.design.background,
 			type: type,
@@ -248,7 +255,7 @@
 
 				{#if backgroundSettings.isBackground}
 					{#if backgroundSettings.isColor}
-						<div class="[ field-group flow ]">
+						<div class="[ field-group flow ] pt-s">
 							<div class="field field-row">
 								<input
 									bind:value={divConfig.design.background.color}
@@ -267,6 +274,7 @@
 								<label for="div-gradient">Gradient Color</label>
 								<select
 									id="div-gradient"
+									bind:value={gradientName}
 									on:change={(e) => setBackgroundColor(e.currentTarget.value)}
 								>
 									{#each gradients as gradient, id}
@@ -335,8 +343,6 @@
 						max="8"
 						step="1"
 						on:input={(e) => spaceHandler("margin", "y", e.currentTarget.value)}
-						on:change={(e) =>
-							spaceHandler("margin", "y", e.currentTarget.value)}
 					/>
 				</div>
 				<!-- END OF MARGINS GROUP -->
@@ -357,7 +363,8 @@
 						min="0"
 						max="8"
 						step="1"
-						on:change={(e) =>
+						bind:value={divConfig.design.space.padding["x"]}
+						on:input={(e) =>
 							spaceHandler("padding", "x", e.currentTarget.value)}
 					/>
 				</div>
@@ -373,7 +380,8 @@
 						min="0"
 						max="8"
 						step="1"
-						on:change={(e) =>
+						bind:value={divConfig.design.space.padding["y"]}
+						on:input={(e) =>
 							spaceHandler("padding", "y", e.currentTarget.value)}
 					/>
 				</div>
@@ -403,7 +411,7 @@
 							max="5"
 							step="1"
 							value={divConfig.design.border["radius"] || "0"}
-							on:change={(e) => borderHandler("radius", e.currentTarget.value)}
+							on:input={(e) => borderHandler("radius", e.currentTarget.value)}
 						/>
 					</div>
 

@@ -25,7 +25,7 @@ export const GLOBAL_STYLES = `
 	h4,h5,h6 { font-size: var(--step-1); }
 `
 
-export const COLOR_SCHEME = `
+export const COLOR_SCHEME_CSS = `
 	:root {
 		--color-light: #ffffff;  
 		--color-dark: #1a1a1a;
@@ -38,3 +38,15 @@ export const COLOR_SCHEME = `
 		--subheadings-color: var(--color-dark);
 	}
 `
+
+export const COLOR_SCHEME = {
+	"color-light": "#ffffff",
+	"color-dark": "#1a1a1a",
+	"background": "#ffffff",
+	"text-color": "#1a1a1a",
+	"color-mid": "#191919",
+	"color-mid-glare": "#b3b3b3",
+	"color-primary": "#F4BF3C",
+	"color-accent": "#C4605E",
+	"subheadings-color": "#1a1a1a",
+}

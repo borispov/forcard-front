@@ -112,7 +112,12 @@
 
 	<div class="sidebar">
 		<!-- <DivConfig bind:divConfig={$site.components[0]} /> -->
-		<ConfigTab bind:component={$site.components[selectedComponentIndex]} />
+		{#if selectedComponentId != "0"}
+			<ConfigTab
+				bind:component={$site.components[selectedComponentIndex]}
+				siteSettings={$site.site}
+			/>
+		{/if}
 
 		<!-- todo: move this to a floating pane or something collapsible like in Elementor maybe? -->
 		<div class="picked">

@@ -5,6 +5,7 @@
 	import type { Component, TextElement } from "../types/components";
 
 	export let component: Component | TextElement | undefined;
+	export let siteSettings;
 
 	$: activePane = "";
 </script>
@@ -17,7 +18,10 @@
 		{/if}
 
 		{#if component.type == "text"}
-			<TextConfig bind:textConfig={component} />
+			<TextConfig
+				bind:textConfig={component}
+				colors={siteSettings.colorScheme}
+			/>
 		{/if}
 
 		<!-- Render Settings For Text Elements -->

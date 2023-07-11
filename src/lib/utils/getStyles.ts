@@ -37,8 +37,6 @@ const getFontStyles = (fontObject: CssFont) => {
 	if (fontObject.weight) {
 		r += `font-weight: ${fontObject.weight};\n`
 	}
-
-	console.log('font : ', r)
 	return r;
 }
 
@@ -91,7 +89,6 @@ const getContainerStyle = (displayObject: {
 	type: string | '';
 	direction: string | '';
 }) => {
-	// console.log('we got it', displayObject)
 	let r = "";
 	r += `display: ${displayObject.type || 'block'};\n`;
 
@@ -144,7 +141,6 @@ export function getStyles(type: string, stylesObject: StyleProperties) {
 		r += getContainerStyle(stylesObject.display);
 		r += getDimensions(stylesObject.width, stylesObject.height);
 		if (Object.entries(stylesObject.border).length) {
-			console.log("setting border radius of : ", stylesObject.border["radius"])
 			r += getBorderStyle(stylesObject.border);
 		}
 	}

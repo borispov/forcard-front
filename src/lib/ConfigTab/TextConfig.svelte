@@ -6,6 +6,7 @@
 	import type { TextElement } from "../../types/components";
 
 	export let textConfig: TextElement;
+	export let colors;
 
 	const UI_STEPPED_TEXT_SIZES = [
 		"Step -2",
@@ -24,6 +25,8 @@
 	let fwIndicator =
 		UI_STEPPED_TEXT_WEIGHTS[textConfig.design.font["font-weight"]] || "DEFAULT";
 
+	let colorIndicator = textConfig.design.color;
+
 	const fontWeightHandler = (e: any) => {
 		const { value } = e.target;
 		if (value) textConfig.design.font["font-size"] = value;
@@ -38,6 +41,14 @@
 
 		fsIndicator = UI_STEPPED_TEXT_SIZES[Number(value)];
 		textConfig.design.font["font-size"] = value;
+	};
+
+	// HOW TO FETCH DEFAULT COLORS FROM CSS VARIABLES??
+	// SITE's GENERAL SETTINGS..?
+	const onColorSelect = (e: any) => {
+		const { value } = e.target;
+		console.log(`Picking a color: ${value}\n`);
+		textConfig.design.color = value;
 	};
 </script>
 
@@ -95,6 +106,26 @@
 				/>
 			</div>
 		</div>
+
+		{#if colors}
+			<div class="[ field-group flow ] [ flex ]">
+				<!-- BEGINNING OF BORDER GROUP -->
+				<div class="[ field-group ]">
+					<div class="field-row repel">
+						<label for="text-content">Color</label>
+						<div class="indicator">
+							{colorIndicator}
+						</div>
+					</div>
+
+					<select id="div-design_bg_style" on:change={onColorSelect}>
+						{#each Object.entries(colors) as [color, value]}
+							<option {value}>{color}</option>
+						{/each}
+					</select>
+				</div>
+			</div>
+		{/if}
 	</div>
 </section>
 
