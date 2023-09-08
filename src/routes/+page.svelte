@@ -53,18 +53,12 @@
 
 	// TODO: Need to update default settings according to Component type
 	// and settings
-	const setDefaultProps = (elementType) => {
+	const setDefaultProps = (elementType, elementRole) => {
 		return {
 			type: elementType,
-			content: elementType !== "img" && elementType,
-			parent: "body",
-			props: {
-				styles: {
-					margin: "0",
-					background: (elementType == "div" && "#d3d3d3") || "#8f8f8f",
-				},
-				children: [],
-			},
+			role: elementRole,
+			design: {},
+			children: [],
 		};
 	};
 
@@ -79,8 +73,9 @@
 		return $site.components[selected];
 	}
 
+	// TODO: Work on adding an element
 	function addElement(element) {
-		let e = setDefaultProps(element);
+		let e = setDefaultProps(element, "");
 		e.id = setElementId(e.type, $site.components);
 		$site.components = [...$site.components, e];
 	}

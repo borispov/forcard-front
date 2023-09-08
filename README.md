@@ -26,9 +26,10 @@ should the user change children/parents within settings panel?
 
 ## todo
 
-1. Add a width setting on container elements
+1. Add a width setting on container elements - DONE
 2. Make it responsive/centered by default.
-3. Code Text Element Configuration element for side-panel
+3. Code Text Element Configuration element for side-panel - PARTIALLY
+   DONE.
 3. Code Button Element Configuration element for side-panel
 
 

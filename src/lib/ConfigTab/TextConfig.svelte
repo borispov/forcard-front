@@ -23,16 +23,21 @@
 
 	let fsIndicator = UI_STEPPED_TEXT_SIZES[textConfig.design.font["font-size"]];
 	let fwIndicator =
-		UI_STEPPED_TEXT_WEIGHTS[textConfig.design.font["font-weight"]] || "DEFAULT";
+		UI_STEPPED_TEXT_WEIGHTS[textConfig.design.font["weight"]] || "DEFAULT";
 
 	let colorIndicator = textConfig.design.color;
 
 	const fontWeightHandler = (e: any) => {
 		const { value } = e.target;
-		if (value) textConfig.design.font["font-size"] = value;
+		if (value) textConfig.design.font["weight"] = value;
 
 		fwIndicator = UI_STEPPED_TEXT_WEIGHTS[Number(value)];
-		textConfig.design.font["font-weight"] = value;
+		textConfig.design.font["weight"] = value;
+	};
+
+	// todo: accomplish text alignemnt
+	const textAlignmentHandler = (e: any) => {
+		const { value } = e.target;
 	};
 
 	const fontSizeHandler = (e: any) => {

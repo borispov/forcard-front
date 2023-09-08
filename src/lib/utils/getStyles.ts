@@ -2,6 +2,9 @@ import type { CssBorder, CssSpace, CssFont, StyleProperties } from "../../types/
 
 import { parseWidth, parseBorder } from "./styleParser";
 
+// FONT_WEIGHTS[0] corresponds to a thin 300 weight font
+const FONT_WEIGHTS = [ "300", "400", "700" ]
+
 const STEPPED_VALUES = [
 	"0",
 	"var(--space-2xs)",
@@ -35,7 +38,8 @@ const getFontStyles = (fontObject: CssFont) => {
 	r += `font-size: ${fontSize};\n`;
 
 	if (fontObject.weight) {
-		r += `font-weight: ${fontObject.weight};\n`
+		const fontWeight = FONT_WEIGHTS[Number(fontObject["weight"])]
+		r += `font-weight: ${fontWeight};\n`
 	}
 	return r;
 }
