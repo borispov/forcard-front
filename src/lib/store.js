@@ -58,7 +58,7 @@ export const site = writable({
 		{
 			type: "text",
 			role: "h1",
-			content: "I'm child; #2",
+			content: "I am a Header",
 			id: "2",
 			design: {
 				font: {
@@ -74,8 +74,8 @@ export const site = writable({
 		},
 		{
 			type: "text",
-			role: "h1",
-			content: "I'm child #3",
+			role: "h2",
+			content: "Some Sub-Header Here",
 			id: "3",
 			design: {
 				color: "var(--text-color)",
@@ -127,17 +127,17 @@ export const site = writable({
 		},
 		{
 			type: "text",
-			role: "h1",
-			content: "I'm a child #5 of Child #4",
+			role: "p",
+			content: "I am a sub-header",
 			id: "5",
 			design: {
-				background: "blue",
-				color: "white",
+				background: "yellow",
+				color: "var(--color-dark)",
 				font: {
-					'font-size': "6",
+					'font-size': "2",
 				},
 				space: {
-					padding: { y: '3', x: '0' },
+					padding: { y: '2', x: '0' },
 				},
 				border: {},
 			}
@@ -145,16 +145,16 @@ export const site = writable({
 		{
 			type: "text",
 			role: "button",
-			content: "click me",
+			content: "Get Now",
 			id: "6",
 			design: {
 				background: "white",
 				color: "black",
 				font: {
-					'font-size': "6",
+					'font-size': "3",
 				},
 				space: {
-					padding: { y: '3', x: '0' },
+					padding: { y: '3', x: '2' },
 				},
 				border: {},
 			}

@@ -1,14 +1,27 @@
 const divConf = {
-	display: {
-		stack: "",
-		columns: "",
-	},
+	children: [],
 	design: {
-		"text-alignment": "var(--g-text-alignment)",
-		"margin-top": "var(--mt)",
-		"margin-bottom": "var(--mb)",
-		"padding-top": "var(--pt)",
-		"padding-bottom": "var(--pb)",
+		display: {
+			type: 'flex',
+			direction: 'row',
+			align: 'stretch',
+		},
+		background: {
+			opacity: 1,
+			blur: 0,
+			type: "color",
+			color: "red",
+			gradient: "",
+			gradientName: "",
+			gradientId: ""
+		},
+		space: {
+			margin: {y: '0', x: '0'},
+			padding: {y: '0', x: '0'},
+		},
+		height: "350px",
+		width: "100%",
+		border: {},
 		gap: "1",
 		background: "#fff",
 		border: "none",
@@ -16,22 +29,38 @@ const divConf = {
 	},
 };
 
+export const populateDivDefaults = (id, role = 'div') => {
+	console.log("HELLO POPULATING DIV ENERGIES")
+	return {
+		id,
+		type: 'container',
+		role,
+		...divConf
+	}
+}
+
+export const populateTextDefaults = (id, role = 'h2') => {
+	console.log("HELLO POPULATING TXTOR ENERGIES")
+	return {
+		id,
+		type: 'text',
+		role,
+		...textConf
+	}
+}
 const textConf = {
-	content: {
-		text: "",
-	},
+	content: "Text",
 	design: {
-		color: "var(--g-text-color)",
-		"font-family": "var(--g-ff)",
-		"font-size": "var(--g-fs)",
-		"font-weight": "var(--g-fw)",
-		"line-height": "var(--g-line-height)",
-		"letter-spacing": "var(--g-ls)",
-		"text-alignment": "var(--g-text-alignment)",
-		"margin-top": "",
-		"margin-bottom": "",
-		"padding-top": "",
-		"padding-bottom": "",
+		font: {
+			size: 'inherit',
+		},
+		textAlign: 'start',
+		space: {
+			margin: { x: '0', y: '0'},
+			padding: { x: '0', y: '0'}
+		},
+		border: {},
+		color: "var(--text-color)",
 	},
 };
 
@@ -60,7 +89,7 @@ const pageConf = {
 
 
 const divConfig = {
-	id: "div-" + id,
+	id: "div-",
 	type: "container",
 	children: [
 		{

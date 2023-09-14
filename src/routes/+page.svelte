@@ -1,15 +1,21 @@
 <script lang="ts">
+	// TODO;
+	// Change Function Namings, it's very confusing atm.
 	import { fade } from "svelte/transition";
 	import { site } from "../lib/store.js";
 	import Canvas from "../lib/Canvas/Canvas.svelte";
 	import ConfigTab from "../lib/ConfigTab.svelte";
 
+	import { populateTextDefaults, populateDivDefaults } from "$lib/ConfigTab/defaultSettings.js";
+	import type { Component, TextElement } from "../types/components.js";
+
 	let selectedComponentId = "0";
 	function getComponentIndex(id: string): number {
-		return $site.components.findIndex((comp) => comp.id === id);
+		return $site.components.findIndex((comp) => Number(comp.id) === Number(id));
 	}
 	$: selectedComponentIndex =
 		selectedComponentId !== "0" && getComponentIndex(selectedComponentId);
+
 
 	let addMenuOpened = false;
 	let toggleAddMenu = () => (addMenuOpened = !addMenuOpened);
@@ -18,9 +24,33 @@
 	let componentsHoverHandler = (e) => {
 		// select clicked Element
 		if (e.type == "click") {
-			let elementId = e.target.getAttribute("data-id");
-			selectedComponentId = elementId;
+			selectComponentById(e)
+		}
 
+		// on hover effects
+		if (e.type === "mouseenter" || e.type == "mouseover") {
+			e.currentTarget.classList.add("hovered-element");
+		}
+		if (e.type === "mouseleave" || e.type == "mouseout") {
+			e.target.classList.remove("hovered-element");
+		}
+	};
+
+	const selectComponentById = async (e) => {
+		let chosenElementId;
+		let el;
+
+		if (typeof e !== 'object') {
+			chosenElementId = e;
+			setTimeout(() => {
+				let query = `[data-id="${chosenElementId}"]`
+				el = document.querySelector(query);
+				el.classList.add("active-element");
+				selectedComponentId = String(chosenElementId)
+			}, 250);
+		} else {
+			el = e;
+			selectedComponentId = e.target.getAttribute("data-id");
 			if (!e.target.classList.contains("active-element")) {
 				e.target.classList.add("active-element");
 
@@ -33,51 +63,84 @@
 			}
 		}
 
-		// on hover effects
-		if (e.type === "mouseenter" || e.type == "mouseover") {
-			e.currentTarget.classList.add("hovered-element");
-		}
-		if (e.type === "mouseleave" || e.type == "mouseout") {
-			e.target.classList.remove("hovered-element");
-		}
-	};
+	}
 
+	// Let's check the latest element's ID and increment it.
 	const setElementId = (type, elementsList) => {
+
+		let lastElement = elementsList[elementsList.length - 1];
+		return Number(lastElement.id) + 1;
+
 		const latestTypeId =
 			elementsList.findLastIndex(
 				(element) => element.type === type && element.id
 			) || 0;
 
-		return latestTypeId !== -1 ? latestTypeId + 1 : 1;
+		return latestTypeId + 1;
+		// return latestTypeId !== -1 ? latestTypeId + 1 : 1;
 	};
 
 	// TODO: Need to update default settings according to Component type
 	// and settings
-	const setDefaultProps = (elementType, elementRole) => {
-		return {
-			type: elementType,
-			role: elementRole,
-			design: {},
-			children: [],
-		};
+	const setDefaultProps = (elementType: string, elementRole?: string): Component | TextElement => {
+		const prependedId = setElementId(elementType, $site.components);
+
+		let elementToRender;
+
+		switch (elementType) {
+			case 'text':
+				elementToRender = populateTextDefaults(prependedId, elementRole);
+				break;
+			case 'container':
+				elementToRender = populateDivDefaults(prependedId, elementRole)
+				break;
+			default:
+				break;
+		}
+		console.log(elementToRender)
+		return elementToRender
 	};
 
-	// Elements are {TYPE, ID} pairs - convenience
+	// Elements are {TYPE, ID} pairs - convenience - do I need this?!
 	$: elements = $site.components.map((element) => [element.type, element.id]);
 
-	function selectElementFromNavigation(element, id) {
-		let selected =
-			$site.components.findIndex((a) => a.type === element && a.id === id) ||
-			-1;
+	// check whether current selected element is a container 
+	// depends on $site
+	const isElementContainer = () => {
 
-		return $site.components[selected];
+
+		if (selectedComponentIndex == undefined) return false
+
+		const result = $site.components[selectedComponentIndex]?.type == 'container' 
+			? true
+			: false
+
+		console.log(result)
+
+		return result;
+
+	}
+
+
+	const addElementToComponents = (el) => {
 	}
 
 	// TODO: Work on adding an element
 	function addElement(element) {
-		let e = setDefaultProps(element, "");
-		e.id = setElementId(e.type, $site.components);
-		$site.components = [...$site.components, e];
+
+		console.log(selectedComponentIndex)
+
+		let e = setDefaultProps(element);
+		// add the new element to the global element array
+		$site.components.push(e)
+
+		// CHECK if chosen element is a container that we can nest the newly added element into.
+		if (selectedComponentIndex !== undefined && isElementContainer()) {
+			$site.components[selectedComponentIndex].children.push({ id: e.id})
+		}
+
+		selectedComponentId = String(e.id)
+		selectComponentById(e.id)
 	}
 </script>
 
@@ -86,10 +149,10 @@
 		<button on:click={toggleAddMenu}>Add +</button>
 		{#if addMenuOpened}
 			<div class="add-button-wrap" transition:fade>
-				<button class="add-button" on:click={() => addElement("div")}>
+				<button class="add-button" on:click={() => addElement("container")}>
 					Add Div +
 				</button>
-				<button class="add-button" on:click={() => addElement("h1")}>
+				<button class="add-button" on:click={() => addElement("text")}>
 					Add Heading +
 				</button>
 				<button class="add-button" on:click={() => addElement("button")}>
@@ -113,51 +176,30 @@
 				siteSettings={$site.site}
 			/>
 		{/if}
-
-		<!-- todo: move this to a floating pane or something collapsible like in Elementor maybe? -->
-		<div class="picked">
-			<h2>Navigation:</h2>
-			<ul>
-				{#each elements as [el, id]}
-					<li
-						on:keydown={() => {}}
-						on:click={() => selectElementFromNavigation(el, id)}
-					>
-						Element: {el}<span>></span>
-					</li>
-				{/each}
-			</ul>
-		</div>
 	</div>
 
-	<div style={$site.site.utopia}>
-		<div
-			class="canvas-site-wrapper"
-			style={"max-width: " + $site.site.pageSettings.width + ";"}
-		>
-			<Canvas
-				hoverHandler={componentsHoverHandler}
-				components={$site.components}
-			/>
-		</div>
+	<div style={$site.site.utopia} class="canvas-site-wrapper">
+		<Canvas
+			hoverHandler={componentsHoverHandler}
+			components={$site.components}
+		/>
 	</div>
 </main>
 
 <style>
 	.canvas-site-wrapper {
 		overflow-x: hidden;
+		border: 1px solid rgba(0, 0, 0, 0.25);
+		border-radius: 0.25em;
+		flex: 1;
+		max-width: 100%;
 	}
+
 	.layout {
+		display: flex;
 		background: var(--color-light);
 		box-sizing: border-box;
-	}
-
-	.picked {
-		display: inline-block;
-	}
-
-	.picked li {
-		padding: 1em;
+		--grid-gutter: 0;
 	}
 
 	.add-button-wrap {
@@ -220,10 +262,12 @@
 	}
 
 	:global(.hovered-element) {
-		border: 3px dotted rgb(99, 64, 213);
+		box-sizing: border-box;
+		outline: solid 1px orange;
 	}
 
 	:global(.active-element) {
-		border: 3px solid rgb(99, 64, 213);
+		box-sizing: border-box;
+		outline: solid 1px orange;
 	}
 </style>

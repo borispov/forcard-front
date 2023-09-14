@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { getStyles } from "$lib/utils/getStyles";
 	import type { Component } from "../../types/components";
 	import Wrapper from "./Wrapper.svelte";
 
@@ -19,25 +20,32 @@
 		return components.findIndex((c) => c.id == id);
 	};
 
+	// is it necessary to pull the component?
+	// I can just register the rendered component's ID and return the component itself. Why search it again?
 	let getElementByIndex = (id: string) => {
 		renderedComponentIds.push(id);
 		return components[findElementIndex(id)];
 	};
 
-	$: console.log(renderedComponentIds);
 </script>
 
-{#each components as component}
-	{@const el =
-		component.type !== undefined ? component : getElementByIndex(component.id)}
+<div id="root">
+	{#each components as component}
+		{@const el =
+			component.type !== undefined ? component : getElementByIndex(component.id)}
 
-	{#if el.children && !childrenIds.includes(el.id)}
-		<Wrapper component={el} {components} {childrenIds} {hoverHandler} />
-	{/if}
-{/each}
+		{#if el.children && !childrenIds.includes(el.id)}
+			<Wrapper component={el} {components} {childrenIds} {hoverHandler} />
+		{/if}
 
-<style>
-	section {
-		border: 1px solid red;
-	}
-</style>
+		{#if !el.children && !childrenIds.includes(el.id) }
+			<svelte:element 
+				this={el.role} 
+				data-id={el.id} 
+				data-name="element" 
+				style={getStyles(el.type, el.design)}>
+				{el.content}
+			</svelte:element>
+		{/if}
+	{/each}
+</div>

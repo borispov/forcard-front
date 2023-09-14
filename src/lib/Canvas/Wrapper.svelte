@@ -18,6 +18,8 @@
 	};
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <div
 	data-name="container"
 	data-id={component.id}

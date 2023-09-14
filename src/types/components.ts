@@ -15,7 +15,8 @@ export type CssShadow = {
 }
 
 export type CssFont = {
-	'font-size': string;
+	'font-size'?: string;
+	size?: string;
 	family?: string;
 	weight?: string;
 }
@@ -26,7 +27,7 @@ export type CssSpace = {
 }
 
 export type StyleProperties = {
-	background: { 
+	background?: { 
 		[key:string]: number | string 
 	};
 	display?: {
@@ -39,8 +40,8 @@ export type StyleProperties = {
 		margin: { [key:string]: string } | {};
 		padding: { [key:string]: string } | {};
 	};
-	height: string;
-	width: 'auto' | number;
+	height?: string;
+	width?: 'auto' | number;
 	border: CssBorder | {} ;
 	shadow?: CssShadow;
 
@@ -60,10 +61,9 @@ export type Component = {
 }
 
 export type TextElement = Component & {
+	content?: string;
 	design: {
-		font: {
-			size: string;
-		}
+		font: CssFont;
 		textAlign: string;
 	}
 }
