@@ -6,7 +6,7 @@
 	import Canvas from "../lib/Canvas/Canvas.svelte";
 	import ConfigTab from "../lib/ConfigTab.svelte";
 
-	import { populateTextDefaults, populateDivDefaults } from "$lib/ConfigTab/defaultSettings.js";
+	import { populateTextDefaults, populateDivDefaults, populateBtnDefaults } from "$lib/ConfigTab/defaultSettings.js";
 	import type { Component, TextElement } from "../types/components.js";
 
 	let selectedComponentId = "0";
@@ -88,6 +88,9 @@
 		let elementToRender;
 
 		switch (elementType) {
+			case 'button':
+				elementToRender = populateBtnDefaults(prependedId, elementRole);
+				break;
 			case 'text':
 				elementToRender = populateTextDefaults(prependedId, elementRole);
 				break;

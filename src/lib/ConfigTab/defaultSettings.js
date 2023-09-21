@@ -1,10 +1,57 @@
+const btnConf = {
+	content: "Click Me",
+	settings: {
+		linkTo: '#',
+		openInNewTab: true,
+	},
+	design: {
+		font: {
+			'font-size': '1rem',
+		},
+		space: {
+			margin: { x: '0', y: '0'},
+			padding: { x: 'var(--step-s)', y: 'var(--step-3xs)'}
+		},
+		shadow: {
+			x: 0, y: 0, distance: 0, blur: '9px', color: 'rgba(0,0,0,0.08)'
+		},
+		background: {
+			opacity: 1,
+			blur: 0,
+			type: "color",
+			color: "white",
+			gradient: "",
+			gradientName: "",
+			gradientId: ""
+		},
+		color: "var(--text-color)",
+		border: {},
+	}
+}
+
+const textConf = {
+	content: "Text",
+	design: {
+		font: {
+			'font-size': 'inherit',
+		},
+		textAlign: 'start',
+		space: {
+			margin: { x: '0', y: '0'},
+			padding: { x: '0', y: '0'}
+		},
+		border: {},
+		color: "var(--text-color)",
+	},
+};
+
 const divConf = {
 	children: [],
 	design: {
 		display: {
 			type: 'flex',
+			display: 'flex',
 			direction: 'row',
-			align: 'stretch',
 		},
 		background: {
 			opacity: 1,
@@ -22,12 +69,18 @@ const divConf = {
 		height: "350px",
 		width: "100%",
 		border: {},
-		gap: "1",
-		background: "#fff",
-		border: "none",
-		"box-shadow": "0",
 	},
 };
+
+export const populateBtnDefaults = (id, role = 'button') => {
+	console.log("HELLO POPULATING |BUTTON| ENERGIES")
+	return {
+		id,
+		type: 'button',
+		role,
+		...btnConf
+	}
+}
 
 export const populateDivDefaults = (id, role = 'div') => {
 	console.log("HELLO POPULATING DIV ENERGIES")
@@ -48,21 +101,6 @@ export const populateTextDefaults = (id, role = 'h2') => {
 		...textConf
 	}
 }
-const textConf = {
-	content: "Text",
-	design: {
-		font: {
-			size: 'inherit',
-		},
-		textAlign: 'start',
-		space: {
-			margin: { x: '0', y: '0'},
-			padding: { x: '0', y: '0'}
-		},
-		border: {},
-		color: "var(--text-color)",
-	},
-};
 
 const pageConf = {
 	design: {

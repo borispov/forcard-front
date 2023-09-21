@@ -1,5 +1,11 @@
 export type StyleProperty = { [key: string]: string | {} | number | { [key:string]: StyleProperty | string | number } };
 
+export type ButtonProps = {
+	innerHTML?: string;
+	linkTo: string;
+	openInNewTab: boolean;
+}
+
 export type CssBorder = {
 	radius?: string | number,
 	width?: string,
@@ -52,10 +58,10 @@ export type StyleProperties = {
 }
 
 export type Component = {
+	id: string;
 	type: string;
 	role: string;
 	content?: string;
-	id: string;
 	children?: { id: string }[];
 	design: StyleProperties;
 }
@@ -64,6 +70,32 @@ export type TextElement = Component & {
 	content?: string;
 	design: {
 		font: CssFont;
-		textAlign: string;
+		textAlign?: string;
+	}
+}
+
+export type ButtonElement = Component & {
+	content?: string;
+	settings: ButtonProps;
+	design: {
+		font: CssFont;
+		textAlign?: string;
+		shadow?: CssShadow;
+		border?: CssBorder;
+		space: CssSpace & {
+			margin?: { y: string, x: string } | {};
+		}
+	}
+}
+
+export type ContainerElement = Component & {
+	design: {
+		content?: {
+			align: string;
+			margins: number|string;
+			position: string;
+			spacing: number|string;
+			width: number|string;
+		}
 	}
 }
