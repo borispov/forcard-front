@@ -1,3 +1,6 @@
+import type { ButtonElement, ComponentRole, ContainerElement, TextElement } from "../../../types/components";
+
+
 const btnConf = {
 	content: "Click Me",
 	settings: {
@@ -6,7 +9,8 @@ const btnConf = {
 	},
 	design: {
 		font: {
-			'font-size': '1rem',
+			'font-size': '1',
+			'font-weight': '1',
 		},
 		space: {
 			margin: { x: '0', y: '0'},
@@ -32,8 +36,10 @@ const btnConf = {
 const textConf = {
 	content: "Text",
 	design: {
+		color: "var(--text-color)",
 		font: {
-			'font-size': 'inherit',
+			'font-size': '1',
+			'font-weight': '1',
 		},
 		textAlign: 'start',
 		space: {
@@ -41,7 +47,6 @@ const textConf = {
 			padding: { x: '0', y: '0'}
 		},
 		border: {},
-		color: "var(--text-color)",
 	},
 };
 
@@ -50,8 +55,8 @@ const divConf = {
 	design: {
 		display: {
 			type: 'flex',
-			display: 'flex',
 			direction: 'row',
+			align: 'center',
 		},
 		background: {
 			opacity: 1,
@@ -67,13 +72,13 @@ const divConf = {
 			padding: {y: '0', x: '0'},
 		},
 		height: "350px",
-		width: "100%",
+		width: 100,
 		border: {},
 	},
 };
 
-export const populateBtnDefaults = (id, role = 'button') => {
-	console.log("HELLO POPULATING |BUTTON| ENERGIES")
+export const populateBtnDefaults = 
+(id: string, role: ComponentRole = 'button'): ButtonElement => {
 	return {
 		id,
 		type: 'button',
@@ -82,8 +87,7 @@ export const populateBtnDefaults = (id, role = 'button') => {
 	}
 }
 
-export const populateDivDefaults = (id, role = 'div') => {
-	console.log("HELLO POPULATING DIV ENERGIES")
+export const populateDivDefaults = (id: string, role: ComponentRole= 'div'): ContainerElement => {
 	return {
 		id,
 		type: 'container',
@@ -92,12 +96,11 @@ export const populateDivDefaults = (id, role = 'div') => {
 	}
 }
 
-export const populateTextDefaults = (id, role = 'h2') => {
-	console.log("HELLO POPULATING TXTOR ENERGIES")
+export const populateTextDefaults = (id: string, role: ComponentRole = 'h2'): TextElement => {
 	return {
-		id,
 		type: 'text',
 		role,
+		id,
 		...textConf
 	}
 }

@@ -1,7 +1,5 @@
 <script lang="ts">
 	// IMPORTS
-	import Header from "./Header.svelte";
-	import Switch from "../common/Switch.svelte";
 
 	import type { TextElement } from "../../types/components";
 
@@ -21,31 +19,13 @@
 
 	const UI_STEPPED_TEXT_WEIGHTS = ["Thin", "Regular", "Bold"];
 
-	let fsIndicator = UI_STEPPED_TEXT_SIZES[textConfig.design.font["font-size"]];
-	let fwIndicator =
-		UI_STEPPED_TEXT_WEIGHTS[textConfig.design.font["weight"]] || "DEFAULT";
-
+	$: fsIndicator = UI_STEPPED_TEXT_SIZES[textConfig.design.font["font-size"]];
+	$: fwIndicator = UI_STEPPED_TEXT_WEIGHTS[textConfig.design.font["font-weight"]] || "Default";
 	let colorIndicator = textConfig.design.color;
-
-	const fontWeightHandler = (e: any) => {
-		const { value } = e.target;
-		if (value) textConfig.design.font["weight"] = value;
-
-		fwIndicator = UI_STEPPED_TEXT_WEIGHTS[Number(value)];
-		textConfig.design.font["weight"] = value;
-	};
 
 	// todo: accomplish text alignemnt
 	const textAlignmentHandler = (e: any) => {
 		const { value } = e.target;
-	};
-
-	const fontSizeHandler = (e: any) => {
-		const { value } = e.target;
-		if (value) textConfig.design.font["font-size"] = value;
-
-		fsIndicator = UI_STEPPED_TEXT_SIZES[Number(value)];
-		textConfig.design.font["font-size"] = value;
 	};
 
 	// HOW TO FETCH DEFAULT COLORS FROM CSS VARIABLES??
@@ -58,7 +38,6 @@
 </script>
 
 <section data-name="text-config" class="config-section flow">
-	<Header />
 
 	<div class="panel">
 		<!-- make it a component Field Group -->
@@ -85,8 +64,7 @@
 					min="0"
 					max="7"
 					bind:value={textConfig.design.font["font-size"]}
-					id="text-content"
-					on:input={fontSizeHandler}
+					name="text-content"
 				/>
 			</div>
 		</div>
@@ -106,8 +84,7 @@
 					min="0"
 					max="2"
 					bind:value={textConfig.design.font["font-weight"]}
-					id="text-content"
-					on:input={fontWeightHandler}
+					name="text-content"
 				/>
 			</div>
 		</div>

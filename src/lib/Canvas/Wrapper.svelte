@@ -1,21 +1,30 @@
 <script lang="ts">
 	import type { Component } from "../../types/components";
 	import { getStyles } from "$lib/utils/getStyles";
+	import { onMount } from "svelte";
 
-	export let component;
+	// props
+	let latestContainerIndex: Number;
+	export let parentIndex: number;
+	export let component: Component;
 	export let components: Component[];
-	export let hoverHandler: any;
 
-	export let childrenIds: string[];
+	// handlers
+	export let hoverHandler: Function;
+	export let dragHandler: Function;
+	export let dragStart: Function;
 
-	// Generate a string css-style.
-	let findElementIndex = (id: string) => {
-		return components.findIndex((c) => c.id == id);
-	};
+	// state
+	let hoveringOverContainer = null;
+	let hoveredElementIndex = null;
 
-	let getElementByIndex = (id: string) => {
-		return components[findElementIndex(id)];
-	};
+	// helpers
+	let findElementIndex = 	(id: string) => components.findIndex((c) => c.id == id);
+	let getElementByIndex = (id: string) => components[findElementIndex(id)];
+
+	onMount(() => {
+		latestContainerIndex = findElementIndex(component.id);
+	})
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -24,28 +33,36 @@
 	data-name="container"
 	data-id={component.id}
 	style={getStyles(component.type, component.design)}
-	on:focus|self={hoverHandler}
+	on:click|self={() => hoverHandler}
+	on:drop|stopPropagation|preventDefault={(e) => dragHandler(e, { type: 'element', hoveredElementIndex }, latestContainerIndex)}
 	on:mouseover|self={hoverHandler}
 	on:mouseout={hoverHandler}
 	on:click|self={hoverHandler}
+	ondragover="return false"
 >
-	{#each component.children as c}
-		{@const el = getElementByIndex(c.id)}
+	{#each component.children as childId, childIndexInContainer (childId)}
+		{@const el = getElementByIndex(childId)}
+		{@const elementIndex = findElementIndex(el.id)}
 
 		{#if el && (el.type == "text" || el.type == "button")}
 			<svelte:element
 				this={el.role}
-				data-id={c.id}
+				data-id={childId}
 				data-name="element"
 				style={getStyles(el.type, el.design)}
-				on:mouseenter={hoverHandler}
-				on:mouseleave={hoverHandler}
+				draggable={true}
+				ondragover="return false"
+				on:dragstart={(event) => dragStart(event, latestContainerIndex, childIndexInContainer, elementIndex, el.id)}
+				on:dragenter={() => hoveredElementIndex = childIndexInContainer}
 				on:click|self={hoverHandler}
+				on:mouseover|self={hoverHandler}
+				on:mouseout={hoverHandler}
 			>
 				{el.content}
 			</svelte:element>
 		{:else if el && el.children}
-			<svelte:self component={el} {components} {hoverHandler} />
+			<svelte:self 
+				component={el} {components} {hoverHandler} {dragStart} {dragHandler} {parentIndex} />
 		{/if}
 	{/each}
 </div>

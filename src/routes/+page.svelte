@@ -1,150 +1,163 @@
 <script lang="ts">
 	// TODO;
-	// Change Function Namings, it's very confusing atm.
 	import { fade } from "svelte/transition";
-	import { site } from "../lib/store.js";
-	import Canvas from "../lib/Canvas/Canvas.svelte";
-	import ConfigTab from "../lib/ConfigTab.svelte";
+	import { site } from "$lib/store";
+	import Canvas from "$lib/Canvas/Canvas.svelte";
+	import ConfigTab from "$lib/components/ConfigTab/ConfigTab.svelte";
 
-	import { populateTextDefaults, populateDivDefaults, populateBtnDefaults } from "$lib/ConfigTab/defaultSettings.js";
-	import type { Component, TextElement } from "../types/components.js";
+	import { populateTextDefaults, populateDivDefaults, populateBtnDefaults } from "$lib/components/ConfigTab/defaultSettings.js";
+	import type { ComponentType, TextElement, ContainerElement, ButtonElement, ComponentRole } from "../types/components.js";
 
-	let selectedComponentId = "0";
-	function getComponentIndex(id: string): number {
-		return $site.components.findIndex((comp) => Number(comp.id) === Number(id));
+	let selectedComponentId = null;
+	let dragStartContainer = null;
+	let draggedComponentId = null;
+
+	const getComponentIndex = (id:string): number => {
+		return $site.components?.findIndex((component) => Number(component.id) === Number(id));
 	}
-	$: selectedComponentIndex =
-		selectedComponentId !== "0" && getComponentIndex(selectedComponentId);
 
+	$: selectedComponentIndex = selectedComponentId && getComponentIndex(selectedComponentId);
 
 	let addMenuOpened = false;
 	let toggleAddMenu = () => (addMenuOpened = !addMenuOpened);
 
-	// I WORK ON SELECTING ELEMENTS ----------->>>>>>>>>>>>>>>>>>>>>>>>
-	let componentsHoverHandler = (e) => {
+	// The Magic Of element selection!
+	let componentsHoverHandler = (e: MouseEvent) => {
+		const target = e.currentTarget as HTMLElement;
 		// select clicked Element
 		if (e.type == "click") {
 			selectComponentById(e)
 		}
-
 		// on hover effects
 		if (e.type === "mouseenter" || e.type == "mouseover") {
-			e.currentTarget.classList.add("hovered-element");
+			target.classList.add("hovered-element");
 		}
 		if (e.type === "mouseleave" || e.type == "mouseout") {
-			e.target.classList.remove("hovered-element");
+			target.classList.remove("hovered-element");
 		}
 	};
 
-	const selectComponentById = async (e) => {
-		let chosenElementId;
-		let el;
+	// TODO: Refactor
+	const selectComponentById = async (e:string|number|MouseEvent) => {
 
+		// When adding a new element.
 		if (typeof e !== 'object') {
-			chosenElementId = e;
+			let chosenElementId = e;
 			setTimeout(() => {
 				let query = `[data-id="${chosenElementId}"]`
-				el = document.querySelector(query);
-				el.classList.add("active-element");
-				selectedComponentId = String(chosenElementId)
-			}, 250);
+				document.querySelector(query).classList.add("active-element")
+			}, 50);
 		} else {
-			el = e;
-			selectedComponentId = e.target.getAttribute("data-id");
-			if (!e.target.classList.contains("active-element")) {
-				e.target.classList.add("active-element");
+			// Selecting existing element & UPDATE selected element
+			const targetElement = e.target as HTMLElement;
+			selectedComponentId = targetElement.getAttribute("data-id");
 
-				// remove previously selected element
-				document.querySelectorAll(".active-element").forEach((el) => {
-					const isActive =
-						Number(el.getAttribute("data-id")) != Number(selectedComponentId);
-					isActive && el.classList.remove("active-element");
-				});
+			if (!targetElement.classList.contains("active-element")) {
+				document.querySelectorAll(".active-element").forEach((el) => { el.classList.remove("active-element")});
+				targetElement.classList.add("active-element");
 			}
 		}
 
 	}
 
-	// Let's check the latest element's ID and increment it.
-	const setElementId = (type, elementsList) => {
-
+	// Check the latest element's ID and increment it.
+	const setElementId = (elementsList) => {
 		let lastElement = elementsList[elementsList.length - 1];
 		return Number(lastElement.id) + 1;
-
-		const latestTypeId =
-			elementsList.findLastIndex(
-				(element) => element.type === type && element.id
-			) || 0;
-
-		return latestTypeId + 1;
-		// return latestTypeId !== -1 ? latestTypeId + 1 : 1;
 	};
 
-	// TODO: Need to update default settings according to Component type
-	// and settings
-	const setDefaultProps = (elementType: string, elementRole?: string): Component | TextElement => {
-		const prependedId = setElementId(elementType, $site.components);
-
-		let elementToRender;
+	const setDefaultProps = (elementType: ComponentType, elementRole?: ComponentRole): TextElement | ButtonElement | ContainerElement => {
+		const prependedId = String(setElementId($site.components));
 
 		switch (elementType) {
 			case 'button':
-				elementToRender = populateBtnDefaults(prependedId, elementRole);
-				break;
+				return populateBtnDefaults(prependedId, elementRole);
 			case 'text':
-				elementToRender = populateTextDefaults(prependedId, elementRole);
-				break;
+				return populateTextDefaults(prependedId, elementRole);
 			case 'container':
-				elementToRender = populateDivDefaults(prependedId, elementRole)
-				break;
+				return populateDivDefaults(prependedId, elementRole)
 			default:
 				break;
 		}
-		console.log(elementToRender)
-		return elementToRender
 	};
 
-	// Elements are {TYPE, ID} pairs - convenience - do I need this?!
-	$: elements = $site.components.map((element) => [element.type, element.id]);
-
 	// check whether current selected element is a container 
-	// depends on $site
-	const isElementContainer = () => {
+	const isContainer = (components, componentIndex) => components[componentIndex]?.type === 'container' ? true : false
 
+	const addElement = (type: ComponentType): void => {
+		let e = setDefaultProps(type);
 
-		if (selectedComponentIndex == undefined) return false
-
-		const result = $site.components[selectedComponentIndex]?.type == 'container' 
-			? true
-			: false
-
-		console.log(result)
-
-		return result;
-
-	}
-
-
-	const addElementToComponents = (el) => {
-	}
-
-	// TODO: Work on adding an element
-	function addElement(element) {
-
-		console.log(selectedComponentIndex)
-
-		let e = setDefaultProps(element);
-		// add the new element to the global element array
-		$site.components.push(e)
+		// make a deep copy of components' array and append to it.
+		// Spread operator doesn't solve this issue
+		let componentsClone = structuredClone($site.components);
+		$site.components = [...componentsClone, e]
 
 		// CHECK if chosen element is a container that we can nest the newly added element into.
-		if (selectedComponentIndex !== undefined && isElementContainer()) {
-			$site.components[selectedComponentIndex].children.push({ id: e.id})
+		if (selectedComponentIndex && isContainer($site.components, selectedComponentIndex)) {
+			$site.components[selectedComponentIndex].children.push( e.id )
 		}
 
+		// update SelectedComponent's ID
 		selectedComponentId = String(e.id)
 		selectComponentById(e.id)
 	}
+
+	// Currently CAN only remove a selected ITEM. In The Future Should Allow For Easier Deletions.
+	const removeElement = (): void => {
+		const id = selectedComponentId
+		$site.components = $site.components.filter(c => c.id !== id)
+		selectedComponentIndex = null
+		selectedComponentId = null
+	}
+
+	// FIX: Id's are not Indexes! I probably don't need most of those arguments
+	// TODO: Remove unused arguments
+	const dragStart = (event, containerElementId, draggedElementId, childIndexInTree, elementId) => {
+		// pass element's id (data-id) attribute
+		const data = { elementId }
+		event.dataTransfer.setData('text/plain', JSON.stringify(data))
+
+		dragStartContainer = containerElementId;
+		draggedComponentId = draggedElementId;
+	}
+
+	const dropHandler = (
+		event:DragEvent, 
+		options: {
+			type: string, 
+			hoveredElementIndex: number, 
+			childIndex: number,
+			parentIndex: number, 
+		},
+		newContainerId
+	) => {
+
+		// extract element id from the drag-drop event
+		const json = event.dataTransfer.getData("text/plain");
+		const data = JSON.parse(json);
+
+		// If the change is within a container
+		if (newContainerId === dragStartContainer) {
+			let containerComponent = $site.components[dragStartContainer];
+			let movedElement = containerComponent.children.splice(draggedComponentId, 1)[0]
+			containerComponent.children.splice(options.hoveredElementIndex, 0, movedElement)
+			$site.components[dragStartContainer] = containerComponent
+			return;
+		}
+
+		// container to append to
+		const theParentElement = $site.components[newContainerId]
+		theParentElement.children.splice(options.hoveredElementIndex + 1, 0, data.elementId )
+		
+		// container to remove from
+		const previousContainer = $site.components[dragStartContainer]
+		previousContainer.children = previousContainer.children.filter(( id ) => data.elementId !== id)
+
+		// UPDATE
+		$site.components[newContainerId] = theParentElement
+		$site.components[dragStartContainer] = previousContainer
+	}
+
 </script>
 
 <main class="layout u-grid">
@@ -172,17 +185,19 @@
 	</div>
 
 	<div class="sidebar">
-		<!-- <DivConfig bind:divConfig={$site.components[0]} /> -->
-		{#if selectedComponentId != "0"}
+		{#if selectedComponentId && selectedComponentIndex !== null}
 			<ConfigTab
 				bind:component={$site.components[selectedComponentIndex]}
 				siteSettings={$site.site}
+				removeHandler={removeElement}
 			/>
 		{/if}
 	</div>
 
 	<div style={$site.site.utopia} class="canvas-site-wrapper">
 		<Canvas
+			dragHandler={dropHandler}
+			dragStart={dragStart}
 			hoverHandler={componentsHoverHandler}
 			components={$site.components}
 		/>
@@ -266,7 +281,7 @@
 
 	:global(.hovered-element) {
 		box-sizing: border-box;
-		outline: solid 1px orange;
+		outline: dotted 1px orange;
 	}
 
 	:global(.active-element) {

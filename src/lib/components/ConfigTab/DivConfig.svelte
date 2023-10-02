@@ -1,22 +1,21 @@
 <script lang="ts">
 	// IMPORTS
-	import Header from "./Header.svelte";
-	import Switch from "../common/Switch.svelte";
-	import { gradientsChoice } from "../utils/generateGradient";
-	import gradients from "../global/gradients.json";
+	import Switch from "../../components/common/Switch.svelte";
+	import { gradientsChoice } from "../../utils/generateGradient";
+	import gradients from "../../global/gradients.json";
 
-	import type { Component } from "../../types/components";
+	import type { ContainerElement, CssWidth } from "../../../types/components";
 	type spaceType = "margin" | "padding" | "gutter";
 
-	export let divConfig: Component;
+	export let divConfig: ContainerElement;
 
 	let gradientName = divConfig.design.background.gradientName;
-	$: console.log(gradientName);
 
+	// TODO: Fix border settings...
 	// settings variables
 	let borderOn = Object.entries(divConfig.design.border).length > 0;
 
-	let widthIndicator: string = divConfig.design.width || "";
+	let widthIndicator: CssWidth = divConfig.design.width || "";
 
 	const UI_STEPPED_VALUES = [
 		"None",
@@ -108,7 +107,6 @@
 			return;
 		}
 
-		console.log(`I REACHED HERE`);
 		divConfig.design.background = {
 			...divConfig.design.background,
 			type: type,
@@ -161,7 +159,7 @@
 	let onFileSelect = (e) => {
 		// TODO: Check/Validate File Size Is below a certain threshold
 		let image = e.target.files[0];
-		let reader = new FileReader(image);
+		let reader = new FileReader();
 		reader.readAsDataURL(image);
 		reader.onload = (e) => (files[0] = e.target.result);
 	};
@@ -196,7 +194,6 @@
 </script>
 
 <section data-name="div-config" class="config-section flow">
-	<Header />
 
 	<div class="panel">
 		<!-- make it a component Field Group -->

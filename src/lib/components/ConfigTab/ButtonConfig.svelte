@@ -1,9 +1,7 @@
 <script lang="ts">
 	// IMPORTS
-	import Header from "./Header.svelte";
-	import Switch from "../common/Switch.svelte";
-
-	import type { ButtonElement } from "../../types/components";
+	import Switch from "$lib/components/common/Switch.svelte";
+	import type { ButtonElement } from "../../../types/components";
 
 	export let buttonConfig: ButtonElement;
 	export let colors;
@@ -21,11 +19,18 @@
 
 	const UI_STEPPED_TEXT_WEIGHTS = ["Thin", "Regular", "Bold"];
 
-	let fsIndicator = UI_STEPPED_TEXT_SIZES[buttonConfig.design.font["font-size"]];
-	let fwIndicator =
-		UI_STEPPED_TEXT_WEIGHTS[buttonConfig.design.font["weight"]] || "DEFAULT";
+	$: fsIndicator = UI_STEPPED_TEXT_SIZES[buttonConfig.design.font["font-size"]];
+	$: fwIndicator = UI_STEPPED_TEXT_WEIGHTS[buttonConfig.design.font["font-weight"]] || "Default";
+	$: borderOn = true;
+
+	$: backgroundColor = null
 
 	let colorIndicator = buttonConfig.design.color;
+
+	const changeBorderRadius = (val: number) => {
+		console.log("changing to val: ", val)
+		buttonConfig.design.border.radius = val
+	}
 
     function updateButtonConfig(event) {
         const { name, value, type, checked } = event.target;
@@ -37,73 +42,48 @@
         }
     }
 
-	const fontWeightHandler = (e: any) => {
-		const { value } = e.target;
-		if (value) buttonConfig.design.font["weight"] = value;
-
-		fwIndicator = UI_STEPPED_TEXT_WEIGHTS[Number(value)];
-		buttonConfig.design.font["weight"] = value;
-	};
-
 	// todo: accomplish text alignemnt
 	const textAlignmentHandler = (e: any) => {
 		const { value } = e.target;
-	};
-
-	const fontSizeHandler = (e: any) => {
-		const { value } = e.target;
-		if (value) buttonConfig.design.font["font-size"] = value;
-
-		fsIndicator = UI_STEPPED_TEXT_SIZES[Number(value)];
-		buttonConfig.design.font["font-size"] = value;
 	};
 
 	// HOW TO FETCH DEFAULT COLORS FROM CSS VARIABLES??
 	// SITE's GENERAL SETTINGS..?
 	const onColorSelect = (e: any) => {
 		const { value } = e.target;
-		console.log(`Picking a color: ${value}\n`);
 		buttonConfig.design.color = value;
 	};
 </script>
 
 <section data-name="text-config" class="config-section flow">
-	<Header />
-
 	<div class="panel">
-		<!-- make it a component Field Group -->
-		<div class="[ field-group flow ] [ flex ]">
-			<!-- BEGINNING OF BORDER GROUP -->
-			<div class="[ field-group ]">
-				<label for="text-content">Content</label>
-				<input bind:value={buttonConfig.content} type="text" id="text-content" />
-			</div>
+		<!-- BEGINNING OF INNER HTML GROUP -->
+		<div class="[ field-group ]">
+			<label for="text-content">Content</label>
+			<input bind:value={buttonConfig.content} type="text" id="text-content" />
 		</div>
 
-    <label for="linkTo">Link To:</label>
-      <input
-        type="text"
-        id="linkTo"
-        name="linkTo"
-        bind:value={buttonConfig.settings.linkTo}
-        on:input={updateButtonConfig}
-      />
+			<label for="linkTo">Link To:</label>
+			<input
+				type="text"
+				id="linkTo"
+				name="linkTo"
+				bind:value={buttonConfig.settings.linkTo}
+				on:input={updateButtonConfig}
+			/>
 
-      <label>
-        <input
-          type="checkbox"
-          id="openInNewTab"
-          name="openInNewTab"
-          bind:checked={buttonConfig.settings.openInNewTab}
-          on:change={updateButtonConfig}
-        />
-        Open in New Tab
-      </label>
+			<label>
+				<input
+				type="checkbox"
+				id="openInNewTab"
+				name="openInNewTab"
+				bind:checked={buttonConfig.settings.openInNewTab}
+				on:change={updateButtonConfig}
+				/>
+				Open in New Tab
+			</label>
 
-
-
-		<div class="[ field-group flow ] [ flex ]">
-			<!-- BEGINNING OF BORDER GROUP -->
+			<!-- BEGINNING OF FONT SIZE GROUP -->
 			<div class="[ field-group ]">
 				<div class="field-row repel">
 					<label for="text-content">Font Size</label>
@@ -117,14 +97,12 @@
 					min="0"
 					max="7"
 					bind:value={buttonConfig.design.font["font-size"]}
-					id="text-content"
-					on:input={fontSizeHandler}
+					name="text-content"
 				/>
 			</div>
-		</div>
 
 		<div class="[ field-group flow ] [ flex ]">
-			<!-- BEGINNING OF BORDER GROUP -->
+			<!-- BEGINNING OF FONT WEIGHT GROUP -->
 			<div class="[ field-group ]">
 				<div class="field-row repel">
 					<label for="text-content">Font Weight</label>
@@ -138,15 +116,14 @@
 					min="0"
 					max="2"
 					bind:value={buttonConfig.design.font["font-weight"]}
-					id="text-content"
-					on:input={fontWeightHandler}
+					name="text-content"
 				/>
 			</div>
 		</div>
 
 		{#if colors}
 			<div class="[ field-group flow ] [ flex ]">
-				<!-- BEGINNING OF BORDER GROUP -->
+				<!-- BEGINNING OF COLORS GROUP -->
 				<div class="[ field-group ]">
 					<div class="field-row repel">
 						<label for="text-content">Color</label>
@@ -163,6 +140,43 @@
 				</div>
 			</div>
 		{/if}
+
+			<div class="[ field-group flow ] [ flex ]">
+				<!-- BEGINNING OF BORDER GROUP -->
+				<div class="[ field-group ]">
+					<div class="field-row repel">
+						<label for="text-content">Border</label>
+						<div class="indicator">
+							<Switch
+								design="slider"
+								fontSize={14}
+								label=""
+								bind:value={borderOn}
+								actionOnClick={() => {
+									// remove Border-Radius when switched OFF
+									if (!borderOn) {
+										console.log("WE SWITCHED OFF")
+										buttonConfig.design.border.radius = ''
+									}
+								}}
+							/>
+						</div>
+					</div>
+
+					{#if borderOn}
+						<div class="repel border-icons">
+							<button on:click={() => changeBorderRadius(0)} style="border-radius: 0;">0</button>
+							<button on:click={() => changeBorderRadius(1)} style="border-radius: .25em;">0.25</button>
+							<button on:click={() => changeBorderRadius(2)} style="border-radius: .5em;">0.5</button>
+							<button on:click={() => changeBorderRadius(3)} style="border-radius: .75em;">0.75</button>
+							<button on:click={() => changeBorderRadius(4)} style="border-radius: 9999px;">100%</button>
+						</div>
+					{/if}
+
+				</div>
+			</div>
+
+
 	</div>
 </section>
 
@@ -208,4 +222,22 @@
 	.repel {
 		--repel-vertical-alignment: baseline;
 	}
+
+	.border-icons {
+		font-size: 12px;
+		gap: 0;
+	}
+
+	.border-icons button {
+		border-radius: .25em;
+		background-color: var(--color-onyx);
+		padding: 0 var(--space-xs);
+	}
+
+	.border-icons button:hover {
+		background-color: var(--button-background);
+		color: inherit;
+		border-radius: .25em;
+	}
+
 </style>

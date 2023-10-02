@@ -1,5 +1,7 @@
 export type StyleProperty = { [key: string]: string | {} | number | { [key:string]: StyleProperty | string | number } };
 
+export type CssWidth = string | number | 'auto';
+
 export type ButtonProps = {
 	innerHTML?: string;
 	linkTo: string;
@@ -24,11 +26,11 @@ export type CssFont = {
 	'font-size'?: string;
 	size?: string;
 	family?: string;
-	weight?: string;
+	'font-weight'?: string;
 }
 
 export type CssSpace = {
-	margin: { y: string, x: string } | {};
+	margin?: { y: string, x: string } | {};
 	padding: { y: string, x: string } | {};
 }
 
@@ -36,33 +38,25 @@ export type StyleProperties = {
 	background?: { 
 		[key:string]: number | string 
 	};
-	display?: {
-		type: string;
-		display: string;
-		direction: string;
-	};
 	space: CssSpace,
-	spaceX?: {
-		margin: { [key:string]: string } | {};
-		padding: { [key:string]: string } | {};
-	};
 	height?: string;
-	width?: 'auto' | number;
+	width?: CssWidth;
 	border: CssBorder | {} ;
 	shadow?: CssShadow;
-
-	font?: CssFont;
-
 	color?: string;
-
 }
+
+export type ComponentType = 'button' | 'container' | 'text' | 'img' | 'p' | 'form'
+export type ComponentRole = 
+	'h1' | 'h2' | 'h3' | 'h4' |
+	'p' | 'button' | 'img' | 'div'
 
 export type Component = {
 	id: string;
-	type: string;
-	role: string;
+	type: ComponentType;
+	role: ComponentRole;
 	content?: string;
-	children?: { id: string }[];
+	children?: string[];
 	design: StyleProperties;
 }
 
@@ -82,14 +76,17 @@ export type ButtonElement = Component & {
 		textAlign?: string;
 		shadow?: CssShadow;
 		border?: CssBorder;
-		space: CssSpace & {
-			margin?: { y: string, x: string } | {};
-		}
+		space: CssSpace;
 	}
 }
 
 export type ContainerElement = Component & {
 	design: {
+		display: {
+			type: string;
+			direction: string;
+			align: string;
+		};
 		content?: {
 			align: string;
 			margins: number|string;
@@ -99,3 +96,5 @@ export type ContainerElement = Component & {
 		}
 	}
 }
+
+export type Components = (Component|ContainerElement|ButtonElement|TextElement)[]

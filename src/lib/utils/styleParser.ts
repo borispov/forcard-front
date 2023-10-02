@@ -20,20 +20,18 @@ export const parseBorder = (radius: string | number) => {
 	let rad = typeof radius === 'string' && radius || String(radius);
 
 	switch (rad) {
-		case "5":
-			return "50%";
 		case "0":
-			return "var(--space-3xs, 4px)";
+			return "0"
 		case "1":
-			return "var(--space-xs, 8px)";
+			return "var(--space-3xs, 0.25em)";
 		case "2":
-			return "var(--space-s, 12px)";
+			return "var(--space-2xs, 0.5em)";
 		case "3":
-			return "var(--space-m, 16px)";
+			return "var(--space-s, 1em)";
 		case "4":
-			return "var(--space-l, 24px)";
-
+			return "100%";
 		default:
+			return "0"
 			break;
 	}
 

@@ -1,4 +1,4 @@
-import type { CssBorder, CssSpace, CssFont, StyleProperties } from "../../types/components";
+import type { CssWidth, CssBorder, CssSpace, CssFont, StyleProperties } from "../../types/components";
 
 import { parseWidth, parseBorder } from "./styleParser";
 
@@ -37,8 +37,8 @@ const getFontStyles = (fontObject: CssFont) => {
 	const fontSize = STEPPED_TEXT_VALUES[Number(fontObject["font-size"])]
 	r += `font-size: ${fontSize};\n`;
 
-	if (fontObject.weight) {
-		const fontWeight = FONT_WEIGHTS[Number(fontObject["weight"])]
+	if (fontObject['font-weight']) {
+		const fontWeight = FONT_WEIGHTS[Number(fontObject["font-weight"])]
 		r += `font-weight: ${fontWeight};\n`
 	}
 	return r;
@@ -108,7 +108,7 @@ const getContainerStyle = (displayObject: {
 	return r;
 }
 
-const getDimensions = (width: 'auto' | number, height: string) => {
+const getDimensions = (width: CssWidth, height: string) => {
 	let r: string = '';
 
 	if (width !== 'auto') {
@@ -129,6 +129,10 @@ const getDimensions = (width: 'auto' | number, height: string) => {
 export function getStyles(type: string, stylesObject: StyleProperties) {
 	let r = "";
 	let a = Object.entries(stylesObject);
+
+	if (type == 'button') {
+		r += getBorderStyle(stylesObject.border);
+	}
 
 	if (type == "text" || type == "button") {
 		r += getFontStyles(stylesObject.font);

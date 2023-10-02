@@ -5,6 +5,8 @@
 	export let fontSize = 16;
 	export let value = false;
 
+	export let actionOnClick;
+
 	let checked = true;
 
 	const uniqueID = Math.floor(Math.random() * 100);
@@ -17,6 +19,8 @@
 		checked = state === "true" ? false : true;
 
 		value = checked === true ? true : false;
+
+		if (actionOnClick) actionOnClick()
 	}
 </script>
 
