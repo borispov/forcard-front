@@ -3,9 +3,20 @@
 	import DivConfig from "./DivConfig.svelte";
 	import TextConfig from "./TextConfig.svelte";
 	import ButtonConfig from "./ButtonConfig.svelte";
-	import type { ButtonElement, Component, ContainerElement, TextElement } from "../../../types/components";
+	import ImageConfig from "./ImageConfig.svelte";
+	import type {
+		ImageElement,
+		ButtonElement,
+		Component,
+		ContainerElement,
+		TextElement,
+	} from "../../../types/components";
 
-	export let component: Component | TextElement | ButtonElement | ContainerElement | undefined;
+	export let component:
+		| TextElement
+		| ButtonElement
+		| ImageElement
+		| ContainerElement;
 	export let removeHandler: Function;
 	export let siteSettings;
 
@@ -13,63 +24,64 @@
 </script>
 
 <div class="config">
-<ConfigHeader {removeHandler} />
-{#if component}
-	<!-- Render Settings For Container/Div Elements -->
-	{#if component.type == "container"}
-		<DivConfig bind:divConfig={component} />
-	{/if}
+	<ConfigHeader {removeHandler} />
+	{#if component !== undefined}
+		<!-- Render Settings For Container/Div Elements -->
+		{#if component.type == "container"}
+			<DivConfig bind:divConfig={component} />
+		{/if}
 
-	{#if component.type == "button"}
-		<ButtonConfig bind:buttonConfig={component} />
-	{/if}
+		{#if component.type == "img"}
+			<ImageConfig bind:imgConfig={component} />
+		{/if}
 
-	{#if component.type == "text"}
-		<TextConfig
-			bind:textConfig={component}
-			colors={siteSettings.colorScheme}
-		/>
-	{/if}
+		{#if component.type == "button"}
+			<ButtonConfig bind:buttonConfig={component} />
+		{/if}
 
-	
-
-	<!-- Render Settings For Text Elements -->
-	{#if component.type == "text"}
-		<ul>
-			<li
-				data-name="content"
-				data-tooltip="תוכן"
-				on:keydown={() => {}}
-				on:click={() => (activePane = "content")}
+		{#if component.type == "text"}
+			<TextConfig
+				bind:textConfig={component}
+				colors={siteSettings.colorScheme}
 			/>
-			<li
-				data-name="design"
-				data-tooltip="עיצוב"
-				on:keydown={() => {}}
-				on:click={() => (activePane = "design")}
-			/>
-		</ul>
-	{/if}
+		{/if}
 
-	<!-- Settings For Buttons -->
-	{#if component && component.type === "button"}
-		<ul>
-			<li
-				data-name="content"
-				data-tooltip="תוכן"
-				on:keydown={() => {}}
-				on:click={() => (activePane = "content")}
-			/>
-			<li
-				data-name="design"
-				data-tooltip="עיצוב"
-				on:keydown={() => {}}
-				on:click={() => (activePane = "design")}
-			/>
-		</ul>
+		<!-- Render Settings For Text Elements -->
+		{#if component.type == "text"}
+			<ul>
+				<li
+					data-name="content"
+					data-tooltip="תוכן"
+					on:keydown={() => {}}
+					on:click={() => (activePane = "content")}
+				/>
+				<li
+					data-name="design"
+					data-tooltip="עיצוב"
+					on:keydown={() => {}}
+					on:click={() => (activePane = "design")}
+				/>
+			</ul>
+		{/if}
 
+		<!-- Settings For Buttons -->
+		{#if component && component.type === "button"}
+			<ul>
+				<li
+					data-name="content"
+					data-tooltip="תוכן"
+					on:keydown={() => {}}
+					on:click={() => (activePane = "content")}
+				/>
+				<li
+					data-name="design"
+					data-tooltip="עיצוב"
+					on:keydown={() => {}}
+					on:click={() => (activePane = "design")}
+				/>
+			</ul>
+		{/if}
 	{/if}
-{/if}
 </div>
 
 <style>

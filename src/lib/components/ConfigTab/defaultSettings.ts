@@ -1,4 +1,4 @@
-import type { ButtonElement, ComponentRole, ContainerElement, TextElement } from "../../../types/components";
+import type { ImageElement, ButtonElement, ComponentRole, ContainerElement, TextElement } from "../../../types/components";
 
 
 const btnConf = {
@@ -76,6 +76,37 @@ const divConf = {
 		border: {},
 	},
 };
+
+const imgConf = {
+	settings: {
+		source: '',
+		altText: 'alt text is good for accessibility',
+		link: {},
+		placeholder: true,
+		placeholder_source: "https://images.placeholders.dev/?width=1055&height=100&text=This%20is%20just%20a%20placeholder&bgColor=%239af273&textColor=%236d6e71",
+	},
+	design: {
+		width: "100%",
+		height: "100%",
+		border: {},
+		imgFilter: "",
+		position: "static",
+		space: {
+			margin: {y: '0', x: '0'},
+			padding: {y: '0', x: '0'},
+		},
+	}
+}
+
+export const populateImgDefaults = 
+(id: string, role: ComponentRole = 'img'): ImageElement => {
+	return {
+		id,
+		type: 'img',
+		role,
+		...imgConf
+	}
+}
 
 export const populateBtnDefaults = 
 (id: string, role: ComponentRole = 'button'): ButtonElement => {

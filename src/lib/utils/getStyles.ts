@@ -31,6 +31,9 @@ const STEPPED_TEXT_VALUES = [
 
 const ALIGNMENT_VALUES = {start: "flex-start", center: "center", end: "flex-end", stretch: "stretch", baseline: "baseline" };
 
+const getImgStyles = (imgStylesObject) => {
+}
+
 const getFontStyles = (fontObject: CssFont) => {
 	let r: string = '';
 
@@ -153,7 +156,29 @@ export function getStyles(type: string, stylesObject: StyleProperties) {
 		}
 	}
 
-	// encapsulate DIV settings
+	if (type == 'img') {
+
+		let w = stylesObject.width
+		let h = stylesObject.height
+
+		console.log('height is: ', h);
+
+		r += `width: ${w}%;\n height:${h}%;\n`
+
+		// r += getDimensions(stylesObject.width, stylesObject.height);
+
+		for (const [k, v] of a) {
+			if (k == "space") {
+				r += getSpaceStyle(v) + "\n";
+			}
+		}
+
+		return r;
+	}
+
+	// encapsulate DIV settings -- if code reached here, then it's
+	// probably a DIV
+	// BAD PRACTICE!
 	r += getBackgroundStyle(stylesObject.background) + "\n";
 
 

@@ -2,6 +2,12 @@ export type StyleProperty = { [key: string]: string | {} | number | { [key:strin
 
 export type CssWidth = string | number | 'auto';
 
+export type LinkProps = {
+	innerHTML?: string;
+	linkTo: string;
+	openInNewTab: boolean;
+}
+
 export type ButtonProps = {
 	innerHTML?: string;
 	linkTo: string;
@@ -96,5 +102,26 @@ export type ContainerElement = Component & {
 		}
 	}
 }
+
+type ImageSettings = {
+	source: string;
+	placeholder: boolean;
+	placeholder_source?: string;
+	altText: string;
+	link: {} | LinkProps;
+}
+
+export type ImageElement = Component & {
+	settings: ImageSettings;
+	design: {
+		border?: CssBorder;
+		width: string;
+		height: string;
+		shadow?: CssShadow;
+		imgFilter: string;
+		position: string;
+	}
+}
+
 
 export type Components = (Component|ContainerElement|ButtonElement|TextElement)[]

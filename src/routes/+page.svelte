@@ -2,21 +2,36 @@
 	// TODO;
 	import { fade } from "svelte/transition";
 	import { site } from "$lib/store";
-	import Canvas from "$lib/Canvas/Canvas.svelte";
+	import Canvas from "$lib/components/Canvas/Canvas.svelte";
 	import ConfigTab from "$lib/components/ConfigTab/ConfigTab.svelte";
 
-	import { populateTextDefaults, populateDivDefaults, populateBtnDefaults } from "$lib/components/ConfigTab/defaultSettings.js";
-	import type { ComponentType, TextElement, ContainerElement, ButtonElement, ComponentRole } from "../types/components.js";
+	import {
+		populateTextDefaults,
+		populateDivDefaults,
+		populateBtnDefaults,
+		populateImgDefaults,
+	} from "$lib/components/ConfigTab/defaultSettings.js";
+	import type {
+		ComponentType,
+		TextElement,
+		ContainerElement,
+		ButtonElement,
+		ImageElement,
+		ComponentRole,
+	} from "../types/components.js";
 
 	let selectedComponentId = null;
 	let dragStartContainer = null;
 	let draggedComponentId = null;
 
-	const getComponentIndex = (id:string): number => {
-		return $site.components?.findIndex((component) => Number(component.id) === Number(id));
-	}
+	const getComponentIndex = (id: string): number => {
+		return $site.components?.findIndex(
+			(component) => Number(component.id) === Number(id)
+		);
+	};
 
-	$: selectedComponentIndex = selectedComponentId && getComponentIndex(selectedComponentId);
+	$: selectedComponentIndex =
+		selectedComponentId && getComponentIndex(selectedComponentId);
 
 	let addMenuOpened = false;
 	let toggleAddMenu = () => (addMenuOpened = !addMenuOpened);
@@ -26,7 +41,7 @@
 		const target = e.currentTarget as HTMLElement;
 		// select clicked Element
 		if (e.type == "click") {
-			selectComponentById(e)
+			selectComponentById(e);
 		}
 		// on hover effects
 		if (e.type === "mouseenter" || e.type == "mouseover") {
@@ -38,14 +53,13 @@
 	};
 
 	// TODO: Refactor
-	const selectComponentById = async (e:string|number|MouseEvent) => {
-
+	const selectComponentById = async (e: string | number | MouseEvent) => {
 		// When adding a new element.
-		if (typeof e !== 'object') {
+		if (typeof e !== "object") {
 			let chosenElementId = e;
 			setTimeout(() => {
-				let query = `[data-id="${chosenElementId}"]`
-				document.querySelector(query).classList.add("active-element")
+				let query = `[data-id="${chosenElementId}"]`;
+				document.querySelector(query).classList.add("active-element");
 			}, 50);
 		} else {
 			// Selecting existing element & UPDATE selected element
@@ -53,12 +67,13 @@
 			selectedComponentId = targetElement.getAttribute("data-id");
 
 			if (!targetElement.classList.contains("active-element")) {
-				document.querySelectorAll(".active-element").forEach((el) => { el.classList.remove("active-element")});
+				document.querySelectorAll(".active-element").forEach((el) => {
+					el.classList.remove("active-element");
+				});
 				targetElement.classList.add("active-element");
 			}
 		}
-
-	}
+	};
 
 	// Check the latest element's ID and increment it.
 	const setElementId = (elementsList) => {
@@ -66,72 +81,92 @@
 		return Number(lastElement.id) + 1;
 	};
 
-	const setDefaultProps = (elementType: ComponentType, elementRole?: ComponentRole): TextElement | ButtonElement | ContainerElement => {
+	const setDefaultProps = (
+		elementType: ComponentType,
+		elementRole?: ComponentRole
+	): TextElement | ImageElement | ButtonElement | ContainerElement => {
 		const prependedId = String(setElementId($site.components));
 
 		switch (elementType) {
-			case 'button':
+			case "button":
 				return populateBtnDefaults(prependedId, elementRole);
-			case 'text':
+			case "text":
 				return populateTextDefaults(prependedId, elementRole);
-			case 'container':
-				return populateDivDefaults(prependedId, elementRole)
+			case "container":
+				return populateDivDefaults(prependedId, elementRole);
+			case "img":
+				return populateImgDefaults(prependedId, elementRole);
 			default:
 				break;
 		}
 	};
 
-	// check whether current selected element is a container 
-	const isContainer = (components, componentIndex) => components[componentIndex]?.type === 'container' ? true : false
+	// check whether current selected element is a container
+	const isContainer = (components, componentIndex: number | string) =>
+		components[componentIndex]?.type === "container" ? true : false;
 
 	const addElement = (type: ComponentType): void => {
 		let e = setDefaultProps(type);
 
+		console.log(e);
+
 		// make a deep copy of components' array and append to it.
 		// Spread operator doesn't solve this issue
+
+		// UPDATE: 4/10/2023, I figured out that the source of the problem
+		// is in populating functions that pass a refernece to nested
+		// objects, not a copy.
 		let componentsClone = structuredClone($site.components);
-		$site.components = [...componentsClone, e]
+		$site.components = [...componentsClone, e];
 
 		// CHECK if chosen element is a container that we can nest the newly added element into.
-		if (selectedComponentIndex && isContainer($site.components, selectedComponentIndex)) {
-			$site.components[selectedComponentIndex].children.push( e.id )
+		if (
+			selectedComponentIndex &&
+			isContainer($site.components, selectedComponentIndex)
+		) {
+			$site.components[selectedComponentIndex].children.push(e.id);
 		}
 
 		// update SelectedComponent's ID
-		selectedComponentId = String(e.id)
-		selectComponentById(e.id)
-	}
+		selectedComponentId = String(e.id);
+		selectComponentById(e.id);
+	};
 
 	// Currently CAN only remove a selected ITEM. In The Future Should Allow For Easier Deletions.
 	const removeElement = (): void => {
-		const id = selectedComponentId
-		$site.components = $site.components.filter(c => c.id !== id)
-		selectedComponentIndex = null
-		selectedComponentId = null
-	}
+		const id = selectedComponentId;
+		$site.components = $site.components.filter((c) => c.id !== id);
+		selectedComponentIndex = null;
+		selectedComponentId = null;
+	};
 
 	// FIX: Id's are not Indexes! I probably don't need most of those arguments
 	// TODO: Remove unused arguments
-	const dragStart = (event, containerElementId, draggedElementId, childIndexInTree, elementId) => {
+	const dragStart = (
+		event,
+		containerElementId,
+		draggedElementId,
+		childIndexInTree,
+		elementId
+	) => {
 		// pass element's id (data-id) attribute
-		const data = { elementId }
-		event.dataTransfer.setData('text/plain', JSON.stringify(data))
+		const data = { elementId };
+		event.dataTransfer.setData("text/plain", JSON.stringify(data));
 
 		dragStartContainer = containerElementId;
 		draggedComponentId = draggedElementId;
-	}
+	};
 
 	const dropHandler = (
-		event:DragEvent, 
+		event: DragEvent,
 		options: {
-			type: string, 
-			hoveredElementIndex: number, 
-			childIndex: number,
-			parentIndex: number, 
+			type: string;
+			hoveredElementIndex: number;
+			childIndex: number;
+			parentIndex: number;
 		},
 		newContainerId
 	) => {
-
 		// extract element id from the drag-drop event
 		const json = event.dataTransfer.getData("text/plain");
 		const data = JSON.parse(json);
@@ -139,25 +174,37 @@
 		// If the change is within a container
 		if (newContainerId === dragStartContainer) {
 			let containerComponent = $site.components[dragStartContainer];
-			let movedElement = containerComponent.children.splice(draggedComponentId, 1)[0]
-			containerComponent.children.splice(options.hoveredElementIndex, 0, movedElement)
-			$site.components[dragStartContainer] = containerComponent
+			let movedElement = containerComponent.children.splice(
+				draggedComponentId,
+				1
+			)[0];
+			containerComponent.children.splice(
+				options.hoveredElementIndex,
+				0,
+				movedElement
+			);
+			$site.components[dragStartContainer] = containerComponent;
 			return;
 		}
 
 		// container to append to
-		const theParentElement = $site.components[newContainerId]
-		theParentElement.children.splice(options.hoveredElementIndex + 1, 0, data.elementId )
-		
+		const theParentElement = $site.components[newContainerId];
+		theParentElement.children.splice(
+			options.hoveredElementIndex + 1,
+			0,
+			data.elementId
+		);
+
 		// container to remove from
-		const previousContainer = $site.components[dragStartContainer]
-		previousContainer.children = previousContainer.children.filter(( id ) => data.elementId !== id)
+		const previousContainer = $site.components[dragStartContainer];
+		previousContainer.children = previousContainer.children.filter(
+			(id) => data.elementId !== id
+		);
 
 		// UPDATE
-		$site.components[newContainerId] = theParentElement
-		$site.components[dragStartContainer] = previousContainer
-	}
-
+		$site.components[newContainerId] = theParentElement;
+		$site.components[dragStartContainer] = previousContainer;
+	};
 </script>
 
 <main class="layout u-grid">
@@ -197,7 +244,7 @@
 	<div style={$site.site.utopia} class="canvas-site-wrapper">
 		<Canvas
 			dragHandler={dropHandler}
-			dragStart={dragStart}
+			{dragStart}
 			hoverHandler={componentsHoverHandler}
 			components={$site.components}
 		/>
