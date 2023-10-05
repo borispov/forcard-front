@@ -1,5 +1,4 @@
 <script lang="ts">
-	// TODO;
 	import { fade } from "svelte/transition";
 	import { site } from "$lib/store";
 	import Canvas from "$lib/components/Canvas/Canvas.svelte";
@@ -10,6 +9,7 @@
 		populateDivDefaults,
 		populateBtnDefaults,
 		populateImgDefaults,
+		populateParagraphDefaults,
 	} from "$lib/components/ConfigTab/defaultSettings.js";
 	import type {
 		ComponentType,
@@ -96,6 +96,8 @@
 				return populateDivDefaults(prependedId, elementRole);
 			case "img":
 				return populateImgDefaults(prependedId, elementRole);
+			case "p":
+				return populateParagraphDefaults(prependedId, elementRole);
 			default:
 				break;
 		}
@@ -107,11 +109,6 @@
 
 	const addElement = (type: ComponentType): void => {
 		let e = setDefaultProps(type);
-
-		console.log(e);
-
-		// make a deep copy of components' array and append to it.
-		// Spread operator doesn't solve this issue
 
 		// UPDATE: 4/10/2023, I figured out that the source of the problem
 		// is in populating functions that pass a refernece to nested

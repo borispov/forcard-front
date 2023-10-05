@@ -1,24 +1,17 @@
 <script lang="ts">
-	// IMPORTS
-
 	import type { TextElement } from "../../../types/components";
 
+	import {
+		UI_STEPPED_TEXT_SIZES,
+		UI_STEPPED_TEXT_WEIGHTS,
+		TEXT_ALIGN_VALS,
+	} from "$lib/utils/UI-CONSTANTS";
+
 	export let textConfig: TextElement;
-	export let colors;
+	export let colors: any;
 
-	const UI_STEPPED_TEXT_SIZES = [
-		"Step -2",
-		"Step -1",
-		"Step 1",
-		"Step 2",
-		"Step 3",
-		"Step 4",
-		"Step 5",
-		"Step 6",
-	];
-
-	const UI_STEPPED_TEXT_WEIGHTS = ["Thin", "Regular", "Bold"];
-
+	$: textAlignmentIndicator = TEXT_ALIGN_VALS[textConfig.design.textAlign];
+	$: wIndicator = textConfig.design.width;
 	$: fsIndicator = UI_STEPPED_TEXT_SIZES[textConfig.design.font["font-size"]];
 	$: fwIndicator =
 		UI_STEPPED_TEXT_WEIGHTS[textConfig.design.font["font-weight"]] || "Default";
@@ -50,64 +43,101 @@
 		</div>
 
 		<div class="[ field-group flow ] [ flex ]">
-			<!-- BEGINNING OF BORDER GROUP -->
 			<div class="[ field-group ]">
 				<div class="field-row repel">
-					<label for="text-content">Font Size</label>
+					<label for="width">Max Width</label>
 					<div class="indicator">
-						{fsIndicator}
+						{wIndicator}
 					</div>
 				</div>
 				<input
+					name="width"
 					type="range"
-					step="1"
-					min="0"
-					max="7"
-					bind:value={textConfig.design.font["font-size"]}
-					name="text-content"
+					step="5"
+					min="35"
+					max="75"
+					bind:value={textConfig.design.width}
 				/>
 			</div>
-		</div>
 
-		<div class="[ field-group flow ] [ flex ]">
-			<!-- BEGINNING OF BORDER GROUP -->
-			<div class="[ field-group ]">
-				<div class="field-row repel">
-					<label for="text-content">Font Weight</label>
-					<div class="indicator">
-						{fwIndicator}
+			<div class="[ field-group flow ] [ flex ]">
+				<div class="[ field-group ]">
+					<div class="field-row repel">
+						<label for="width">Text Alignment</label>
+						<div class="indicator">
+							{textAlignmentIndicator}
+						</div>
 					</div>
+					<input
+						name="width"
+						type="range"
+						step="1"
+						min="0"
+						max="2"
+						list="markers"
+						bind:value={textConfig.design.textAlign}
+					/>
 				</div>
-				<input
-					type="range"
-					step="1"
-					min="0"
-					max="2"
-					bind:value={textConfig.design.font["font-weight"]}
-					name="text-content"
-				/>
-			</div>
-		</div>
 
-		{#if colors}
+				<!-- BEGINNING OF BORDER GROUP -->
+				<div class="[ field-group ]">
+					<div class="field-row repel">
+						<label for="text-content">Font Size</label>
+						<div class="indicator">
+							{fsIndicator}
+						</div>
+					</div>
+					<input
+						type="range"
+						step="1"
+						min="0"
+						max="7"
+						bind:value={textConfig.design.font["font-size"]}
+						name="text-content"
+					/>
+				</div>
+			</div>
+
 			<div class="[ field-group flow ] [ flex ]">
 				<!-- BEGINNING OF BORDER GROUP -->
 				<div class="[ field-group ]">
 					<div class="field-row repel">
-						<label for="text-content">Color</label>
+						<label for="text-content">Font Weight</label>
 						<div class="indicator">
-							{colorIndicator}
+							{fwIndicator}
 						</div>
 					</div>
-
-					<select id="div-design_bg_style" on:change={onColorSelect}>
-						{#each Object.entries(colors) as [color, value]}
-							<option {value}>{color}</option>
-						{/each}
-					</select>
+					<input
+						type="range"
+						step="1"
+						min="0"
+						max="2"
+						bind:value={textConfig.design.font["font-weight"]}
+						name="text-content"
+					/>
 				</div>
 			</div>
-		{/if}
+
+			{#if colors}
+				<div class="[ field-group flow ] [ flex ]">
+					<!-- BEGINNING OF BORDER GROUP -->
+					<div class="[ field-group ]">
+						<div class="field-row repel">
+							<label for="text-content">Color</label>
+							<div class="indicator">
+								{colorIndicator}
+							</div>
+						</div>
+
+						<select id="div-design_bg_style" on:change={onColorSelect}>
+							{#each Object.entries(colors) as [color, value]}
+								<option {value}>{color}</option>
+							{/each}
+						</select>
+					</div>
+				</div>
+			{/if}
+		</div>
 	</div>
 </section>
 

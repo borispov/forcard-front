@@ -33,6 +33,24 @@ const btnConf = {
 	}
 }
 
+const paragraphConf = {
+	content: "Default Parapgraph, Edit Me As You Wish...",
+	design: {
+		width: '60',
+		color: "var(--text-color)",
+		font: {
+			'font-size': '1',
+			'font-weight': '1',
+		},
+		textAlign: 'start',
+		space: {
+			margin: { x: '0', y: '0'},
+			padding: { x: '0', y: '0'}
+		},
+		border: {},
+	},
+}
+
 const textConf = {
 	content: "Text",
 	design: {
@@ -135,6 +153,16 @@ export const populateTextDefaults = (id: string, role: ComponentRole = 'h2'): Te
 		...textConf
 	}
 }
+
+export const populateParagraphDefaults = (id: string, role: ComponentRole = 'p'): TextElement => {
+	return {
+		type: 'p',
+		role,
+		id,
+		...paragraphConf
+	}
+}
+
 
 const pageConf = {
 	design: {

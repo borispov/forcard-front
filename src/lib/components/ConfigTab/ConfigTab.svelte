@@ -3,6 +3,7 @@
 	import DivConfig from "./DivConfig.svelte";
 	import TextConfig from "./TextConfig.svelte";
 	import ButtonConfig from "./ButtonConfig.svelte";
+	import ParagraphConfig from "./ParagraphConfig.svelte";
 	import ImageConfig from "./ImageConfig.svelte";
 	import type {
 		ImageElement,
@@ -33,6 +34,10 @@
 
 		{#if component.type == "img"}
 			<ImageConfig bind:imgConfig={component} />
+		{/if}
+
+		{#if component.type == "p"}
+			<ParagraphConfig bind:textConfig={component} />
 		{/if}
 
 		{#if component.type == "button"}

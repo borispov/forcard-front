@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Component } from "../../types/components";
+	import type { Component } from "../../../types/components";
 	import { getStyles } from "$lib/utils/getStyles";
 	import { onMount } from "svelte";
 
@@ -50,7 +50,7 @@
 		{@const el = getElementByIndex(childId)}
 		{@const elementIndex = findElementIndex(el.id)}
 
-		{#if el && (el.type == "text" || el.type == "button")}
+		{#if el && (el.type == "text" || el.type == "button" || el.type == "p")}
 			<svelte:element
 				this={el.role}
 				data-id={childId}

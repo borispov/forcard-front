@@ -1,37 +1,47 @@
-import type { CssWidth, CssBorder, CssSpace, CssFont, StyleProperties } from "../../types/components";
+import type { ComponentType, CssWidth, CssBorder, CssSpace, CssFont, StyleProperties } from "../../types/components";
 
 import { parseWidth, parseBorder } from "./styleParser";
 
-// FONT_WEIGHTS[0] corresponds to a thin 300 weight font
-const FONT_WEIGHTS = [ "300", "400", "700" ]
+import {
+	STEPPED_VALUES,
+	STEPPED_TEXT_VALUES,
+	FONT_WEIGHTS
+} from "$lib/utils/UI-CONSTANTS";
 
-const STEPPED_VALUES = [
-	"0",
-	"var(--space-2xs)",
-	"var(--space-xs)",
-	"var(--space-s)",
-	"var(--space-m)",
-	"var(--space-l)",
-	"var(--space-xl)",
-	"var(--space-2xl)",
-	"var(--space-3xl)",
-];
+const ALIGNMENT_VALUES = { 
+	start: "flex-start", 
+	center: "center", 
+	end: "flex-end", 
+	stretch: "stretch",
+	baseline: "baseline" 
+};
 
-const STEPPED_TEXT_VALUES = [
-	"var(--step--1)",
-	"var(--step--2)",
-	"var(--step-1)",
-	"var(--step-2)",
-	"var(--step-3)",
-	"var(--step-4)",
-	"var(--step-5)",
-	"var(--step-6)",
-];
-
-
-const ALIGNMENT_VALUES = {start: "flex-start", center: "center", end: "flex-end", stretch: "stretch", baseline: "baseline" };
+const TEXT_ALIGN_VALS = [ "start", "center", "end" ];
 
 const getImgStyles = (imgStylesObject) => {
+}
+
+const getTextAlignment = (textAlignValue: string) => {
+	let r: string = '';
+	r += `text-align: ${textAlignValue && TEXT_ALIGN_VALS[textAlignValue] || 'start' };\n`;
+	return r;
+}
+
+const getParagraphStyles = (stylesObject: StyleProperties) => {
+	let r: string = '';
+	r += getFontStyles(stylesObject.font);
+	r += getSpaceStyle(stylesObject.space)
+	r += getTextAlignment(stylesObject.textAlign);
+
+	// if client sets width to above 65, set it to 100%
+	let { width } = stylesObject;
+	if (Number(width) < 65) {
+		r += `\nwidth: ${stylesObject.width}ch;\n`;
+	} else {
+		r += `\nwidth: 100%;\n`;
+	}
+
+	return r
 }
 
 const getFontStyles = (fontObject: CssFont) => {
@@ -129,7 +139,7 @@ const getDimensions = (width: CssWidth, height: string) => {
 
 
 // Show UP
-export function getStyles(type: string, stylesObject: StyleProperties) {
+export function getStyles(type: ComponentType, stylesObject: StyleProperties) {
 	let r = "";
 	let a = Object.entries(stylesObject);
 
@@ -147,6 +157,13 @@ export function getStyles(type: string, stylesObject: StyleProperties) {
 		}
 		return r;
 	}
+
+	if (type == 'p') {
+		r += getParagraphStyles(stylesObject);
+		return r
+	}
+
+
 
 	if (type == "container" && stylesObject.display ) {
 		r += getContainerStyle(stylesObject.display);

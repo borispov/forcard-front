@@ -1,6 +1,7 @@
+// should be renamed to parseContainerWidth because it's not generic
+// enough 
 export const parseWidth = (widthValue: number) => {
 	let r: string;
-
 
 	if (widthValue >= 100 && widthValue <= 110) {
 		r = `width: 100%;\n`;

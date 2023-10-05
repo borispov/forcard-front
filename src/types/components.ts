@@ -1,5 +1,3 @@
-export type StyleProperty = { [key: string]: string | {} | number | { [key:string]: StyleProperty | string | number } };
-
 export type CssWidth = string | number | 'auto';
 
 export type LinkProps = {
@@ -50,6 +48,8 @@ export type StyleProperties = {
 	border: CssBorder | {} ;
 	shadow?: CssShadow;
 	color?: string;
+	font?: CssFont;
+	textAlign?: string;
 }
 
 export type ComponentType = 'button' | 'container' | 'text' | 'img' | 'p' | 'form'
