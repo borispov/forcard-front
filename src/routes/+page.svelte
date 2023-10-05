@@ -3,6 +3,7 @@
 	import { site } from "$lib/store";
 	import Canvas from "$lib/components/Canvas/Canvas.svelte";
 	import ConfigTab from "$lib/components/ConfigTab/ConfigTab.svelte";
+	import global from "$lib/styles/global.css";
 
 	import {
 		populateTextDefaults,
