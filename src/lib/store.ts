@@ -51,7 +51,7 @@ export const site = writable({
 		{
 			type: "text",
 			role: "h1",
-			content: "I am a Header",
+			content: "What's Up Arik?",
 			id: "2",
 			design: {
 				font: {
@@ -70,7 +70,7 @@ export const site = writable({
 		{
 			type: "text",
 			role: "h2",
-			content: "Some Sub-Header Here",
+			content: "This is built with Svelte (SPA) for funsies",
 			id: "3",
 			design: {
 				color: "var(--text-color)",
@@ -95,7 +95,7 @@ export const site = writable({
 				display: {
 					type: 'flex',
 					direction: 'row',
-					align: "stretch"
+					align: "center"
 				},
 				background: {
 					opacity: 1,
@@ -108,7 +108,7 @@ export const site = writable({
 				},
 				space: {
 					margin: {y: '5', x: '0'},
-					padding: {y: '5', x: '0'},
+					padding: {y: '6', x: '0'},
 				},
 				height: "auto",
 				width: "auto",
@@ -116,11 +116,13 @@ export const site = writable({
 			}
 		},
 		{
-			type: "text",
+			type: "p",
 			role: "p",
-			content: "I am a sub-header",
+			content: "I am a text in a row, I am a text in a row",
 			id: "5",
 			design: {
+				textAlign: '1',
+				width: "55ch",
 				background: "yellow",
 				color: "var(--color-dark)",
 				font: {
@@ -128,8 +130,8 @@ export const site = writable({
 					'font-weight': "1",
 				},
 				space: {
-					margin: { y: '0', x: '0' },
-					padding: { y: '2', x: '0' },
+					margin: { y: '0', x: '4' },
+					padding: { y: '3', x: '4' },
 				},
 				border: {},
 			}
@@ -137,7 +139,7 @@ export const site = writable({
 		{
 			type: "text",
 			role: "button",
-			content: "Get Now",
+			content: "Uhh Click?",
 			id: "6",
 			design: {
 				background: "white",

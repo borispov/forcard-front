@@ -29,6 +29,7 @@ const getTextAlignment = (textAlignValue: string) => {
 
 const getParagraphStyles = (stylesObject: StyleProperties) => {
 	let r: string = '';
+
 	r += getFontStyles(stylesObject.font);
 	r += getSpaceStyle(stylesObject.space)
 	r += getTextAlignment(stylesObject.textAlign);
