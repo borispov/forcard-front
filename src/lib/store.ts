@@ -39,13 +39,12 @@ export const site = writable({
 						gradientId: ""
 				},
 				space: {
-					margin: {y: '4', x: '0'},
+					margin: {y: '0', x: '0'},
 					padding: {y: '4', x: '0'},
 				},
 				height: "auto",
 				width: "auto",
-				border: {
-				},
+				border: {},
 			}
 		},
 		{
