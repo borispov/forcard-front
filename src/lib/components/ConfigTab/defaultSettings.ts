@@ -1,6 +1,5 @@
 import type { ImageElement, ButtonElement, ComponentRole, ContainerElement, TextElement } from "../../../types/components";
 
-
 const btnConf = {
 	content: "Click Me",
 	settings: {
@@ -8,6 +7,9 @@ const btnConf = {
 		openInNewTab: true,
 	},
 	design: {
+		letterSpacing: 0,
+		lineHeight: 150,
+		textAlign: 1,
 		font: {
 			'font-size': '1',
 			'font-weight': '1',
@@ -36,18 +38,20 @@ const btnConf = {
 const paragraphConf = {
 	content: "Default Parapgraph, Edit Me As You Wish...",
 	design: {
-		width: '60',
 		color: "var(--text-color)",
+		width: '60',
 		font: {
 			'font-size': '1',
 			'font-weight': '1',
 		},
-		textAlign: 'start',
+		textAlign: 1,
+		lineHeight: 150,
 		space: {
 			margin: { x: '0', y: '0'},
 			padding: { x: '0', y: '0'}
 		},
 		border: {},
+		letterSpacing: 0,
 	},
 }
 
@@ -55,16 +59,19 @@ const textConf = {
 	content: "Text",
 	design: {
 		color: "var(--text-color)",
+		width: '60',
 		font: {
-			'font-size': '1',
+			'font-size': '4',
 			'font-weight': '1',
 		},
-		textAlign: 'start',
+		textAlign: 1,
+		lineHeight: 110,
 		space: {
 			margin: { x: '0', y: '0'},
 			padding: { x: '0', y: '0'}
 		},
 		border: {},
+		letterSpacing: 0,
 	},
 };
 

@@ -18,7 +18,7 @@
 		| ImageElement
 		| ContainerElement;
 	export let removeHandler: Function;
-	export let siteSettings: any;
+	export let siteSettings;
 
 	$: activePane = "";
 </script>
@@ -26,6 +26,7 @@
 <div class="config">
 	<ConfigHeader {removeHandler} />
 	{#if component !== undefined}
+		<!-- Render Settings For Container/Div Elements -->
 		{#if component.type == "container"}
 			<DivConfig bind:divConfig={component} />
 		{/if}
@@ -107,5 +108,34 @@
 	ul li {
 		padding: 1em;
 		cursor: pointer;
+	}
+
+	ul li.active {
+		background: rgba(53, 54, 66, 1);
+	}
+
+	section {
+		padding: 2.25em 1.625em 0.5em 1.625em;
+	}
+
+	section.active {
+		display: flex;
+		flex-direction: column;
+	}
+
+	section h2 {
+		text-transform: capitalize;
+	}
+
+	label {
+		display: block;
+		font-size: 18px;
+		line-height: 1.6;
+		margin-top: 10px;
+		text-transform: capitalize;
+	}
+
+	input {
+		padding: 6px 12px;
 	}
 </style>

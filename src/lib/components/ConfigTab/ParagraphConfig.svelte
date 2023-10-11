@@ -8,25 +8,26 @@
 	} from "$lib/utils/UI-CONSTANTS";
 
 	export let textConfig: TextElement;
-	export let colors: any;
+	export let colors: { [key: string]: string };
 
-	$: textAlignmentIndicator = TEXT_ALIGN_VALS[textConfig.design.textAlign];
-	$: wIndicator = textConfig.design.width;
-	$: fsIndicator = UI_STEPPED_TEXT_SIZES[textConfig.design.font["font-size"]];
-	$: fwIndicator =
-		UI_STEPPED_TEXT_WEIGHTS[textConfig.design.font["font-weight"]] || "Default";
-	let colorIndicator = textConfig.design.color;
-
-	// todo: accomplish text alignemnt
-	const textAlignmentHandler = (e: any) => {
-		const { value } = e.target;
+	let onMarginsChange = (vec: string, val: string) => {
+		textConfig.design.space.margin[vec] = val;
 	};
+
+	$: textAlignmentIndicator =
+		TEXT_ALIGN_VALS[Number(textConfig.design.textAlign)];
+	$: wIndicator = textConfig.design.width;
+	$: fsIndicator =
+		UI_STEPPED_TEXT_SIZES[Number(textConfig.design.font["font-size"])];
+	$: fwIndicator =
+		UI_STEPPED_TEXT_WEIGHTS[Number(textConfig.design.font["font-weight"])] ||
+		"Default";
+	$: colorIndicator = textConfig.design.color;
 
 	// HOW TO FETCH DEFAULT COLORS FROM CSS VARIABLES??
 	// SITE's GENERAL SETTINGS..?
 	const onColorSelect = (e: any) => {
 		const { value } = e.target;
-		console.log(`Picking a color: ${value}\n`);
 		textConfig.design.color = value;
 	};
 </script>
@@ -42,10 +43,48 @@
 			</div>
 		</div>
 
+		{#if colors}
+			<div class="[ field-group flow ] [ flex ]">
+				<!-- BEGINNING OF COLOR GROUP -->
+				<div class="[ field-group ]">
+					<div class="field-row repel">
+						<label for="text-content">Color</label>
+					</div>
+
+					<div class="color-input-wrapper">
+						<input
+							type="text"
+							bind:value={textConfig.design.color}
+							name="text-color"
+							class="color-input"
+						/>
+
+						<div class="color-input__button">
+							<input type="color" bind:value={textConfig.design.color} />
+							<div
+								class="indicator__color"
+								style="--indicator-color: {colorIndicator}"
+							/>
+						</div>
+					</div>
+
+					<select
+						class="color-input__select"
+						id="div-design_bg_style"
+						on:change={onColorSelect}
+					>
+						{#each Object.entries(colors) as [color, value]}
+							<option {value}>{color}</option>
+						{/each}
+					</select>
+				</div>
+			</div>
+		{/if}
+
 		<div class="[ field-group flow ] [ flex ]">
 			<div class="[ field-group ]">
 				<div class="field-row repel">
-					<label for="width">Max Width</label>
+					<label for="width">Width</label>
 					<div class="indicator">
 						{wIndicator}
 					</div>
@@ -118,25 +157,66 @@
 				</div>
 			</div>
 
-			{#if colors}
-				<div class="[ field-group flow ] [ flex ]">
-					<!-- BEGINNING OF BORDER GROUP -->
-					<div class="[ field-group ]">
-						<div class="field-row repel">
-							<label for="text-content">Color</label>
-							<div class="indicator">
-								{colorIndicator}
-							</div>
+			<div class="[ field-group flow ] [ flex ]">
+				<!-- BEGINNING OF MARGINS GROUP -->
+				<div class="[ field-group ]">
+					<div class="field-row repel">
+						<label for="margins">Margins</label>
+						<div class="indicator">
+							{textConfig.design.space.margin.y}
 						</div>
-
-						<select id="div-design_bg_style" on:change={onColorSelect}>
-							{#each Object.entries(colors) as [color, value]}
-								<option {value}>{color}</option>
-							{/each}
-						</select>
 					</div>
+					<input
+						type="range"
+						step="1"
+						min="0"
+						max="8"
+						bind:value={textConfig.design.space.margin.y}
+						on:input={(e) => onMarginsChange("y", e.currentTarget.value)}
+						name="margins"
+					/>
 				</div>
-			{/if}
+			</div>
+
+			<div class="[ field-group flow ] [ flex ]">
+				<!-- BEGINNING OF LETER SPACING GROUP -->
+				<div class="[ field-group ]">
+					<div class="field-row repel">
+						<label for="margins">Letter Spacing</label>
+						<div class="indicator">
+							{textConfig.design["letterSpacing"]}
+						</div>
+					</div>
+					<input
+						type="range"
+						step="0.025"
+						min="-0.5"
+						max="1"
+						bind:value={textConfig.design["letterSpacing"]}
+						name="margins"
+					/>
+				</div>
+			</div>
+
+			<div class="[ field-group flow ] [ flex ]">
+				<!-- LINE HEIGHT -->
+				<div class="[ field-group ]">
+					<div class="field-row repel">
+						<label for="line-height">Line Height</label>
+						<div class="indicator">
+							{textConfig.design.lineHeight}
+						</div>
+					</div>
+					<input
+						type="range"
+						step="10"
+						min="100"
+						max="200"
+						bind:value={textConfig.design.lineHeight}
+						name="line-height"
+					/>
+				</div>
+			</div>
 		</div>
 	</div>
 </section>
@@ -169,18 +249,48 @@
 		width: 100%;
 	}
 
-	.field {
-		flex-shrink: 1;
-		flex-grow: 1;
-		position: relative;
-		vertical-align: top;
-	}
-
 	.field-row {
 		width: 80%;
 	}
 
 	.repel {
 		--repel-vertical-alignment: baseline;
+	}
+
+	.indicator__color {
+		background: --var(--indicator-color);
+		width: 32px;
+		height: 32px;
+		border-radius: 4px;
+		margin-right: 10px;
+		border: 1px solid white;
+		display: inline-block;
+	}
+
+	.color-input-wrapper {
+		display: flex;
+		flex-flow: row nowrap;
+		background: var(--color-onyx);
+		align-items: center;
+	}
+
+	.color-input {
+		background: inherit;
+		width: 80%;
+		font-style: italic;
+	}
+	.color-input__button input {
+		border: 0;
+		padding: 0;
+		margin: 0;
+		opacity: 0;
+		position: absolute;
+		background: transparent;
+	}
+
+	.color-input__select {
+		margin-top: var(--space-s);
+		padding-block: var(--space-3xs);
+		padding-right: var(--space-m-l);
 	}
 </style>

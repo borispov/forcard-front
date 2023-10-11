@@ -1,6 +1,10 @@
 <script lang="ts">
 	// TODO:
 	// maybe have a function that sets the initial state, of selected comp to base of root component
+	// const resetState = () => {
+	//	selectedComponentId = '1';
+	//	selectedComponentIndex = 0;
+	// }
 	// TODO#2:
 	// implement ctx -- for deleting elements. access the index of each
 	// element's container to remove it from container's children
@@ -26,6 +30,7 @@
 		ButtonElement,
 		ImageElement,
 		ComponentRole,
+		Components,
 	} from "../types/components.js";
 
 	let selectedComponentId = $site.components[0].id;
@@ -58,7 +63,30 @@
 			selectComponentById(e);
 		}
 		// on hover effects
+		document.querySelector(".tooltip")?.remove();
+
 		if (e.type === "mouseenter" || e.type == "mouseover") {
+			let div = document.createElement("div");
+			div.classList.add("tooltip");
+			let styles = {
+				position: "absolute",
+				top: "-32px",
+				left: "-1px",
+				background: "rgb(40, 30, 66)",
+				color: "white",
+				height: "30px",
+				width: "100px",
+				padding: "0.5em 1em",
+				fontSize: "12px",
+			};
+
+			for (const s in styles) {
+				div.style[s] = styles[s];
+			}
+
+			const dataIdAttribute = e.target.getAttribute("data-name");
+			div.innerHTML = dataIdAttribute;
+			target.prepend(div);
 			target.classList.add("hovered-element");
 		}
 		if (e.type === "mouseleave" || e.type == "mouseout") {
@@ -90,7 +118,7 @@
 	};
 
 	// Check the latest element's ID and increment it.
-	const setElementId = (elementsList) => {
+	const setElementId = (elementsList: Components) => {
 		let lastElement = elementsList[elementsList.length - 1];
 		return Number(lastElement.id) + 1;
 	};
@@ -118,8 +146,10 @@
 	};
 
 	// check whether current selected element is a container
-	const isContainer = (components, componentIndex: number | string) =>
-		components[componentIndex]?.type === "container" ? true : false;
+	const isContainer = (
+		components: Components,
+		componentIndex: number | string
+	) => (components[componentIndex]?.type === "container" ? true : false);
 
 	const addElement = (type: ComponentType): void => {
 		let e = setDefaultProps(type);
@@ -497,6 +527,7 @@
 	}
 
 	.bar {
+		z-index: 2;
 		position: absolute;
 		display: flex;
 		flex-direction: row;
@@ -515,6 +546,7 @@
 	}
 
 	:global(.hovered-element) {
+		position: relative;
 		box-sizing: border-box;
 		outline: dotted 1px orange;
 	}
@@ -554,5 +586,17 @@
 	}
 	.add-button:hover {
 		background: rgb(80, 60, 126);
+	}
+
+	.tooltip {
+		position: absolute;
+		top: 0;
+		left: 0;
+		background: rgb(40, 30, 66);
+		color: white;
+		height: 30px;
+		width: 100px;
+		padding: 0.5em 1em;
+		font-size: 12px;
 	}
 </style>

@@ -54,7 +54,7 @@
 			<svelte:element
 				this={el.role}
 				data-id={childId}
-				data-name="element"
+				data-name={el.type}
 				style={getStyles(el.type, el.design)}
 				draggable={true}
 				ondragover="return false"
@@ -79,7 +79,7 @@
 				src={el.settings.source || el.settings.placeholder_source}
 				alt={el.settings.altText}
 				data-id={childId}
-				data-name="element"
+				data-name={el.type}
 				style={getStyles(el.type, el.design)}
 				draggable={true}
 				ondragover="return false"

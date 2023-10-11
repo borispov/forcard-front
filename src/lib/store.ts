@@ -53,6 +53,7 @@ export const site = writable({
 			content: "What's Up Arik?",
 			id: "2",
 			design: {
+				textAlign: 1,
 				font: {
 					'font-size': "6",
 					'font-weight': "1",
@@ -63,6 +64,9 @@ export const site = writable({
 					padding: { y: '2', x: '0' },
 				},
 				border: {},
+				letterSpacing: 0,
+				lineHeight: 110,
+				width: 'auto',
 			}
 
 		},
@@ -72,6 +76,7 @@ export const site = writable({
 			content: "This is built with Svelte (SPA) for funsies",
 			id: "3",
 			design: {
+				textAlign: 1,
 				color: "var(--text-color)",
 				font: {
 					'font-size': "3",
@@ -82,6 +87,9 @@ export const site = writable({
 					padding: { y: '3', x: '0' },
 				},
 				border: {},
+				letterSpacing: 0,
+				lineHeight: 110,
+				width: 'auto',
 			}
 
 		},
@@ -120,7 +128,7 @@ export const site = writable({
 			content: "I am a text in a row, I am a text in a row",
 			id: "5",
 			design: {
-				textAlign: '1',
+				textAlign: 1,
 				width: "55ch",
 				background: "yellow",
 				color: "var(--color-dark)",
@@ -133,14 +141,22 @@ export const site = writable({
 					padding: { y: '3', x: '4' },
 				},
 				border: {},
+				letterSpacing: 0,
+				lineHeight: 150,
 			}
 		},
 		{
-			type: "text",
+			type: "button",
 			role: "button",
 			content: "Uhh Click?",
 			id: "6",
+			settings: {
+				innerHTML: "Yes, click Me",
+				linkTo: "#",
+				openInNewTab: false,
+			},
 			design: {
+				textAlign: 1,
 				background: "white",
 				color: "black",
 				font: {
@@ -152,173 +168,11 @@ export const site = writable({
 					padding: { y: '3', x: '2' },
 				},
 				border: {},
+				letterSpacing: 0,
+				lineHeight: 110,
+				width: 'auto',
 			}
 		},
 
 	]
 })
-
-// export const site = writable({
-// 	site: {
-// 		utopia: UTOPIA_DEFAULT,
-// 		globalCss: GLOBAL_STYLES,
-// 		title: 'MySite',
-// 		description: 'Welcome to mySite, it is best in class',
-// 		cssColorScheme: COLOR_SCHEME_CSS,
-// 		colorScheme: COLOR_SCHEME,
-// 		pageSettings: {
-// 			width: "100%",
-// 		},
-// 	},
-// 	components: [
-// 		{
-// 			type: "container",
-// 			role: "div",
-// 			id: "1",
-// 			children: [
-// 				{
-// 					id: "2",
-// 				},
-// 				{
-// 					id: "3",
-// 				},
-// 				{
-// 					id: "4",
-// 				}
-// 			],
-// 			design: {
-// 					display: {
-// 						type: "flex",
-// 						direction: "column",
-// 						align: "stretch"
-// 					},
-// 					background: {
-// 						type: "color",
-// 						opacity: 1,
-// 						blur: 0,
-// 						color: "var(--background)",
-// 						gradient: "",
-// 						gradientName: "",
-// 						gradientId: ""
-// 				},
-// 				space: {
-// 					margin: {y: '4', x: '0'},
-// 					padding: {y: '4', x: '0'},
-// 				},
-// 				height: "auto",
-// 				width: "auto",
-// 				border: {
-// 				},
-// 			}
-// 		},
-// 		{
-// 			type: "text",
-// 			role: "h1",
-// 			content: "I am a Header",
-// 			id: "2",
-// 			design: {
-// 				font: {
-// 					'font-size': "6",
-// 				},
-// 				color: "var(--text-color)",
-// 				space: {
-// 					margin: { y: '0', x: '0' },
-// 					padding: { y: '2', x: '0' },
-// 				},
-// 				border: {},
-// 			}
-
-// 		},
-// 		{
-// 			type: "text",
-// 			role: "h2",
-// 			content: "Some Sub-Header Here",
-// 			id: "3",
-// 			design: {
-// 				color: "var(--text-color)",
-// 				font: {
-// 					'font-size': "3",
-// 				},
-// 				space: {
-// 					margin: { y: '0', x: '0' },
-// 					padding: { y: '3', x: '0' },
-// 				},
-// 				border: {},
-// 			}
-
-// 		},
-// 		{
-// 			type: "container",
-// 			role: "div",
-// 			id: "4",
-// 			children: [
-// 				{
-// 					id: "5",
-// 				},
-// 				{
-// 					id: "6",
-// 				},
-// 			],
-// 			design: {
-// 				display: {
-// 					type: 'flex',
-// 					direction: 'row',
-// 					align: "stretch"
-// 				},
-// 				background: {
-// 					opacity: 1,
-// 					blur: 0,
-// 					type: "color",
-// 					color: "var(--background)",
-// 					gradient: "",
-// 					gradientName: "",
-// 					gradientId: ""
-// 				},
-// 				space: {
-// 					margin: {y: '5', x: '0'},
-// 					padding: {y: '5', x: '0'},
-// 				},
-// 				height: "auto",
-// 				width: "auto",
-// 				border: {},
-// 			}
-// 		},
-// 		{
-// 			type: "text",
-// 			role: "p",
-// 			content: "I am a sub-header",
-// 			id: "5",
-// 			design: {
-// 				background: "yellow",
-// 				color: "var(--color-dark)",
-// 				font: {
-// 					'font-size': "2",
-// 				},
-// 				space: {
-// 					margin: { y: '0', x: '0' },
-// 					padding: { y: '2', x: '0' },
-// 				},
-// 				border: {},
-// 			}
-// 		},
-// 		{
-// 			type: "text",
-// 			role: "button",
-// 			content: "Get Now",
-// 			id: "6",
-// 			design: {
-// 				background: "white",
-// 				color: "black",
-// 				font: {
-// 					'font-size': "3",
-// 				},
-// 				space: {
-// 					margin: { y: '0', x: '0' },
-// 					padding: { y: '3', x: '2' },
-// 				},
-// 				border: {},
-// 			}
-// 		},
-// 	]
-
-// })

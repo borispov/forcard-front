@@ -12,6 +12,13 @@ export type ButtonProps = {
 	openInNewTab: boolean;
 }
 
+type RGB = `rgb(${number}, ${number}, ${number})`;
+type RGBA = `rgba(${number}, ${number}, ${number}, ${number})`;
+type HEX = `#${string}`;
+type CssVar = `var(--${string})`;
+
+export type CssColor = RGB | RGBA | HEX | CssVar;
+
 export type CssBorder = {
 	radius?: string | number,
 	width?: string,
@@ -27,15 +34,13 @@ export type CssShadow = {
 }
 
 export type CssFont = {
-	'font-size'?: string;
-	size?: string;
-	family?: string;
-	'font-weight'?: string;
+	'font-size': string | number;
+	'font-weight': string | number;
 }
 
 export type CssSpace = {
-	margin?: { y: string, x: string } | {};
-	padding: { y: string, x: string } | {};
+	margin: { y: string, x: string };
+	padding: { y: string, x: string };
 }
 
 export type StyleProperties = {
@@ -57,9 +62,15 @@ export type ComponentRole =
 	'h1' | 'h2' | 'h3' | 'h4' |
 	'p' | 'button' | 'img' | 'div'
 
+export type CssTypography = {
+	font: CssFont,
+	textAlign: string;
+	letterSpacing: string;
+	lineHeight: number;
+}
+
 export type Component = {
 	id: string;
-	type: ComponentType;
 	role: ComponentRole;
 	content?: string;
 	children?: string[];
@@ -67,14 +78,28 @@ export type Component = {
 }
 
 export type TextElement = Component & {
-	content?: string;
+	type: "text" | "p";
+	content: string;
 	design: {
 		font: CssFont;
-		textAlign?: string;
+		textAlign: string;
+		letterSpacing: string;
+		lineHeight: number | string;
+		space: CssSpace;
 	}
 }
 
+// maybe create a TypoGraphy property inside design?
+// typography = {
+// font, alignemnt, letterspacing, lineheight, etc..
+// }
+// access will be more READABLE
+// design.typography
+// and iterate over them in a single function.
+// getTypography ...
+
 export type ButtonElement = Component & {
+	type: "button";
 	content?: string;
 	settings: ButtonProps;
 	design: {
@@ -87,6 +112,7 @@ export type ButtonElement = Component & {
 }
 
 export type ContainerElement = Component & {
+	type: "container";
 	design: {
 		display: {
 			type: string;
@@ -104,6 +130,7 @@ export type ContainerElement = Component & {
 }
 
 type ImageSettings = {
+	type: "img";
 	source: string;
 	placeholder: boolean;
 	placeholder_source?: string;
@@ -112,6 +139,7 @@ type ImageSettings = {
 }
 
 export type ImageElement = Component & {
+	type: "img";
 	settings: ImageSettings;
 	design: {
 		border?: CssBorder;

@@ -1,4 +1,35 @@
-import type { ComponentType, CssWidth, CssBorder, CssSpace, CssFont, StyleProperties } from "../../types/components";
+import { z } from "zod";
+
+import type { 
+	ComponentType, 
+	CssWidth, 
+	CssBorder, 
+	CssSpace, 
+	CssFont, 
+} from "../../types/components";
+
+const cssFontSchema = z.object({
+		'font-size': z.string().or(z.number()),
+		'font-weight': z.string().or(z.number()),
+})
+
+const cssSpaceSchema = z.object({
+	margin: z.object({ x: z.string(), y: z.string() }).partial(),
+	padding: z.object({ x: z.string(), y: z.string() }).partial(),
+})
+
+const cssColorSchema = z.string()
+
+const ParagraphShape = z.object({
+	font: cssFontSchema,
+	color: cssColorSchema,
+	space: cssSpaceSchema,
+	textAlign: z.number(),
+	letterSpacing: z.number(),
+	lineHeight: z.string().or(z.number()),
+	width: z.string().or(z.number())
+});
+
 
 import { parseWidth, parseBorder } from "./styleParser";
 
@@ -21,23 +52,40 @@ const TEXT_ALIGN_VALS = [ "start", "center", "end" ];
 const getImgStyles = (imgStylesObject) => {
 }
 
-const getTextAlignment = (textAlignValue: string) => {
+const getLetterSpacing = (ls: number) => {
+	let r: string = '';
+	r += `letter-spacing: ${ls && ls + 'rem'};\n`;
+	return r;
+}
+
+const getLineHeight = (lh: number) => {
+	let r: string = '';
+	r += `line-height: ${lh && lh}%;\n`;
+	return r;
+}
+
+const getTextAlignment = (textAlignValue: number) => {
 	let r: string = '';
 	r += `text-align: ${textAlignValue && TEXT_ALIGN_VALS[textAlignValue] || 'start' };\n`;
 	return r;
 }
 
-const getParagraphStyles = (stylesObject: StyleProperties) => {
-	let r: string = '';
+const getParagraphStyles = (stylesObject: unknown) => {
+	const parseStyles = ParagraphShape.parse(stylesObject)
+	let r = '';
 
-	r += getFontStyles(stylesObject.font);
-	r += getSpaceStyle(stylesObject.space)
-	r += getTextAlignment(stylesObject.textAlign);
+	r += getFontStyles(parseStyles.font);
+	r += getSpaceStyle(parseStyles.space)
+	r += getTextAlignment(parseStyles.textAlign);
+	r += getLetterSpacing(parseStyles.letterSpacing);
+	r += getLineHeight(parseStyles.lineHeight);
+
+	r += `color: ${parseStyles.color};\n`;
 
 	// if client sets width to above 65, set it to 100%
-	let { width } = stylesObject;
+	let { width } = parseStyles;
 	if (Number(width) < 65) {
-		r += `\nwidth: ${stylesObject.width}ch;\n`;
+		r += `\nwidth: ${parseStyles.width}ch;\n`;
 	} else {
 		r += `\nwidth: 100%;\n`;
 	}
@@ -46,20 +94,22 @@ const getParagraphStyles = (stylesObject: StyleProperties) => {
 }
 
 const getFontStyles = (fontObject: CssFont) => {
-	let r: string = '';
 
-	const fontSize = STEPPED_TEXT_VALUES[Number(fontObject["font-size"])]
+	const parsedFonts = cssFontSchema.parse(fontObject);
+	let r = '';
+
+	const fontSize = STEPPED_TEXT_VALUES[Number(parsedFonts["font-size"])]
 	r += `font-size: ${fontSize};\n`;
 
-	if (fontObject['font-weight']) {
-		const fontWeight = FONT_WEIGHTS[Number(fontObject["font-weight"])]
+	if (parsedFonts['font-weight']) {
+		const fontWeight = FONT_WEIGHTS[Number(parsedFonts["font-weight"])]
 		r += `font-weight: ${fontWeight};\n`
 	}
 	return r;
 }
 
 const getBackgroundStyle = (bgObject: any) => {
-	let r: string;
+	let r = '';
 
 	if (bgObject.type === "gradient") {
 		r = `${bgObject.gradient};`
@@ -77,7 +127,6 @@ const getBackgroundStyle = (bgObject: any) => {
 	return r;
 };
 
-//  UGLY sorry.
 const getSpaceStyle = (spaceObject: CssSpace ) => {
 	let r = "";
 
@@ -140,27 +189,24 @@ const getDimensions = (width: CssWidth, height: string) => {
 
 
 // Show UP
-export function getStyles(type: ComponentType, stylesObject: StyleProperties) {
+export function getStyles(type: ComponentType, stylesObject: unknown) {
 	let r = "";
 	let a = Object.entries(stylesObject);
 
 	if (type == 'button') {
 		r += getBorderStyle(stylesObject.border);
+		r += getLetterSpacing(stylesObject.letterSpacing);
 	}
 
-	if (type == "text" || type == "button") {
+	if (type == "button") {
 		r += getFontStyles(stylesObject.font);
-		for (const [k, v] of a) {
-			if (k == "space") {
-			} else {
-				r += `${k}: ${v};\n`;
-			}
-		}
+		r += getLetterSpacing(stylesObject.letterSpacing);
 		return r;
 	}
 
-	if (type == 'p') {
+	if (type == 'p' || type == 'text') {
 		r += getParagraphStyles(stylesObject);
+
 		return r
 	}
 

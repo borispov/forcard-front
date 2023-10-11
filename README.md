@@ -56,3 +56,25 @@ I start by removing the ID property children's
 ### UPDATE
 It did not solve the issue.
 StopPropagation did.
+
+
+## 08/10/2023.
+Working on color swatches and picking text colors, I think it would be
+a great idea to make a feature for creating a color palette.
+
+I think it'd be a kind of a Modal wizard, something VERY simple yet
+comprehensive for most essential use cases.
+
+A good example: [Svelte](https://svelte.dev/repl/c049d685a16e442fa11281909cb5dac4?version=3.38.2)
+
+## UPDATE 11/10/2023
+Working on this project is my therapy. My escapism.
+
+I hav added paddings and margins on most elements, 
+added line height and letter spacing on text elements and need to check
+image has it too.
+
+### TODO: Config Changes -- 
+I must extract configuration fields into separate components - it'll
+much easier to compose and change configuration settings from one
+element to another.
