@@ -6,6 +6,7 @@
 @import "composition/sidebar.scss";
 @import "composition/cluster.css";
 @import "composition/repel.css";
+@import "composition/stack.scss";
 
 @import "utils/flow.css";
 @import "utils/region.css";

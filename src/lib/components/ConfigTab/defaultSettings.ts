@@ -1,4 +1,5 @@
 import type { ImageElement, ButtonElement, ComponentRole, ContainerElement, TextElement } from "../../../types/components";
+import type { CssBackground, CssBox, CssDiv, CssFlexLayout, CssGradient } from "../../../types/types";
 
 const btnConf = {
 	content: "Click Me",
@@ -102,6 +103,34 @@ const divConf = {
 	},
 };
 
+const initialContainer = {
+	design: {
+		layout: {
+			display: "flex" ,
+			direction: 'column',
+			justifyContent: "center",
+			alignItems: 'flex-start',
+			gap: '10px',
+			wrap: 'nowrap',
+		} as CssFlexLayout,
+		box: {
+			width: 'auto',
+			height: 'auto',
+			margin: {y: '0', x: '0'},
+			padding: {y: '0', x: '0'},
+		} as CssBox,
+		background: {
+			type: 'none',
+			opacity: 1,
+			blur: 0,
+			backgroundColor: 'inherit',
+			backgroundSize: '',
+			backgroundPosition: '',
+			backgroundRepeat: '',
+		} as CssBackground | CssGradient,
+	}
+};
+
 const imgConf = {
 	settings: {
 		source: '',
@@ -149,6 +178,18 @@ export const populateDivDefaults = (id: string, role: ComponentRole= 'div'): Con
 		type: 'container',
 		role,
 		...divConf
+	}
+}
+
+// try new div - flex all approach 
+export const initContainer = (id: string, role = 'div'): CssDiv => {
+	let containerData = structuredClone(initialContainer);
+	return {
+		id,
+		role,
+		type: 'container',
+		children: [],
+		...containerData
 	}
 }
 

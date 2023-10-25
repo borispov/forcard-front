@@ -1,6 +1,8 @@
 <script lang="ts">
 	import ConfigHeader from "./ConfigHeader.svelte";
 	import DivConfig from "./DivConfig.svelte";
+	import ContainerConfig from "./ContainerConfig.svelte";
+	import TextCfg from "./TextCfg.svelte";
 	import TextConfig from "./TextConfig.svelte";
 	import ButtonConfig from "./ButtonConfig.svelte";
 	import ParagraphConfig from "./ParagraphConfig.svelte";
@@ -12,11 +14,7 @@
 		TextElement,
 	} from "../../../types/components";
 
-	export let component:
-		| TextElement
-		| ButtonElement
-		| ImageElement
-		| ContainerElement;
+	export let component: any;
 	export let removeHandler: Function;
 	export let siteSettings: any;
 
@@ -27,11 +25,16 @@
 	<ConfigHeader {removeHandler} />
 	{#if component !== undefined}
 		{#if component.type == "container"}
-			<DivConfig bind:divConfig={component} />
+			<ContainerConfig divConfig={component} />
+			<!-- <DivConfig bind:divConfig={component} /> -->
 		{/if}
 
 		{#if component.type == "img"}
 			<ImageConfig bind:imgConfig={component} />
+		{/if}
+
+		{#if component.type == "text"}
+			<TextCfg textConfig={component} />
 		{/if}
 
 		{#if component.type == "p"}
@@ -48,12 +51,12 @@
 			/>
 		{/if}
 
-		{#if component.type == "text"}
-			<TextConfig
-				bind:textConfig={component}
-				colors={siteSettings.colorScheme}
-			/>
-		{/if}
+		<!-- {#if component.type == "text"} -->
+		<!-- 	<TextConfig -->
+		<!-- 		bind:textConfig={component} -->
+		<!-- 		colors={siteSettings.colorScheme} -->
+		<!-- 	/> -->
+		<!-- {/if} -->
 
 		<!-- Render Settings For Text Elements -->
 		{#if component.type == "text"}

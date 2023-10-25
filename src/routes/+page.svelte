@@ -11,6 +11,7 @@
 
 	import { fade } from "svelte/transition";
 	import { site } from "$lib/store";
+	// import { site } from "$lib/newStore";
 	import Canvas from "$lib/components/Canvas/Canvas.svelte";
 	import ConfigTab from "$lib/components/ConfigTab/ConfigTab.svelte";
 	import global from "$lib/styles/global.css";
@@ -21,6 +22,7 @@
 		populateBtnDefaults,
 		populateImgDefaults,
 		populateParagraphDefaults,
+		initContainer,
 	} from "$lib/components/ConfigTab/defaultSettings.js";
 
 	import type {
@@ -33,7 +35,9 @@
 		Components,
 	} from "../types/components.js";
 
-	let selectedComponentId = $site.components[0].id;
+	import type { ContainerElement as CssDiv } from "../types/types.ts";
+
+	let selectedComponentId = $site.components[1].id;
 	let dragStartContainer = null;
 	let draggedComponentId = null;
 
@@ -65,6 +69,7 @@
 		// on hover effects
 		document.querySelector(".tooltip")?.remove();
 
+		// tooltip logic?!
 		if (e.type === "mouseenter" || e.type == "mouseover") {
 			let div = document.createElement("div");
 			div.classList.add("tooltip");
@@ -123,6 +128,11 @@
 		return Number(lastElement.id) + 1;
 	};
 
+	const setDefaultPropsv2 = (): CssDiv => {
+		const prependedId = String(setElementId($site.components));
+		return initContainer(prependedId, "div");
+	};
+
 	const setDefaultProps = (
 		elementType: ComponentType,
 		elementRole?: ComponentRole
@@ -152,11 +162,9 @@
 	) => (components[componentIndex]?.type === "container" ? true : false);
 
 	const addElement = (type: ComponentType): void => {
-		let e = setDefaultProps(type);
+		// let e = setDefaultProps(type);
+		let e = setDefaultPropsv2();
 
-		// UPDATE: 4/10/2023, I figured out that the source of the problem
-		// is in populating functions that pass a refernece to nested
-		// objects, not a copy.
 		let componentsClone = structuredClone($site.components);
 		$site.components = [...componentsClone, e];
 

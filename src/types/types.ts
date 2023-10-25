@@ -4,10 +4,15 @@ type HEX = `#${string}`;
 type CssVar = `var(--${string})`;
 
 // Combine color types into a single type
-export type CssColor = RGB | RGBA | HEX | CssVar;
+export type CssColor = RGB | RGBA | HEX | CssVar | 'inherit';
 
 // Define width and height constraints for styling
-export type WidthAndHeightValue = "auto" | "100%" | `${number}px` | `${number}rem` | `${number}%`;
+export type WidthAndHeightValue = number | "auto" | "100%" | `${number}px` | `${number}rem` | `${number}%`;
+
+export type CssSpaceUnit = {
+	x: string;
+	y: string;
+}
 
 export type CssShadow = {
 	x: string | number,
@@ -33,43 +38,53 @@ export type CssTypography = {
 	color: CssColor;
 }
 
-export type CssBaseLayout = {
-	display: string;
-	overflow: string;
-	position: string;
-}
-
-// FLEX
-export type CssFlexLayout = CssBaseLayout & {
-	display: 'flex';
-	justifyContent: "flex-start" | "flex-end" | "center" | "space-between" | "space-around";
-	alignItems: "flex-start" | "flex-end" | "center" | "baseline" | "stretch";
-	gap: string;
-}
-
 export type CssBox = {
 	width: WidthAndHeightValue;
 	height: WidthAndHeightValue;
-	margin: { x: string, y: string};
-	padding: { x: string, y: string};
-	border: CssBorder;
+	margin: CssSpaceUnit;
+	padding: CssSpaceUnit;
+	border?: CssBorder;
 }
 
+
 export type CssBackground = {
-	type: 'color' | 'gradient' | 'image';
+	type: 'none' | 'color' | 'gradient' | 'image';
+	opacity?: number;
+	blur?: number;
+}
+
+export type CssBackgroundColor = CssBackground & {
+	type: 'color';
+	backgroundColor?: string;
+}
+
+export type CssBackgroundImage = CssBackground & {
+	type: 'image';
+	backgroundPosition: string;
+	backgroundRepeat: string;
+	backgroundSize: string;
+	objectPosition: string;
+	objectFit: string;
+}
+
+export type CssGradient = {
+	gradientStyle: string;
+	angle: number;
+	gradientId?: string;
+	gradientName?: string;
+	gradientValue?: string;
+	stops: {
+		color: string; position?: string;
+	}[];
+}
+
+export type CssAllBackgrounds = {
+	type: 'none' | 'color' | 'gradient' | 'image';
 	opacity: number;
 	blur: number;
 	backgroundColor: CssColor;
-	backgroundSize: string;
-	backgroundPosition: string;
-	backgroundRepeat: string;
-}
-
-export type CssGradient = CssBackground & {
-	type: 'gradient';
-	gradientId: string;
-	gradientName: string;
-	gradientValue: string;
+	pattern: {};
+	gradient: CssGradient;
 }
 
 // Define possible component roles
@@ -77,9 +92,25 @@ export type ComponentRole = 'h1'
 	| 'h2' | 'h3' | 'h4' 
 	| 'p'	 | 'button' | 'img' | 'div'
 
-type Component = {
-	id:					string;
-	role:				ComponentRole;
+interface Component {
+	id: string;
+	role: ComponentRole;
+}
+
+export type CssBaseLayout = {
+	display: string;
+	overflow?: string;
+	position?: string;
+}
+
+export interface CssFlexLayout {
+	display: "flex";
+	overflow?: string;
+	direction: 'row' | 'column';
+	justifyContent: "flex-start" | "flex-end" | "center" | "space-between" | "space-around";
+	alignItems: "flex-start" | "flex-end" | "center" | "baseline" | "stretch";
+	gap: string;
+	wrap: string;
 }
 
 export type ContainerElement = Component & {
@@ -87,7 +118,30 @@ export type ContainerElement = Component & {
 	children:	string[];
 	design: {
 		layout: CssBaseLayout | CssFlexLayout;
-		background: CssBackground;
+		background: CssBackground | CssGradient;
+		box: CssBox;
+	}
+}
+
+export interface CssDiv {
+	id: string;
+	role: string;
+	type: "container";
+	children:	string[];
+	design: {
+		layout: CssFlexLayout;
+		background: CssAllBackgrounds;
+		box: CssBox;
+	}
+}
+
+export interface CssText {
+	id: string;
+	role: string;
+	type: "text";
+	design: {
+		typography: CssTypography;
+		background: CssAllBackgrounds;
 		box: CssBox;
 	}
 }

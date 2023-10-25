@@ -1,15 +1,24 @@
 <script lang="ts">
-	export let color: string;
+	export let labelWrapper: HTMLLabelElement;
+	export let hex: string;
+	/* svelte-ignore unused-export-let */
+	export let isOpen: boolean;
 </script>
 
-<div class="color-input-wrapper">
-	<input type="text" bind:value={color} name="text-color" class="color-input" />
+<label bind:this={labelWrapper} class="color-input-wrapper">
+	<input type="text" bind:value={hex} name="text-color" class="color-input" />
 
 	<div class="color-input__button">
-		<input type="color" bind:value={color} />
-		<div class="indicator__color" style="--indicator-color: {color};" />
+		<input
+			on:click|preventDefault={() => {}}
+			on:mousedown|preventDefault={() => {}}
+			aria-haspopup="dialog"
+			type="color"
+			bind:value={hex}
+		/>
+		<div class="indicator__color" style="--indicator-color: {hex};" />
 	</div>
-</div>
+</label>
 
 <style>
 	.indicator__color {

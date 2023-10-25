@@ -6,13 +6,17 @@
   --color-light-alpha: rgba(255, 255, 255, 0.82);
   --color-dark-alpha: rgba(0, 0, 0, 0.1);
 
-  --color-primary: #C4605E;
+  --panel-main: #332D36;
+  --color-light-bg: #f2f4f3;
+
+  --color-primary: #f7a214;
 
   --color-mid: #191919;
   --color-mid-light: #cdcad5;
 
   --color-onyx: #3a3b3f;
 
+  /* --background: var(--color-black); */
   --background: var(--color-black);
   --text-color: var(--color-light);
 

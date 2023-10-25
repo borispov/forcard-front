@@ -216,7 +216,7 @@
 	}
 
 	.indicator__color {
-		background: --var(--indicator-color);
+		background: var(--indicator-color);
 		width: 32px;
 		height: 32px;
 		border-radius: 4px;
