@@ -1,12 +1,11 @@
 <script>
-	export let color;
-	export let size;
-	export let width;
-	export let height;
+	export let color = '#cdcad5';
+	export let width = '26px';
+	export let height = '26px';
 </script>
 
 <svg
-	style="--color: {color}; --size: {size}; --height: {height}; --width: {width};"
+	style="--color: {color}; --height: {height}; --width: {width};"
 	viewBox="0 0 20 16"
 	fill="none"
 	xmlns="http://www.w3.org/2000/svg"

@@ -9,7 +9,6 @@
 	const slugify = (str = "") =>
 		str.toLowerCase().replace(/ /g, "-").replace(/\./g, "");
 
-	console.log(userSelected);
 </script>
 
 <div
@@ -27,9 +26,9 @@
 			bind:group={userSelected}
 			{value}
 		/>
-		<label for={slugify(label)}>
+		<label for={slugify(label)} >
 			{#if icon}
-				<svelte:component this={icon} width={"36px"} height={"22px"} />
+				<svelte:component this={icon} width={"80px"} height={"20px"} />
 			{/if}
 			{label}
 		</label>
@@ -40,7 +39,7 @@
 	.radio-wrapper {
 		display: flex;
 		flex-direction: row;
-		justify-content: space-evenly;
+		justify-content: space-around;
 		width: 100%;
 	}
 
@@ -55,9 +54,9 @@
 		flex-direction: column;
 		align-items: center;
 		gap: 10px;
-		font-size: var(--space-xs);
+		font-size: var(--step--2);
 		border-radius: 12px;
-		padding: 1em 0.5em;
+		padding-block: .5em;
 	}
 
 	.radio-wrapper label:hover {
@@ -71,4 +70,5 @@
 	.radio-wrapper input[type="radio"]:checked + label {
 		color: var(--color-primary);
 	}
+
 </style>

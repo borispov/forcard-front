@@ -1,12 +1,10 @@
 <script>
-	export let color;
-	export let size;
 	export let width;
 	export let height;
 </script>
 
 <svg
-	style="--color: {color}; --size: {size}; --height: {height}; --width: {width};"
+	style="--height: {height}; --width: {width};"
 	xmlns="http://www.w3.org/2000/svg"
 	viewBox="0 0 576 512"
 	><path
@@ -17,7 +15,7 @@
 <style>
 	svg {
 		transform: rotate(90deg);
-		fill: var(--color, #cdcad5);
+		fill: #cdcad5;
 		width: var(--width, 26px);
 		height: var(--height, 26px);
 		align-self: center;

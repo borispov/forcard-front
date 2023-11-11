@@ -78,3 +78,67 @@ image has it too.
 I must extract configuration fields into separate components - it'll
 much easier to compose and change configuration settings from one
 element to another.
+
+
+### TODO:
+implement ctx -- for deleting elements. access the index of each
+element's container to remove it from container's children
+
+
+# UPDATE 11.11.2023
+
+I have opted for CSSOM completely for handling CSS and especially pseudo
+elements. this has proven to be a very challenging task for myself.
+I can easily manage drawing the initial styles of pre-loaded components.
+However, upon change, it gets more challenging.
+
+How to update individual CSS values without rewriting the whole
+stylesheet upon every single change? updating font-size to 1rem
+shouldn't cause a regeneration of the entire stylesheet, right?
+
+CSSOM's API exposes small number of methods to allow us to construct and
+modify stylesheets programatically. However, it feels like a lot of work
+is still needed to achieve a convenient state. For instance, insertRule
+method doesn't simply insert a css rule, it overrides any existing rules
+for a selector. replaceSync replaces the whole stylesheet. What then?
+
+Well, iterating over the stylesheet's CSS RULES, namely, the registered
+selectors, we can loop over the elemnts and when we get to a desired
+element, we can append styles to it like we would traditionally:
+
+```javascript
+// old way
+element.style[cssProperty] = cssPropertyValue
+// CSSOM way...
+element.style[cssProperty] = cssPropertyValue
+```
+
+The difference is what element really represents. We can get via
+`document.getElementById...` like we're all familiar with, and we can
+iterate of a stylesheet. For example:
+
+```
+let a = document.adoptedStylesheets[0].cssRules
+for ( const sel of a) {
+    sel.style....
+}
+```
+
+## Svelte Challenges
+HOWEVER, how can I know which property to update without updating whole
+component's styles everytime?
+
+I have found a solution. A trick. A hack using JavaScript's Proxy API.
+It feels hacky and messy, I need to write a lot of logic because of
+this.
+
+For example, the gradient background colors, have various settings like
+position for each color, premade gradients, etc.
+I'd like to recalculate the whole gradient upon every change, which
+requires the whole gradient object's information. It's not naturally
+available in the Proxy, I can easily get the propety and value that are
+being changed, not the whole context.
+
+It feels right that I'm re-writing a lot of code and features taking
+important things in mind, but it's a bit frustrating knowing I might be
+making bad decisions which will require an important rewrite again...

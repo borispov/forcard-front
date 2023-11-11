@@ -1,20 +1,12 @@
 <script lang="ts">
-	// TODO:
-	// maybe have a function that sets the initial state, of selected comp to base of root component
-	// const resetState = () => {
-	//	selectedComponentId = '1';
-	//	selectedComponentIndex = 0;
-	// }
-	// TODO#2:
-	// implement ctx -- for deleting elements. access the index of each
-	// element's container to remove it from container's children
-
+	// where should I generate the classes?
 	import { fade } from "svelte/transition";
-	import { site } from "$lib/store";
-	// import { site } from "$lib/newStore";
+	import { site } from "$lib/newStore";
 	import Canvas from "$lib/components/Canvas/Canvas.svelte";
 	import ConfigTab from "$lib/components/ConfigTab/ConfigTab.svelte";
 	import global from "$lib/styles/global.css";
+	import type { ComponentType, ComponentRole } from "$lib/schemas";
+	import { stylesheetStore } from "$lib/sheetStore";
 
 	import {
 		populateTextDefaults,
@@ -22,22 +14,12 @@
 		populateBtnDefaults,
 		populateImgDefaults,
 		populateParagraphDefaults,
-		initContainer,
 	} from "$lib/components/ConfigTab/defaultSettings.js";
+	import { getStyles } from "$lib/utils/parseStyles";
+	import { generateSelector, generateRule } from "$lib/utils/generateClasses";
+	import { onMount, setContext } from "svelte";
 
-	import type {
-		ComponentType,
-		TextElement,
-		ContainerElement,
-		ButtonElement,
-		ImageElement,
-		ComponentRole,
-		Components,
-	} from "../types/components.js";
-
-	import type { ContainerElement as CssDiv } from "../types/types.ts";
-
-	let selectedComponentId = $site.components[1].id;
+	let selectedComponentId = $site.components[0].id;
 	let dragStartContainer = null;
 	let draggedComponentId = null;
 
@@ -123,20 +105,15 @@
 	};
 
 	// Check the latest element's ID and increment it.
-	const setElementId = (elementsList: Components) => {
+	const setElementId = (elementsList: any) => {
 		let lastElement = elementsList[elementsList.length - 1];
 		return Number(lastElement.id) + 1;
-	};
-
-	const setDefaultPropsv2 = (): CssDiv => {
-		const prependedId = String(setElementId($site.components));
-		return initContainer(prependedId, "div");
 	};
 
 	const setDefaultProps = (
 		elementType: ComponentType,
 		elementRole?: ComponentRole
-	): TextElement | ImageElement | ButtonElement | ContainerElement => {
+	) => {
 		const prependedId = String(setElementId($site.components));
 
 		switch (elementType) {
@@ -144,29 +121,25 @@
 				return populateBtnDefaults(prependedId, elementRole);
 			case "text":
 				return populateTextDefaults(prependedId, elementRole);
+			default:
 			case "container":
 				return populateDivDefaults(prependedId, elementRole);
 			case "img":
 				return populateImgDefaults(prependedId, elementRole);
 			case "p":
 				return populateParagraphDefaults(prependedId, elementRole);
-			default:
-				break;
 		}
 	};
 
 	// check whether current selected element is a container
-	const isContainer = (
-		components: Components,
-		componentIndex: number | string
-	) => (components[componentIndex]?.type === "container" ? true : false);
+	const isContainer = (components: any, componentIndex: number | string) =>
+		components[componentIndex]?.type === "container" ? true : false;
 
 	const addElement = (type: ComponentType): void => {
-		// let e = setDefaultProps(type);
-		let e = setDefaultPropsv2();
-
-		let componentsClone = structuredClone($site.components);
-		$site.components = [...componentsClone, e];
+		let e = setDefaultProps(type);
+		$site.components = [...$site.components, e];
+		const elementCss = getComponentStyles(e.id, e.type, e.design);
+		$stylesheetStore.insertRule(elementCss);
 
 		// CHECK if chosen element is a container that we can nest the newly added element into.
 		if (
@@ -190,7 +163,7 @@
 
 		$site.components.find((c, idx) => {
 			let i = c.children?.findIndex((childId) => childId === id);
-			if (i > -1) {
+			if (i && i > -1) {
 				console.log(i);
 				console.log(`found child in container `);
 				$site.components[idx].children = [
@@ -270,6 +243,23 @@
 		// UPDATE
 		$site.components[newContainerId] = theParentElement;
 		$site.components[dragStartContainer] = previousContainer;
+	};
+
+	onMount(() => {
+		// $stylesheet = new CSSStyleSheet();
+
+		$site.components.map(({ id, type, design }) => {
+			const style = getComponentStyles(id, type, design);
+			$stylesheetStore?.insertRule(style);
+		});
+		document.adoptedStyleSheets.push($stylesheetStore);
+	});
+
+	const getComponentStyles = (id, type, designObject) => {
+		const cssRules = getStyles(type, designObject);
+		const selector = generateSelector(id, type);
+		const style = generateRule(selector, cssRules);
+		return style;
 	};
 </script>
 

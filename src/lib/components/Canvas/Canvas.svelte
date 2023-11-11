@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { getStyles } from "$lib/utils/getStyles";
-	import type { Component } from "../../../types/components";
+	import { generateSelector } from "$lib/utils/generateClasses";
+	import { onMount } from "svelte";
 	import Wrapper from "./Wrapper.svelte";
 
-	export let components: Component[];
+	export let components: any;
 	export let hoverHandler: Function;
 	export let dragHandler: Function;
 	export let dragStart: Function;
@@ -13,7 +13,6 @@
 		return component.children ? [...acc, ...component.children] : acc;
 	}, []);
 
-	// Generate a string css-style.
 	let findElementIndex = (id: string) =>
 		components.findIndex((c) => c.id == id);
 </script>
@@ -38,13 +37,13 @@
 			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 			<svelte:element
 				this={component.role}
+				id={generateSelector(component.id, component.type).slice(1)}
 				data-id={component.id}
 				data-name="element"
 				on:focus|self={() => hoverHandler}
 				on:mouseover|self={() => hoverHandler}
 				on:mouseout={() => hoverHandler}
 				on:click|self={() => hoverHandler}
-				style={getStyles(component.type, component.design)}
 			>
 				{component.content}
 			</svelte:element>

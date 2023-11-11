@@ -5,6 +5,7 @@
 	export let margins = "var(--space-3xs)";
 	export let indicator = null;
 	export let suffix = null;
+	export let group = false;
 </script>
 
 <div
@@ -12,31 +13,52 @@
 	class="[ field-group ] flow"
 >
 	{#if label}
-		<label class="field-label" for={labelFor}>
-			{label}
-			{#if indicator !== null}
-				<span>
-					{indicator}
-					{#if suffix !== null}
-						{" " + suffix}
-					{/if}
-				</span>
-			{/if}
-		</label>
+		<div class="label-wrapper">
+			<label class="field-label" for={labelFor}>
+				{label}
+				{#if indicator !== null}
+					<span>
+						{indicator}
+						{#if typeof suffix == "string"}
+							{" " + suffix}
+						{/if}
+					</span>
+				{/if}
+			</label>
+			<slot name="state-btn" />
+		</div>
 	{/if}
-	<slot />
+	{#if group}
+		<main>
+			<slot />
+		</main>
+	{:else}
+		<slot />
+	{/if}
 </div>
 
 <style>
+	.label-wrapper {
+		display: flex;
+		justify-content: space-between;
+		margin-top: var(--marginTop);
+		margin-bottom: var(--space-xs);
+		padding-inline: var(--space-2xs);
+		align-items: baseline;
+	}
+	main {
+		border: dotted 1px rgba(255, 255, 255, 0.18);
+		padding: 0 0.75em 0.5em 0.75em;
+		align-items: baseline;
+	}
+
 	.field-label {
 		display: flex;
 		justify-content: space-between;
+		width: 100%;
 		color: var(--text-light);
-		margin-top: var(--marginTop);
-		margin-bottom: var(--space-xs);
 		font-size: var(--step--2);
 		text-align: var(--align);
-		padding-inline: var(--space-s);
 	}
 
 	span {

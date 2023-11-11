@@ -4,6 +4,7 @@
 		"allowJs": true,
 		"checkJs": false,
 		"lib": ["es2017"],
+		"type": "module",
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"resolveJsonModule": true,

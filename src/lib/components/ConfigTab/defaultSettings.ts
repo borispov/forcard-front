@@ -1,5 +1,6 @@
-import type { ImageElement, ButtonElement, ComponentRole, ContainerElement, TextElement } from "../../../types/components";
 import type { CssBackground, CssBox, CssDiv, CssFlexLayout, CssGradient } from "../../../types/types";
+
+import type { ComponentRole, Layout, Text } from "$lib/schemas";
 
 const btnConf = {
 	content: "Click Me",
@@ -8,126 +9,186 @@ const btnConf = {
 		openInNewTab: true,
 	},
 	design: {
-		letterSpacing: 0,
-		lineHeight: 150,
-		textAlign: 1,
-		font: {
-			'font-size': '1',
-			'font-weight': '1',
+		layout: {
+			display: "flex",
+			direction: "row",
+			alignItems: "center",
+			justifyContent: "space-between",
+			gap: "10px",
+			wrap: "nowrap",
 		},
-		space: {
-			margin: { x: '0', y: '0'},
-			padding: { x: 'var(--step-s)', y: 'var(--step-3xs)'}
-		},
-		shadow: {
-			x: 0, y: 0, distance: 0, blur: '9px', color: 'rgba(0,0,0,0.08)'
+		typography: {
+			fontFamily: "inherit",
+			color: "var(--text-color)",
+			fontSize: "2",
+			fontWeight: "2",
+			textAlign: "center",
+			letterSpacing: "-0.025",
+			lineHeight: 110,
+			hover: {
+				color: "",
+			}
 		},
 		background: {
+			type: "color",
 			opacity: 1,
 			blur: 0,
-			type: "color",
-			color: "white",
-			gradient: "",
-			gradientName: "",
-			gradientId: ""
+			backgroundColor: "#ffffff",
+			pattern: {},
+			gradient: {
+				gradientStyle: "linear",
+				angle: 0,
+				stops: [
+					{ color: "#b9387a", position: "" },
+					{ color: "#89c89a", position: "" },
+				],
+			},
+			hover: {
+				backgroundColor: "",
+			}
 		},
-		color: "var(--text-color)",
-		border: {},
+		box: {
+			width: "auto",
+			height: "auto",
+			margin: { y: "0", x: "0" },
+			padding: { y: "4", x: "6" },
+			border: {
+				borderStyle: 'solid',
+				color: "#3d3d3d",
+				width: "",
+				radius: 0,
+			},
+		},
+		effects: {
+			dropShadow: {
+				vertical: 0,
+				horizontal: 0,
+				blur: 0,
+				spread: 0,
+				color: "#0000000A",
+			},
+		},
 	}
 }
 
-const paragraphConf = {
-	content: "Default Parapgraph, Edit Me As You Wish...",
-	design: {
-		color: "var(--text-color)",
-		width: '60',
-		font: {
-			'font-size': '1',
-			'font-weight': '1',
-		},
-		textAlign: 1,
-		lineHeight: 150,
-		space: {
-			margin: { x: '0', y: '0'},
-			padding: { x: '0', y: '0'}
-		},
-		border: {},
-		letterSpacing: 0,
-	},
-}
-
 const textConf = {
-	content: "Text",
+	content: "I'm a headline, be concise and accurate.",
 	design: {
-		color: "var(--text-color)",
-		width: '60',
-		font: {
-			'font-size': '4',
-			'font-weight': '1',
+		background: {
+			type: "color",
+			opacity: 1,
+			blur: 0,
+			backgroundColor: "#a9b1b1",
+			pattern: {},
+				gradient: {
+				gradientStyle: "linear",
+				angle: 0,
+				stops: [
+					{ color: "#b9387a", position: "" },
+					{ color: "#89c89a", position: "" },
+				],
+			},
+			hover: {
+				backgroundColor: "",
+			}
 		},
-		textAlign: 1,
-		lineHeight: 110,
-		space: {
-			margin: { x: '0', y: '0'},
-			padding: { x: '0', y: '0'}
+		typography: {
+			fontFamily: "inherit",
+			color: "var(--text-color)",
+			fontSize: "4",
+			fontWeight: "2",
+			textAlign: "center",
+			letterSpacing: "-0.025",
+			lineHeight: 110,
+			hover: {
+				color: "",
+			}
 		},
-		border: {},
-		letterSpacing: 0,
-	},
+		box: {
+			width: '100%',
+			height: 'auto',
+			margin: { y: '0', x: '0' },
+			padding: { y: '2', x: '0' },
+		},
+		effects: {
+			dropShadow: {
+				vertical: 0,
+				horizontal: 0,
+				blur: 0,
+				spread: 0,
+				color: "#0000000A",
+			},
+		},
+	}
 };
+
+const paragraphConf = {
+	content: "I'm a paragraph, edit me as you see fit, write something awesome!",
+	design: {
+		...textConf.design,
+		background: {
+			...textConf.design.background
+		},
+		typography: {
+			...textConf.design.typography,
+			fontSize: "1",
+			fontWeight: "1",
+			lineHeight: 150,
+			letterSpacing: 0,
+		}
+	}
+}
 
 const divConf = {
 	children: [],
 	design: {
-		display: {
-			type: 'flex',
-			direction: 'row',
-			align: 'center',
-		},
-		background: {
-			opacity: 1,
-			blur: 0,
-			type: "color",
-			color: "red",
-			gradient: "",
-			gradientName: "",
-			gradientId: ""
-		},
-		space: {
-			margin: {y: '0', x: '0'},
-			padding: {y: '0', x: '0'},
-		},
-		height: "350px",
-		width: 100,
-		border: {},
-	},
-};
-
-const initialContainer = {
-	design: {
 		layout: {
-			display: "flex" ,
-			direction: 'column',
+			display: "flex",
+			direction: "column",
+			alignItems: "center",
 			justifyContent: "center",
-			alignItems: 'flex-start',
-			gap: '10px',
-			wrap: 'nowrap',
-		} as CssFlexLayout,
-		box: {
-			width: 'auto',
-			height: 'auto',
-			margin: {y: '0', x: '0'},
-			padding: {y: '0', x: '0'},
-		} as CssBox,
+			gap: "10px",
+			wrap: "nowrap",
+		},
 		background: {
-			type: 'none',
+			type: "color",
 			opacity: 1,
 			blur: 0,
-			backgroundColor: 'inherit',
-			backgroundSize: '',
-			backgroundPosition: '',
-			backgroundRepeat: '',
-		} as CssBackground | CssGradient,
+			backgroundColor: "#ffffff",
+			pattern: {},
+				gradient: {
+				gradientStyle: "linear",
+				angle: 0,
+				stops: [
+					{ color: "#b9387a", position: "" },
+					{ color: "#89c89a", position: "" },
+				],
+			},
+			hover: {
+				backgroundColor: "",
+			}
+	},
+		box: {
+			width: "auto",
+			height: "auto",
+			margin: { y: "0", x: "0" },
+			padding: { y: "4", x: "4" },
+			border: {
+				borderStyle: 'solid',
+				color: "#3d3d3d",
+				width: "",
+				radius: 0,
+			},
+		},
+		effects: {
+			dropShadow: {
+				vertical: 0,
+				horizontal: 0,
+				blur: 0,
+				spread: 0,
+				color: "#0000000A",
+			},
+		},
 	}
 };
 
@@ -153,7 +214,7 @@ const imgConf = {
 }
 
 export const populateImgDefaults = 
-(id: string, role: ComponentRole = 'img'): ImageElement => {
+(id: string, role: ComponentRole = 'img') => {
 	return {
 		id,
 		type: 'img',
@@ -163,51 +224,43 @@ export const populateImgDefaults =
 }
 
 export const populateBtnDefaults = 
-(id: string, role: ComponentRole = 'button'): ButtonElement => {
+(id: string, role: ComponentRole = 'button') => {
+	let buttonData = structuredClone(btnConf);
 	return {
 		id,
 		type: 'button',
 		role,
-		...btnConf
+		...buttonData
 	}
 }
 
-export const populateDivDefaults = (id: string, role: ComponentRole= 'div'): ContainerElement => {
-	return {
-		id,
-		type: 'container',
-		role,
-		...divConf
-	}
-}
-
-// try new div - flex all approach 
-export const initContainer = (id: string, role = 'div'): CssDiv => {
-	let containerData = structuredClone(initialContainer);
+export const populateDivDefaults = (id: string, role: string = 'div'): Layout => {
+	let containerData = structuredClone(divConf);
 	return {
 		id,
 		role,
 		type: 'container',
-		children: [],
 		...containerData
 	}
 }
 
-export const populateTextDefaults = (id: string, role: ComponentRole = 'h2'): TextElement => {
+export const populateTextDefaults = (id: string, role: string = 'h2'): Text => {
+	const textData = structuredClone(textConf);
+	return {
+		type: 'text',
+		role: 'h1',
+		id,
+		...textData
+	}
+}
+
+export const populateParagraphDefaults = (id: string, role: ComponentRole = 'p'): Text => {
+	const paragraphData = structuredClone(paragraphConf);
 	return {
 		type: 'text',
 		role,
 		id,
-		...textConf
-	}
-}
-
-export const populateParagraphDefaults = (id: string, role: ComponentRole = 'p'): TextElement => {
-	return {
-		type: 'p',
-		role,
-		id,
-		...paragraphConf
+		...paragraphData
 	}
 }
 

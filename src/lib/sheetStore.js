@@ -1,0 +1,167 @@
+import { writable } from 'svelte/store';
+import { browser } from '$app/environment';
+
+const createStylesheetStore = () => {
+
+	/**
+	 * 
+	 * @param {Object} payload 
+	 * @param {string} payload.targetElement - The Element To Add Pseudo Element To
+	 * @param {string} payload.pseudo - The Pseudo Element (:hover, :focus, etc)
+	 */
+	function addPseudoElement(payload, updateFn) {
+		updateFn(sheet => {
+			const { targetElement, pseudo } = payload
+			let len = sheet.cssRules.length
+			let pseudoExists = false
+			for (const i of sheet.cssRules) {
+				if (i.selectorText.includes(targetElement)) {
+					if (i.selectorText.split(':')[1] === 'hover') {
+						pseudoExists = true;
+						break;
+					}
+				}
+			}
+			if (!pseudoExists) {
+				sheet.insertRule(`#${targetElement}:${pseudo} {}`, len)
+			}
+			return sheet
+		})
+	}
+
+
+	if (browser) {
+		const { update, subscribe} = writable(new CSSStyleSheet())
+
+		function log (s) {
+			if (s) {
+				let rules = s.cssRules
+				console.log(rules)
+				for (const r of rules) {
+				}
+			} else {
+				update(sheet => {
+					let rules = sheet.cssRules
+					for (const r of rules) {
+						console.log(r)
+					}
+					return sheet
+				})
+			}
+		}
+
+		/**
+		 * 
+		 * @param {Object} payload 
+		 * @param {string} payload.targetElement - The Element To Add Pseudo Element To
+		 * @param {Array.<string[]>} payload.styles - Array of string arrays.
+		 */
+		function addStyleToHover({ targetElement , styles }) {
+			update(sheet => {
+				for (const i of sheet.cssRules) {
+					if (i.selectorText.split(':')[1] == 'hover' && i.selectorText.split(':')[0].includes(targetElement)){
+						for (const cssStyle of styles) {
+							let [k,v] = cssStyle
+							i.style[k] = v
+						}
+						log(sheet)
+					}
+				}
+				return sheet
+			})
+		}
+
+		/**
+		 * 
+		 * @param {Object} payload 
+		 * @param {string} payload.targetElement - The Element To Add Pseudo Element To
+		 * @param {Array.<string[]>|string[]} payload.styles - Array of string arrays.
+		 */
+		function addStyle(payload) {
+			const { t, styles } = payload;
+
+			update(sheet => {
+				for (const i of sheet.cssRules) {
+					if (i.selectorText === `#${t}`){
+
+						console.log(styles)
+						if (Array.isArray(styles[0])) {
+							for (const cssStyle of styles) {
+								let [k,v] = cssStyle
+								i.style[k] = v
+							}
+						}
+
+						let [k,v] = styles
+						i.style[k] = v
+
+						break;
+					}
+				}
+				return sheet
+			})
+		}
+
+		/**
+		 * 
+		 * @param {Object} payload 
+		 * @param {string} payload.targetElement - The Element To Add Pseudo Element To
+		 * @param {string[]} payload.style - Array of string arrays.
+		 */
+		function addSingleStyle(payload) {
+			const { t, style } = payload;
+			update(sheet => {
+				for (const i of sheet.cssRules) {
+					if (i.selectorText === t){
+						let [k,v] = style
+						i.style[k] = v
+					}
+					break;
+				}
+				return sheet
+			})
+
+		}
+
+		
+		/**
+		 * @param {'ADD_PSEUDO'|'ADD_HOVER_STYLE'|'ADD_STYLES'|'ADD_SINGLE_STYLE'} action
+		 * @param {Object} payload
+		 */
+		function dispatch(action, payload) {
+			update(sheet => {
+				switch (action) {
+					case "ADD_PSEUDO":
+						addPseudoElement(payload, update)
+						break;
+					case 'ADD_HOVER_STYLE':
+						addStyleToHover(payload)
+						break;
+					case 'ADD_STYLES':
+						addStyle(payload)
+						break;
+					case 'ADD_SINGLE_STYLE':
+						addSingleStyle(payload)
+						break;
+					case 'DELETE_STYLE':
+						break;
+					case 'updateStyle':
+						break;
+				
+					default:
+						break;
+				}
+				return sheet
+			})
+		}
+
+		return {
+			log, 
+			subscribe,
+			dispatch
+		}
+	}
+}
+
+
+export const stylesheetStore = createStylesheetStore();

@@ -4,7 +4,7 @@ import { containerDesignSchema, textDesignSchema, typographySchema, backgroundSc
 
 import { STEPPED_TEXT_VALUES, STEPPED_VALUES, FONT_WEIGHTS } from "$lib/utils/UI-CONSTANTS";
 
-import { parseWidth, parseWidthValue } from "./styleParser";
+import { parseWidth } from "./styleParser";
 
 let GLOBAL_MODE = 'string' // RETURN CSS AS STRING | ARRAY
 
@@ -22,7 +22,7 @@ const createCssProp = (k:string, v:string) => {
 		: [k,v]
 }
 
-const appendStyles = (r: any, css: any) => {
+const appendStyles = (r, css) => {
 	GLOBAL_MODE === 'string'
 		? r += css
 		: r.push(css)
@@ -40,7 +40,7 @@ const boxMap = {
 		radius: "border-radius",
 		color: "border-color",
 		width: "border-width",
-		style: "border-style",
+		borderStyle: "border-style",
 	},
 }
 
@@ -71,7 +71,7 @@ export const boxSchema = z.object({
 			radius: z.number(),
 			color: z.string(),
 			width: z.string(),
-			style: z.string(),
+			borderStyle: z.string(),
 		})
 		.optional(),
 })
@@ -81,9 +81,8 @@ type Typography = z.infer<typeof typographySchema>
 type Background = z.infer<typeof backgroundSchema>
 
 
-export const transformBoxToCss = (r, o: Box) => {
-	var tmpCssValue: string | string[] | string[][] = '';
-
+const transformBoxToCss = (o: Box) => {
+	let r = '';
 	for (const k in o) {
 		let cssProp = k as keyof Box
 
@@ -91,48 +90,33 @@ export const transformBoxToCss = (r, o: Box) => {
 			case 'margin':
 				let marginX = STEPPED_VALUES[Number(o.margin.x)];
 				let marginY = STEPPED_VALUES[Number(o.margin.y)];
-				tmpCssValue = createCssProp(cssProp, `${marginY} ${marginX}`)
-				r = appendStyles(r, tmpCssValue)
-				// r += `margin: ${marginY} ${marginX};\n` 
+				r += `margin: ${marginY} ${marginX};\n` 
 				break;
 			case 'padding':
 				let paddingX = STEPPED_VALUES[Number(o.padding.x)];
 				let paddingY = STEPPED_VALUES[Number(o.padding.y)];
-				tmpCssValue = createCssProp(cssProp, `${paddingY} ${paddingX}`)
-				r =  appendStyles(r, tmpCssValue)
-				// r += `padding: ${paddingY} ${paddingX};\n` 
+				r += `padding: ${paddingY} ${paddingX};\n` 
 				break;
 			case 'border':
-				if (!o.border || !o.border.width || !o.border.color || o.border.style) break;
-				tmpCssValue = createCssProp('border', `${o.border.width}px ${o.border.style} ${o.border.color}`)
-				r = appendStyles(r, tmpCssValue)
-				tmpCssValue = createCssProp('border-radius', `${o.border.radius}em`)
-				r = appendStyles(r, tmpCssValue)
-				// r =  appendStyles(r, ['border', `${o.border.width}px ${o.border.borderStyle} ${o.border.color}`])
-				// r =  appendStyles(r, ['border-radius', `${o.border.radius}em`])
-				// r += `border: ${o.border.width}px ${o.border.borderStyle} ${o.border.color};\n`;
-				// r += `border-radius: ${o.border.radius}em;\n`;
+				if (!o.border || !o.border.width || !o.border.color || o.border.borderStyle) break;
+				r += `border: ${o.border.width}px ${o.border.borderStyle} ${o.border.color};\n`;
+				r += `border-radius: ${o.border.radius}em;\n`;
 				break;
 			case 'width':
-				tmpCssValue = GLOBAL_MODE === 'string'
-					? parseWidth(Number(o.width))
-					: parseWidthValue(Number(o.width))
-				r = appendStyles(r, tmpCssValue)
-				// r += parseWidth(Number(o.width));
+				r += parseWidth(Number(o.width));
 				break;
 			default:
 				// If the property doesn't require special treatment, just put
 				// the prop name as is and use its value as is
-				tmpCssValue = createCssProp(boxMap[cssProp], o[cssProp])
-				r = appendStyles(r, tmpCssValue)
-				// r += `${boxMap[cssProp]}: ${o[cssProp]};\n`
+				r += `${boxMap[cssProp]}: ${o[cssProp]};\n`
 				break;
 		}
 	}
 	return r;
 }
 
-const transformTypographyToCss = (r, o: Typography) => {
+const transformTypographyToCss = (o: Typography) => {
+	let r = GLOBAL_MODE === 'string' && '' || [];
 	var tmpCssValue = '';
 
 	for (const k in o) {
@@ -178,42 +162,26 @@ const transformTypographyToCss = (r, o: Typography) => {
 	return r;
 }
 
-export const parseGradients = (angle:any = '45right', colors: string[], mode = GLOBAL_MODE): string|string[][] => (
-	mode === 'string'
-		? `background: ${colors[0]};
+const parseGradients = (angle:any = '45right', colors: string[]) => (
+	`background: ${colors[0]};
 	background: -webkit-linear-gradient(${angle}, ${[...colors].reverse().join(", ")});
 	background: linear-gradient(${angle}, ${[...colors].reverse().join(", ")});
-	` : [
-		['background', `${colors[0]}`],
-		['background', `-webkit-linear-gradient(${angle}, ${[...colors].reverse().join(", ")})`],
-		['background', `linear-gradient(${angle}, ${[...colors].reverse().join(", ")})`]
-	]
+	`
 )
 
-export const parseBackgroundColor = ( o: Background, mode = GLOBAL_MODE ) => {
-	// console.log(o)
-	let r = mode == 'string'
-		? `background: ${o.backgroundColor};\n opacity: ${o.opacity};\n blur: ${o.blur};`
-		: [
-			['background', o.backgroundColor], ['opacity', `${o.opacity}`], ['blur', `${o.blur}`]
-		]
-	return r
-}
-
-const transformBackgroundToCss = (r, o: Background) => {
-	var tmpCssValue:string | string[][] = '';
+const transformBackgroundToCss = (o: Background) => {
+	let r = '';
+	var tmpCssValue = '';
 
 	switch (o.type) {
 		case 'gradient':
 			let colors = o.gradient.stops.map(c => c.color + ' ' + c.position ?? '')
 			tmpCssValue = parseGradients(o.gradient.angle, colors)
-			r = appendStyles(r, tmpCssValue)
-			// r += tmpCssValue
+			r += tmpCssValue
 			break;
 		case 'color':
-			tmpCssValue = parseBackgroundColor(o)
-			r = appendStyles(r, tmpCssValue)
-			// r += tmpCssValue
+			tmpCssValue = `background: ${o.backgroundColor};\n opacity: ${o.opacity};\n blur: ${o.blur};`
+			r += tmpCssValue
 		default:
 			break;
 	}
@@ -221,55 +189,40 @@ const transformBackgroundToCss = (r, o: Background) => {
 	return r;
 }
 
-const transformEffectsToCss = (r, o: any) => {
-	var tmpCssValue: string | string[] = '';
+const transformEffectsToCss = (o: any) => {
+	let r = '';
 	for (const cssProp in o) {
 		if (cssProp == 'dropShadow') {
 			const { vertical, horizontal, blur, spread, color } = o.dropShadow;
 			const boxShadowValue = vertical + ' ' + horizontal + ' ' + blur + ' ' + spread + ' ' + color;
-			tmpCssValue = createCssProp('box-shadow', boxShadowValue)
-			r = appendStyles(r, tmpCssValue)
-			// r += `box-shadow: ${boxShadowValue};\n`
+			r += `box-shadow: ${boxShadowValue};\n`
 		}
 	}
 	return r;
 }
 
 // TODO: Next
-const transformLayoutToCss = (r, o: any) => {
-	var tmpCssValue: string | string[] = '';
-
+const transformLayoutToCss = (o: any) => {
+	let r = '';
 	for (const cssProp in o) {
 		switch (cssProp) {
 			case 'direction':
-				tmpCssValue = createCssProp('flex-direction', o.direction)
-				r = appendStyles(r, tmpCssValue)
-				// r += `flex-direction: ${o.direction};\n`
+				r += `flex-direction: ${o.direction};\n`
 				break;
 			case 'display':
-				tmpCssValue = createCssProp('display', 'flex')
-				r = appendStyles(r, tmpCssValue)
-				// r += 'display: flex;\n'
+				r += 'display: flex;\n'
 				break;
 			case 'justifyContent':
-				tmpCssValue = createCssProp('justify-content', o.justifyContent)
-				r = appendStyles(r, tmpCssValue)
-				// r += `justify-content: ${o.justifyContent};\n`
+				r += `justify-content: ${o.justifyContent};\n`
 				break;
 			case 'alignItems':
-				tmpCssValue = createCssProp('align-items', o.alignItems)
-				r = appendStyles(r, tmpCssValue)
-				// r += `align-items: ${o.alignItems};\n`
+				r += `align-items: ${o.alignItems};\n`
 				break;
 			case 'gap':
-				tmpCssValue = createCssProp('gap', o.gap)
-				r = appendStyles(r, tmpCssValue)
-				// r += `gap: ${o.gap};\n`
+				r += `gap: ${o.gap};\n`
 				break;
 			case 'wrap':
-				tmpCssValue = createCssProp('flex-wrap', o.wrap)
-				r = appendStyles(r, tmpCssValue)
-				// r += `flex-wrap: ${o.wrap};\n`
+				r += `flex-wrap: ${o.wrap};\n`
 				break;
 			default:
 				break;
@@ -279,28 +232,23 @@ const transformLayoutToCss = (r, o: any) => {
 }
 
 
-const parseTextStyles = (r = '', design: TextDesign ) => {
-	r = appendStyles(r, transformTypographyToCss(r, design.typography))
-	r = appendStyles(r, transformBoxToCss(r, design.box))
-	r = appendStyles(r, transformEffectsToCss(r, design.effects))
+const parseTextStyles = ( design: TextDesign ) => {
+	let r = '';
 
-	// r += transformTypographyToCss(design.typography);
-	// r += transformBoxToCss(design.box);
-	// r += transformEffectsToCss(design.effects);
+	r += transformTypographyToCss(design.typography);
+	r += transformBoxToCss(design.box);
+	r += transformEffectsToCss(design.effects);
 
 	return r
 }
 
-const parseContainerStyles = (r = '', design: any) => {
-	r = appendStyles(r, transformBackgroundToCss(r, design.background))
-	r = appendStyles(r, transformBoxToCss(r, design.box))
-	r = appendStyles(r, transformEffectsToCss(r, design.effects))
-	r = appendStyles(r, transformLayoutToCss(r, design.layout))
+const parseContainerStyles = ( design: any) => {
+	let r = '';
 
-	// r += transformBoxToCss(design.box);
-	// r += transformEffectsToCss(design.effects);
-	// r += transformBackgroundToCss(design.background);
-	// r += transformLayoutToCss(design.layout);
+	r += transformBoxToCss(design.box);
+	r += transformEffectsToCss(design.effects);
+	r += transformBackgroundToCss(design.background);
+	r += transformLayoutToCss(design.layout);
 
 	return r
 }
@@ -318,23 +266,24 @@ const parseButtonStyles = ( design: any) => {
 
 export const getStyles = (type: string, styles: any, mode: string = 'string') => {
 	GLOBAL_MODE = mode
-	let r = GLOBAL_MODE === 'string' ? '' : [];
+	let r = '';
 
 	switch (type) {
 		case 'text':
 			const textStyles = textDesignSchema.parse(styles);
-			r = parseTextStyles(r, textStyles)
+			r += parseTextStyles(textStyles)
 			break;
 		case 'container':
 			const containerStyles = containerDesignSchema.parse(styles);
-			r += parseContainerStyles(r, containerStyles)
+			r += parseContainerStyles(containerStyles)
 			break
-		// case 'button':
-		// 	const buttonStyles = buttonDesignSchema.parse(styles);
-		// 	r += parseButtonStyles(buttonStyles)
-		// 	break;
+		case 'button':
+			const buttonStyles = buttonDesignSchema.parse(styles);
+			r += parseButtonStyles(buttonStyles)
+			break;
 		default:
 			break;
 	}
+
 	return r;
 }

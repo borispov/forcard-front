@@ -1,8 +1,130 @@
 import { UTOPIA_DEFAULT } from './global/utopia';
 import { COLOR_SCHEME_CSS, COLOR_SCHEME, GLOBAL_STYLES } from './global/global-styles';
 import { writable } from 'svelte/store';
+import { browser } from '$app/environment';
 
 export const componentIndex = writable(null)
+
+export const createStylesheetStore = () => {
+
+	/**
+	 * 
+	 * @param {Object} payload 
+	 * @param {string} payload.targetElement - The Element To Add Pseudo Element To
+	 * @param {string} payload.pseudo - The Pseudo Element (:hover, :focus, etc)
+	 */
+	function addPseudoElement(payload, updateFn) {
+		updateFn(sheet => {
+			const { targetElement, pseudo } = payload
+			let len = sheet.cssRules.length
+
+			let pseudoExists = false
+
+			let targetIndex = -1 // should always exist, can't add pseudo over non existent element
+
+			for (const i of sheet.cssRules) {
+				if (i.selectorText.includes(targetElement)) {
+					if (i.selectorText.split(':')[1] === 'hover') {
+						pseudoExists = true;
+						break;
+					}
+				}
+			}
+			if (!pseudoExists) {
+				sheet.insertRule(`#${targetElement}:${pseudo} {}`, len)
+			}
+			return sheet
+		})
+	}
+
+
+	if (browser) {
+		const { update, subscribe} = writable(new CSSStyleSheet())
+
+		function log (s) {
+			if (s) {
+				let rules = s.cssRules
+				for (const r of rules) {
+					console.log(r)
+				}
+			} else {
+				update(sheet => {
+					let rules = sheet.cssRules
+					for (const r of rules) {
+						console.log(r)
+					}
+					return sheet
+				})
+			}
+		}
+
+		function addStyleToHover({ t , styles }) {
+			update(sheet => {
+				for (const i of sheet.cssRules) {
+					if (i.selectorText.split(':')[1] == 'hover' && i.selectorText.split(':')[0].includes(t)){
+						styles.map(style => {
+							let [k,v] = style
+							i.style[k] = v
+						})
+					}
+				}
+				return sheet
+			})
+		}
+
+		function addStyle(paylaod) {
+			const { t, styles } = paylaod;
+			update(sheet => {
+				for (const i of sheet.cssRules) {
+					if (i.selectorText === t){
+						styles.map(style => {
+							let [k,v] = style
+							i.style[k] = v
+						})
+					}
+				}
+				return sheet
+			})
+		}
+
+		
+		/**
+		 * @param {string} action
+		 */
+		function dispatch(action, payload) {
+			update(sheet => {
+				switch (action) {
+					case "ADD_PSEUDO":
+						addPseudoElement(payload, update)
+						break;
+					case 'addStyleHover':
+						addStyleToHover(payload)
+						break;
+					case 'addStyle':
+						addStyleToHover(payload)
+						break;
+					case 'deleteStyle':
+						break;
+					case 'updateStyle':
+						break;
+				
+					default:
+						break;
+				}
+				return sheet
+			})
+		}
+
+		return {
+			log, 
+			subscribe,
+			addStyleToHover,
+			dispatch
+		}
+	}
+}
+
+export const stylesheetStore = createStylesheetStore();
 
 export const site = writable({
 	site: {
@@ -21,7 +143,7 @@ export const site = writable({
 			type: "container",
 			role: "div",
 			id: "1",
-			children: [ "2", "3", "4", ],
+			children: [ "2" ],
 			design: {
 				layout: {
 					display: "flex",
@@ -37,24 +159,28 @@ export const site = writable({
 					blur: 0,
 					backgroundColor: "#a9b1b1",
 					pattern: {},
-						gradient: {
-						gradientStyle: "linear",
-						angle: 0,
-						stops: [
-							{ color: "#b9387a", position: "" },
-							{ color: "#89c89a", position: "" },
-						],
-					},
+					gradient: {
+					gradientStyle: "linear",
+					angle: 0,
+					stops: [
+						{ color: "#b9387a", position: "" },
+						{ color: "#89c89a", position: "" },
+					],
+				},
+				hover: {
+					backgroundColor: "",
+				}
 			},
 				box: {
-					width: "auto",
+					width: "100",
 					height: "auto",
 					margin: { y: "0", x: "0" },
 					padding: { y: "4", x: "0" },
 					border: {
-						color: "#3d3d3d",
+						color: "",
 						width: "",
 						radius: 0,
+						style: 'solid',
 					},
 				},
 				effects: {
@@ -71,7 +197,7 @@ export const site = writable({
 		{
 			type: "text",
 			role: "h1",
-			content: "What's Up Arik?",
+			content: "What's Up Arik?sssss",
 			id: "2",
 			design: {
 				background: {
@@ -80,7 +206,7 @@ export const site = writable({
 					blur: 0,
 					backgroundColor: "#a9b1b1",
 					pattern: {},
-						gradient: {
+					gradient: {
 						gradientStyle: "linear",
 						angle: 0,
 						stops: [
@@ -88,6 +214,9 @@ export const site = writable({
 							{ color: "#89c89a", position: "" },
 						],
 					},
+					hover: {
+						backgroundColor: "",
+					}
 				},
 				typography: {
 					fontFamily: "inherit",
@@ -97,15 +226,26 @@ export const site = writable({
 					textAlign: "center",
 					letterSpacing: 0,
 					lineHeight: 110,
+					hover: {
+						color: "",
+					}
 				},
 				box: {
-					width: '100%',
+					width: '100',
 					height: 'auto',
 					margin: { y: '0', x: '0' },
 					padding: { y: '2', x: '0' },
 				},
+				effects: {
+					dropShadow: {
+						vertical: 0,
+						horizontal: 0,
+						blur: 0,
+						spread: 0,
+						color: "#0000000A",
+					},
+				},
 			}
-
 		}]
 	// 	{
 	// 		type: "text",

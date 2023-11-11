@@ -1,5 +1,24 @@
 // should be renamed to parseContainerWidth because it's not generic
 // enough 
+
+export function parseWidthValue(widthValue: number) {
+
+	if (widthValue >= 100 && widthValue <= 110) {
+		return ['width', '100%']
+	} else if (widthValue > 110 && widthValue < 120) {
+		return [
+			['width', 'calc(100% + calc(var(--padding-horizontal) * 2) + 0.4725px)'],
+			['max-width', 'calc(100% + calc(var(--padding-horizontal) * 2) + 0.4725px)']
+		]
+	} else if (widthValue == 120) {
+		return [ 
+			[ 'width', '100vw'], [ 'max-width', '100vw' ]
+		]
+	} else {
+		return [ 'width', widthValue + 'rem' ]
+	}
+}
+
 export const parseWidth = (widthValue: number) => {
 	let r: string;
 

@@ -25,7 +25,7 @@
 	<ConfigHeader {removeHandler} />
 	{#if component !== undefined}
 		{#if component.type == "container"}
-			<ContainerConfig divConfig={component} />
+			<ContainerConfig bind:divConfig={component} />
 			<!-- <DivConfig bind:divConfig={component} /> -->
 		{/if}
 
@@ -34,7 +34,7 @@
 		{/if}
 
 		{#if component.type == "text"}
-			<TextCfg textConfig={component} />
+			<TextCfg bind:textConfig={component} />
 		{/if}
 
 		{#if component.type == "p"}

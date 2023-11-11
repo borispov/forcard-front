@@ -1,13 +1,12 @@
 <script lang="ts">
-	import type { Component } from "../../../types/components";
-	import { getStyles } from "$lib/utils/getStyles";
+	import { generateSelector } from "$lib/utils/generateClasses";
 	import { onMount } from "svelte";
 
 	// props
 	let latestContainerIndex: Number;
 	export let parentIndex: number;
-	export let component: Component;
-	export let components: Component[];
+	export let component: any;
+	export let components: any;
 
 	// handlers
 	export let hoverHandler: Function;
@@ -31,9 +30,9 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <div
+	id={generateSelector(component.id, component.type).slice(1)}
 	data-name="container"
 	data-id={component.id}
-	style={getStyles(component.type, component.design)}
 	on:click|self={() => hoverHandler}
 	on:drop|stopPropagation|preventDefault={(e) =>
 		dragHandler(
@@ -53,9 +52,9 @@
 		{#if el && (el.type == "text" || el.type == "button" || el.type == "p")}
 			<svelte:element
 				this={el.role}
+				id={generateSelector(el.id, el.type).slice(1)}
 				data-id={childId}
 				data-name={el.type}
-				style={getStyles(el.type, el.design)}
 				draggable={true}
 				ondragover="return false"
 				on:dragstart={(event) =>
@@ -76,11 +75,11 @@
 		{:else if el.type == "img"}
 			<svelte:element
 				this={el.role}
+				id={generateSelector(el.id, el.type).slice(1)}
 				src={el.settings.source || el.settings.placeholder_source}
 				alt={el.settings.altText}
 				data-id={childId}
 				data-name={el.type}
-				style={getStyles(el.type, el.design)}
 				draggable={true}
 				ondragover="return false"
 				on:dragstart={(event) =>
