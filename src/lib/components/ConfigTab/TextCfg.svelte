@@ -10,7 +10,8 @@
 
 	import type { CssSpaceUnit } from "../../../types/types";
 	import { textSchema } from "$lib/schemas";
-  import { text } from "@sveltejs/kit";
+	import { getStyles } from "$lib/utils/parseStyles";
+	import { stylesheetStore } from "$lib/sheetStore";
 
 	const UI_STEPPED_VALUES = [
 		"None",
@@ -41,6 +42,10 @@
 
 	$: {
 		textConfig = textSchema.parse(textConfig);
+		let t = textConfig.type + textConfig.id;
+		let styles = getStyles("text", textConfig.design, "array");
+		let payload = { t, styles };
+		stylesheetStore?.dispatch("ADD_STYLES", payload);
 	}
 </script>
 
@@ -57,30 +62,33 @@
 				components={{ input: ColorInput }}
 			/>
 		</FieldGroup>
-		<TypographySetting 
-			settingName="textAlign" 
+		<TypographySetting
+			settingName="textAlign"
 			bind:value={textConfig.design.typography.textAlign}
-		 />
-		<TypographySetting 
-			settingName="fontSize" 
+		/>
+		<TypographySetting
+			settingName="fontSize"
 			bind:value={textConfig.design.typography.fontSize}
-		 />
-		<TypographySetting 
-			settingName="fontWeight" 
+		/>
+		<TypographySetting
+			settingName="fontWeight"
 			bind:value={textConfig.design.typography.fontWeight}
-		 />
-		<TypographySetting 
-			settingName="letterSpacing" 
+		/>
+		<TypographySetting
+			settingName="letterSpacing"
 			bind:value={textConfig.design.typography.letterSpacing}
 			suffix="em"
-		 />
-		<TypographySetting 
-			settingName="lineHeight" 
+		/>
+		<TypographySetting
+			settingName="lineHeight"
 			bind:value={textConfig.design.typography.lineHeight}
 			suffix="%"
-		 />
+		/>
 
-		<SpaceSetting bind:margin={textConfig.design.box.margin} bind:padding={textConfig.design.box.padding} />
+		<SpaceSetting
+			bind:margin={textConfig.design.box.margin}
+			bind:padding={textConfig.design.box.padding}
+		/>
 
 		<FieldGroup marginTop="var(--space-s)" label="Role" labelFor="role">
 			<select bind:value={textConfig.role} id="role-select" class="field-row">

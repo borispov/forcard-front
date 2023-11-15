@@ -17,7 +17,7 @@
 	} from "$lib/components/ConfigTab/defaultSettings.js";
 	import { getStyles } from "$lib/utils/parseStyles";
 	import { generateSelector, generateRule } from "$lib/utils/generateClasses";
-	import { onMount, setContext } from "svelte";
+	import { onMount } from "svelte";
 
 	let selectedComponentId = $site.components[0].id;
 	let dragStartContainer = null;

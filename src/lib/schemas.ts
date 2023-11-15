@@ -113,6 +113,18 @@ const boxSchema = z.object({
 	}),
 })
 
+export const imageSchema = z.object({
+	id: z.string(),
+	role: z.string(),
+	type: z.literal("img"),
+	design: z.object({
+		box: boxSchema,
+		effects: z.object({
+			dropShadow: dropShadowSchema,
+		}),
+	}),
+})
+
 export const containerDesignSchema = z.object({
 	layout: layoutSchema,
 	background: backgroundSchema,

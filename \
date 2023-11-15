@@ -4,7 +4,7 @@ import { containerDesignSchema, textDesignSchema, typographySchema, backgroundSc
 
 import { STEPPED_TEXT_VALUES, STEPPED_VALUES, FONT_WEIGHTS } from "$lib/utils/UI-CONSTANTS";
 
-import { parseBorder, parseWidth, parseWidthValue } from "./styleParser";
+import { parseWidth, parseWidthValue } from "./styleParser";
 
 let GLOBAL_MODE = 'string' // RETURN CSS AS STRING | ARRAY
 
@@ -23,20 +23,13 @@ const createCssProp = (k:string, v:string) => {
 }
 
 const appendStyles = (r: any, css: any) => {
-	if ( GLOBAL_MODE === 'string' ) {
-		return r + css
-	} else {
-		if (typeof css[0] === 'string') {
-			r.push(css)
-		} else {
-			r = r.concat(css)
-		}
-
-		// r = r.push(css)
-		// r.concat(css).flatMap(style => Array.isArray(style[0]) ? style : [style])
-	}
+	GLOBAL_MODE === 'string'
+		? r += css
+		: r.push(css)
 	return r
 }
+
+const createCssPropToArray = (k,v) => ([k, v])
 
 const boxMap = {
 	width: 'width',
@@ -88,29 +81,8 @@ type Typography = z.infer<typeof typographySchema>
 type Background = z.infer<typeof backgroundSchema>
 
 
-export const transformImageToCss = (o) => {
+export const transformBoxToCss = (r, o: Box) => {
 	var tmpCssValue: string | string[] | string[][] = '';
-	let r = [];
-
-	for (const k in o) {
-		let cssProp = k
-
-		switch (cssProp) {
-			case 'imgFilter':
-				tmpCssValue = createCssProp('filter', o.imgFilter);
-				r  = appendStyles(r, tmpCssValue)
-				break;
-				default: break;
-		}
-	}
-
-	return r;
-}
-
-export const transformBoxToCss = (o: Box) => {
-	var tmpCssValue: string | string[] | string[][] = '';
-
-	let r = []
 
 	for (const k in o) {
 		let cssProp = k as keyof Box
@@ -131,9 +103,11 @@ export const transformBoxToCss = (o: Box) => {
 				// r += `padding: ${paddingY} ${paddingX};\n` 
 				break;
 			case 'border':
-				if (!o.border || !o.border.width || !o.border.color || !o.border.style) break;
-				r = appendStyles(r, createCssProp( 'border', `${o.border.width}px ${o.border.style} ${o.border.color}`))
-				r = appendStyles(r, createCssProp('border-radius', `${o.border.radius}em`))
+				if (!o.border || !o.border.width || !o.border.color || o.border.style) break;
+				tmpCssValue = createCssProp('border', `${o.border.width}px ${o.border.style} ${o.border.color}`)
+				r = appendStyles(r, tmpCssValue)
+				tmpCssValue = createCssProp('border-radius', `${o.border.radius}em`)
+				r = appendStyles(r, tmpCssValue)
 				break;
 			case 'width':
 				tmpCssValue = GLOBAL_MODE === 'string'
@@ -143,18 +117,19 @@ export const transformBoxToCss = (o: Box) => {
 				// r += parseWidth(Number(o.width));
 				break;
 			default:
+				// If the property doesn't require special treatment, just put
+				// the prop name as is and use its value as is
 				tmpCssValue = createCssProp(boxMap[cssProp], o[cssProp])
 				r = appendStyles(r, tmpCssValue)
 				// r += `${boxMap[cssProp]}: ${o[cssProp]};\n`
 				break;
 		}
 	}
-	return r
+	return r;
 }
 
-const transformTypographyToCss = (o: Typography) => {
+const transformTypographyToCss = (r, o: Typography) => {
 	var tmpCssValue = '';
-	let r = [];
 
 	for (const k in o) {
 		let cssProp = k as keyof Typography
@@ -212,6 +187,7 @@ export const parseGradients = (angle:any = '45right', colors: string[], mode = G
 )
 
 export const parseBackgroundColor = ( o: Background, mode = GLOBAL_MODE ) => {
+	// console.log(o)
 	let r = mode == 'string'
 		? `background: ${o.backgroundColor};\n opacity: ${o.opacity};\n blur: ${o.blur};`
 		: [
@@ -220,36 +196,36 @@ export const parseBackgroundColor = ( o: Background, mode = GLOBAL_MODE ) => {
 	return r
 }
 
-const transformBackgroundToCss = (o: Background) => {
+const transformBackgroundToCss = (r, o: Background) => {
 	var tmpCssValue:string | string[][] = '';
 
 	switch (o.type) {
-		default:
 		case 'gradient':
 			let colors = o.gradient.stops.map(c => c.color + ' ' + c.position ?? '')
-			return parseGradients(o.gradient.angle, colors)
 			tmpCssValue = parseGradients(o.gradient.angle, colors)
-			// r = appendStyles(r, tmpCssValue)
+			r = appendStyles(r, tmpCssValue)
+			console.log(r)
 			// r += tmpCssValue
 			break;
 		case 'color':
-			return parseBackgroundColor(o)
 			tmpCssValue = parseBackgroundColor(o)
-			// r = appendStyles(r, tmpCssValue)
+			r = appendStyles(r, tmpCssValue)
 			// r += tmpCssValue
+		default:
+			break;
 	}
+
 	return tmpCssValue
+	return r;
 }
 
-const transformEffectsToCss = (o: any) => {
+const transformEffectsToCss = (r, o: any) => {
 	var tmpCssValue: string | string[] = '';
-	let r = [];
 	for (const cssProp in o) {
 		if (cssProp == 'dropShadow') {
 			const { vertical, horizontal, blur, spread, color } = o.dropShadow;
-			const boxShadowValue = vertical + 'px ' + horizontal + 'px ' + blur + 'px ' + spread + 'px ' + color;
+			const boxShadowValue = vertical + ' ' + horizontal + ' ' + blur + ' ' + spread + ' ' + color;
 			tmpCssValue = createCssProp('box-shadow', boxShadowValue)
-			console.log(tmpCssValue)
 			r = appendStyles(r, tmpCssValue)
 			// r += `box-shadow: ${boxShadowValue};\n`
 		}
@@ -258,9 +234,8 @@ const transformEffectsToCss = (o: any) => {
 }
 
 // TODO: Next
-const transformLayoutToCss = (o: any) => {
+const transformLayoutToCss = (r, o: any) => {
 	var tmpCssValue: string | string[] = '';
-	let r = [];
 
 	for (const cssProp in o) {
 		switch (cssProp) {
@@ -302,33 +277,43 @@ const transformLayoutToCss = (o: any) => {
 }
 
 
-const parseTextStyles = (r: string | [], design: TextDesign ) => {
-	r = appendStyles(r, transformTypographyToCss(design.typography))
-	r = appendStyles(r, transformBoxToCss(design.box))
-	r = appendStyles(r, transformEffectsToCss(design.effects))
+const parseTextStyles = (r = '', design: TextDesign ) => {
+	r = appendStyles(r, transformTypographyToCss(r, design.typography))
+	r = appendStyles(r, transformBoxToCss(r, design.box))
+	r = appendStyles(r, transformEffectsToCss(r, design.effects))
+
+	// r += transformTypographyToCss(design.typography);
+	// r += transformBoxToCss(design.box);
+	// r += transformEffectsToCss(design.effects);
+
 	return r
 }
 
-const parseContainerStyles = (r: string | [], design: any) => {
-	r = appendStyles(r, transformBackgroundToCss(design.background))
-	r = appendStyles(r, transformBoxToCss(design.box))
-	r = appendStyles(r, transformEffectsToCss(design.effects))
-	r = appendStyles(r, transformLayoutToCss(design.layout))
+const parseContainerStyles = (r = '', design: any) => {
+	r = appendStyles(r, transformBackgroundToCss(r, design.background))
+	console.log(r)
+	// r = appendStyles(r, transformBoxToCss(r, design.box))
+	// r = appendStyles(r, transformEffectsToCss(r, design.effects))
+	// r = appendStyles(r, transformLayoutToCss(r, design.layout))
+
+
+	// r += transformBoxToCss(design.box);
+	// r += transformEffectsToCss(design.effects);
+	// r += transformBackgroundToCss(design.background);
+	// r += transformLayoutToCss(design.layout);
+
 	return r
 }
 
-const parseButtonStyles = (r: string | [], design: any) => {
-	r = appendStyles(r, transformTypographyToCss(design.typography))
-	r = appendStyles(r, transformBoxToCss(design.box))
-	r = appendStyles(r, transformEffectsToCss(design.effects))
-	r = appendStyles(r, transformBackgroundToCss(design.background))
+const parseButtonStyles = ( design: any) => {
+	let r = '';
+
+	r += transformTypographyToCss(design.typography);
+	r += transformBoxToCss(design.box);
+	r += transformEffectsToCss(design.effects);
+	r += transformBackgroundToCss(design.background);
+
 	return r;
-}
-
-const parseImageStyles = (r: string | [], design: any) => {
-	r = appendStyles(r, transformBoxToCss(design.box))
-	r = appendStyles(r, transformEffectsToCss(design.effects))
-	return r
 }
 
 export const getStyles = (type: string, styles: any, mode: string = 'string') => {
@@ -342,15 +327,12 @@ export const getStyles = (type: string, styles: any, mode: string = 'string') =>
 			break;
 		case 'container':
 			const containerStyles = containerDesignSchema.parse(styles);
-			r = parseContainerStyles(r, containerStyles)
+			r = appendStyles(r, parseContainerStyles(r, containerStyles))
 			break
-		case 'img':
-			r = parseImageStyles(r, styles)
-			break;
-		case 'button':
-			const buttonStyles = buttonDesignSchema.parse(styles);
-			r = parseButtonStyles(r, buttonStyles)
-			break;
+		// case 'button':
+		// 	const buttonStyles = buttonDesignSchema.parse(styles);
+		// 	r += parseButtonStyles(buttonStyles)
+		// 	break;
 		default:
 			break;
 	}

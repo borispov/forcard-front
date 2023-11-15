@@ -82,6 +82,7 @@ const createStylesheetStore = () => {
 				for (const i of sheet.cssRules) {
 					if (i.selectorText === `#${t}`){
 
+						console.log(styles)
 						if (Array.isArray(styles[0])) {
 							for (const cssStyle of styles) {
 								let [k,v] = cssStyle
@@ -109,7 +110,6 @@ const createStylesheetStore = () => {
 						sheet.deleteRule(t)
 					}
 				}
-				return sheet
 			})
 
 		}

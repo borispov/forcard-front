@@ -1,74 +1,56 @@
-<script lang="ts">
-	// IMPORTS
+<script>
 	import Switch from "../../components/common/Switch.svelte";
-	import type { ImageElement, CssWidth } from "../../../types/components";
+	import FieldGroup from "./FieldGroup.svelte";
+	import ColorInput from "../ColorInput.svelte";
+	import ColorPicker from "svelte-awesome-color-picker";
 
-	export let imgConfig: ImageElement;
+	import SpaceSetting from "./Settings/SpaceSetting.svelte";
+
+	export let imgConfig;
 
 	// Localized state/variables
-	let borderOn = Object.entries(imgConfig.design.border).length > 0;
-	let widthIndicator: CssWidth = imgConfig.design.width || "";
-	let files: File;
+	let borderOn = imgConfig.design.box.border.width != 0;
+	let widthIndicator = imgConfig.design.width || "";
+	let files;
 
-	const UI_STEPPED_VALUES = [
-		"None",
-		"2XS",
-		"Extra Small",
-		"Small",
-		"Medium",
-		"Large",
-		"XL",
-		"2XL",
-		"3XL",
-	];
-
-	let setMargins = (val: string, vec: string) => {
-		imgConfig.design.space.margin[vec] = val;
-	};
-
-	let setPaddings = (val: string, vec: string) => {
-		imgConfig.design.space.padding[vec] = val;
-	};
-
-	let setShadow = (val: string) => {
+	let setShadow = (val) => {
 		// let transformedValue = UI_STEPPED_VALUES[val];
 		// imgConfig.design.shadow = val;
 		// TODO: Shadow
 	};
 
-	let borderHandler = (type: string, val = "") => {
-		if (type == "borderOn") {
-			borderOn = val === "on" ? true : false;
-		}
-
-		if (type == "border") {
-			let r = "1px solid black";
-			return r;
-		}
-
-		if (type == "radius") {
-			imgConfig.design.border["radius"] = val;
+	const handleBorderChange = (e, borderProp) => {
+		switch (borderProp) {
+			case "color":
+				const val = e.detail.hex;
+				imgConfig.design.box.border.color = val;
+				break;
+			case "width":
+				imgConfig.design.box.border.width = e.target.value;
+				break;
+			case "style":
+				imgConfig.design.box.border.style = e.target.value;
+				break;
+			case "radius":
+				imgConfig.design.box.border.radius = e.target.value;
+				break;
+			default:
+				break;
 		}
 	};
 
-	let spaceHandler = (type: spaceType, vec: string, val: string) => {
+	let borderHandler = () => {
+		borderOn = borderOn ? false : true;
+	};
+
+	let spaceHandler = (type, vec, val) => {
 		type === "margin" && setMargins(val, vec);
 		type === "padding" && setPaddings(val, vec);
 	};
 
-	let imageSettings = {
-		isBackground: false,
-		isImage: false,
-		isColor: false,
-		isGradient: false,
-		data: {
-			bgColor: "",
-		},
-	};
-
 	// TODO: Check/Validate File Size Is below a certain threshold
 	let onFileSelect = (e) => {
-		const inputTarget = e.target as HTMLInputElement;
+		const inputTarget = e.target;
 		console.log("trying to upload an image");
 		let image = inputTarget.files[0];
 		let reader = new FileReader();
@@ -81,31 +63,31 @@
 
 	// figure out the best way to set maxWidth if at all.. offer pre-defined
 	// settings ? or let user free-roll this
-	let setMaxWidth = (e: Event) => {
+	let setMaxWidth = (e) => {
 		const { target } = e;
-		const { value } = target as HTMLInputElement;
+		const { value } = target;
 	};
 
-	let onWidthCustom = (e: Event) => {
+	let onWidthCustom = (e) => {
 		// maybe store values above 100% as max1, max2, max3?
 		const { target } = e;
-		const { value } = target as HTMLInputElement;
+		const { value } = target;
 		const numValue = value + "%";
 		widthIndicator = numValue;
-		imgConfig.design.width = numValue;
+		imgConfig.design.box.width = numValue;
 	};
 </script>
 
-<section data-name="div-config" class="config-section flow">
+<section data-name="img-config" class="config-section flow">
 	<div class="panel">
 		<!-- make it a component Field Group -->
 
-		<div class="[ field-group flow ] [ flex ]">
-			<div class="field">
+		<FieldGroup label="Layout" alignLabel="start" labelFor="layout" group>
+			<div class="field-group">
 				<div class="field-row repel">
 					<label for="div-design_bg_style">Width</label>
 					<div class="indicator">
-						{imgConfig.design.width}
+						{imgConfig.design.box.width}
 					</div>
 				</div>
 
@@ -113,10 +95,11 @@
 					id="container-width"
 					name="container-width"
 					type="range"
-					min="0"
+					min="15"
 					max="100"
 					step="1"
-					bind:value={imgConfig.design.width}
+					bind:value={imgConfig.design.box.width}
+					on:input={onWidthCustom}
 				/>
 			</div>
 
@@ -124,7 +107,7 @@
 				<div class="field-row repel">
 					<label for="div-design_bg_style">Height</label>
 					<div class="indicator">
-						{imgConfig.design.height}
+						{imgConfig.design.box.height}
 					</div>
 				</div>
 
@@ -135,151 +118,122 @@
 					min="0"
 					max="100"
 					step="1"
-					bind:value={imgConfig.design.height}
+					bind:value={imgConfig.design.box.height}
 				/>
 			</div>
+		</FieldGroup>
 
-			<!-- BEGINNING OF BACKGROUND GROUP -->
-			<div class="field">
-				<label for="img-file">Image File</label>
+		<!-- BEGINNING OF FILE GROUP -->
+		<FieldGroup label="Image File" labelFor="img">
+			<input
+				accept=".jpg"
+				type="file"
+				alt="Choose Image File"
+				id="img-file"
+				on:change={onFileSelect}
+			/>
+		</FieldGroup>
+
+		<SpaceSetting
+			bind:margin={imgConfig.design.box.margin}
+			bind:padding={imgConfig.design.box.padding}
+		/>
+
+		<!-- BEGINNING OF BORDER GROUP -->
+		<FieldGroup marginTop="var(--space-s)" label="Border" labelFor="border">
+			<div class="field-row repel">
+				<label for="">Border</label>
+				<Switch label="" bind:value={borderOn} />
+			</div>
+
+			<div class="field-row repel">
+				<label for="border-radius">Border Radius</label>
+				<div class="indicator">
+					{(imgConfig.design.box.border.hasOwnProperty("radius") &&
+						imgConfig.design.box.border["radius"]) ||
+						0}
+				</div>
+			</div>
+			<div class="[ field-group ]">
 				<input
-					accept=".jpg"
-					type="file"
-					alt="Choose Image File"
-					id="img-file"
-					on:change={onFileSelect}
+					id="border-radius"
+					name="border-radius"
+					type="range"
+					min="0"
+					max="1.25"
+					step="0.25"
+					value={imgConfig.design.box.border.radius || "0"}
+					on:input={(e) => handleBorderChange(e, "radius")}
 				/>
 			</div>
+		</FieldGroup>
 
-			<div class="field">
-				<div class="[ field-group ]">
-					<!-- BEGINNING OF MARGINS GROUP -->
-					<label for="">Margins</label>
-					<div class="field-row repel">
-						<label for="margin_vertical">X-Axis</label>
-						<div class="indicator">
-							{UI_STEPPED_VALUES[imgConfig.design.space.margin["x"]] || "None"}
-						</div>
-					</div>
-					<div class="[ field-group ]">
-						<input
-							bind:value={imgConfig.design.space.margin["x"]}
-							id="margin_vertical"
-							name="margin_vertical"
-							type="range"
-							min="0"
-							max="8"
-							step="1"
-							on:input={(e) =>
-								spaceHandler("margin", "x", e.currentTarget.value)}
-						/>
-					</div>
-
-					<div class="[ field-group ]">
-						<div class="field-row repel">
-							<label for="margin_horizontal">Y-Axis</label>
-							<div class="indicator">
-								{UI_STEPPED_VALUES[imgConfig.design.space.margin["y"]] ||
-									"None"}
-							</div>
-						</div>
-						<input
-							bind:value={imgConfig.design.space.margin["y"]}
-							id="margin_horizontal"
-							name="margin_horizontal"
-							type="range"
-							min="0"
-							max="8"
-							step="1"
-							on:input={(e) =>
-								spaceHandler("margin", "y", e.currentTarget.value)}
-						/>
-					</div>
-					<!-- END OF MARGINS GROUP -->
+		<!-- START OF SHADOW LOGIC -->
+		<FieldGroup label="Shadow" labelFor="shadow">
+			<!-- OFFSET SHADOW -->
+			<div class="field-row">
+				<div class="field-row repel">
+					<label class="field-label" for="vertical-shadow">Vertical</label>
+					<span>{imgConfig.design.effects.dropShadow.vertical}</span>
 				</div>
-
-				<!-- BEGINNING OF PADDING GROUP -->
-				<div class="[ field-group ]">
-					<label for="">Padding</label>
-					<div class="[ field-group ]">
-						<div class="field-row repel">
-							<label for="padding_vertical">X-Axis</label>
-							<div class="indicator">{imgConfig.design.space.padding["x"]}</div>
-						</div>
-						<input
-							id="padding_vertical"
-							name="padding_vertical"
-							type="range"
-							min="0"
-							max="8"
-							step="1"
-							bind:value={imgConfig.design.space.padding["x"]}
-							on:input={(e) =>
-								spaceHandler("padding", "x", e.currentTarget.value)}
-						/>
-					</div>
-
-					<div class="[ field-group ]">
-						<div class="field-row repel" data-nowrap>
-							<label for="padding_horizontal">Y-Axis</label>
-							<div class="indicator">{imgConfig.design.space.padding["y"]}</div>
-						</div>
-						<input
-							id="padding_horizontal"
-							name="padding_horizontal"
-							type="range"
-							min="0"
-							max="8"
-							step="1"
-							bind:value={imgConfig.design.space.padding["y"]}
-							on:input={(e) =>
-								spaceHandler("padding", "y", e.currentTarget.value)}
-						/>
-					</div>
-					<!-- END OF PADDING GROUP -->
-
-					<!-- BEGINNING OF BORDER GROUP -->
-					<div class="[ field-group ]">
-						<div class="field-row repel">
-							<label for="">Border</label>
-							<Switch label="" bind:value={borderOn} />
-						</div>
-
-						<div class="field-row repel">
-							<label for="border-radius">Border Radius</label>
-							<div class="indicator">
-								{(imgConfig.design.border.hasOwnProperty("radius") &&
-									imgConfig.design.border["radius"]) ||
-									0}
-							</div>
-						</div>
-						<div class="[ field-group ]">
-							<input
-								id="border-radius"
-								name="border-radius"
-								type="range"
-								min="0"
-								max="5"
-								step="1"
-								value={imgConfig.design.border["radius"] || "0"}
-								on:input={(e) => borderHandler("radius", e.currentTarget.value)}
-							/>
-						</div>
-
-						{#if borderOn}
-							<div class="[ field-group ]">
-								<input
-									id="border"
-									name="border"
-									type="text"
-									value="BORDERRRRRRRR"
-								/>
-							</div>
-						{/if}
-					</div>
+				<div class="field-row repel">
+					<label class="field-label" for="vertical-shadow">Horizontal</label>
+					<span>{imgConfig.design.effects.dropShadow.horizontal}</span>
 				</div>
 			</div>
-		</div>
+			<div class="field-row">
+				<input
+					type="range"
+					min="-12"
+					max="12"
+					step="0"
+					bind:value={imgConfig.design.effects.dropShadow.vertical}
+				/>
+				<input
+					type="range"
+					min="-12"
+					max="12"
+					step="0"
+					bind:value={imgConfig.design.effects.dropShadow.horizontal}
+				/>
+			</div>
+			<!-- BLUR & SPREAD -->
+			<div class="field-row">
+				<div class="field-row repel">
+					<label class="field-label" for="blur-shadow">Blur</label>
+					<span>{imgConfig.design.effects.dropShadow.blur}</span>
+				</div>
+				<div class="field-row repel">
+					<label class="field-label" for="spread-shadow">Spread</label>
+					<span>{imgConfig.design.effects.dropShadow.spread}</span>
+				</div>
+			</div>
+			<div class="field-row">
+				<input
+					type="range"
+					min="0"
+					max="15"
+					step="0.5"
+					bind:value={imgConfig.design.effects.dropShadow.blur}
+				/>
+				<input
+					type="range"
+					min="0"
+					max="15"
+					step="0.5"
+					bind:value={imgConfig.design.effects.dropShadow.spread}
+				/>
+			</div>
+			<div class="field-row">
+				<label class="field-label" for="color-shadow">Shadow Color</label>
+				<ColorPicker
+					isPopup={false}
+					bind:hex={imgConfig.design.effects.dropShadow.color}
+					components={{ input: ColorInput }}
+				/>
+			</div>
+		</FieldGroup>
+		<!-- END OF SHADOW LOGIC -->
 	</div>
 </section>
 
@@ -288,24 +242,12 @@
 		--flow-space: var(--space-s-l);
 	}
 
-	.panel {
-		padding-inline: var(--space-m);
-	}
-
 	label {
 		display: inline-block;
 		font-size: 1rem;
 		font-weight: bold;
 		margin: 0 0 1em;
 		color: var(--color-light);
-	}
-
-	.thumbnail {
-		height: 12em;
-		cursor: pointer;
-		overflow: hidden;
-		border-radius: 12px;
-		background-color: rgb(0, 0, 0);
 	}
 
 	.field-group {
@@ -319,18 +261,33 @@
 		width: 100%;
 	}
 
-	.field {
-		flex-shrink: 1;
-		flex-grow: 1;
-		position: relative;
-		vertical-align: top;
+	.repel {
+		--repel-vertical-alignment: baseline;
+	}
+
+	section {
+		padding-bottom: 20px;
+	}
+
+	.field-group {
+		padding-inline: var(--space-3xs);
+		font-size: 12px;
 	}
 
 	.field-row {
-		width: 80%;
+		display: flex;
+		--cluster-horizontal-alignment: center;
+		justify-content: space-between;
+		padding-inline: 1em;
+		gap: var(--space-3xs);
 	}
 
-	.repel {
-		--repel-vertical-alignment: baseline;
+	.field-row input {
+		width: 65%;
+	}
+
+	.field-row.repel {
+		display: flex;
+		width: 100%;
 	}
 </style>

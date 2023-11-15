@@ -1,4 +1,5 @@
 <script>
+	import { fade } from "svelte/transition";
 	export let label, labelFor;
 	export let alignLabel = "start";
 	export let marginTop = "var(--space-l)";
@@ -6,11 +7,13 @@
 	export let indicator = null;
 	export let suffix = null;
 	export let group = false;
+	export let transition = false;
 </script>
 
 <div
 	style="--align: {alignLabel}; --marginTop: {marginTop};"
 	class="[ field-group ] flow"
+	transition:fade={{ duration: transition ? 500 : 0 }}
 >
 	{#if label}
 		<div class="label-wrapper">

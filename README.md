@@ -142,3 +142,10 @@ being changed, not the whole context.
 It feels right that I'm re-writing a lot of code and features taking
 important things in mind, but it's a bit frustrating knowing I might be
 making bad decisions which will require an important rewrite again...
+
+# UPDATE 12.11.2023
+
+I decided: to fuck with it.
+Let's recreate a whole selector's css with EVERY change.
+Why not? I don't have to rewrite a ton of logic to handle and 'parse'
+various css changes.

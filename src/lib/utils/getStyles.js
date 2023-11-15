@@ -51,8 +51,11 @@ export function handleStyleChange(node, { prop, value, path, designObject}) {
 				default: case prop === 'type':
 					if (value == 'color') {
 						r = parseBackgroundColor(designObject)
+						break;
 					} else if (value == 'gradient') {
-						r = parseGradients('45deg', designObject)
+						const colors = designObject.gradient.stops.map(c => c.color + ' ' + c.position ?? '')
+						r = parseGradients('45deg', colors, 'array')
+						break;
 					}
 					break;
 				case prop === 'backgroundColor':
@@ -61,10 +64,12 @@ export function handleStyleChange(node, { prop, value, path, designObject}) {
 				// The Proxy passes insufficient data when just changing those
 				// values, it does not send the whole update object.
 				case prop === 'color' || prop === 'gradientName':
+					console.log('hhhhh')
 					break;
 				case path[1] === 'gradient':
-					let colors = designObject.gradient.stops.map(c => c.color + ' ' + c.position ?? '')
+					const colors = designObject.gradient.stops.map(c => c.color + ' ' + c.position ?? '')
 					r = parseGradients('45deg', colors, 'array')
+					console.log(r)
 					break;
 		}
 	}

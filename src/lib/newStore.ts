@@ -5,127 +5,6 @@ import { browser } from '$app/environment';
 
 export const componentIndex = writable(null)
 
-export const createStylesheetStore = () => {
-
-	/**
-	 * 
-	 * @param {Object} payload 
-	 * @param {string} payload.targetElement - The Element To Add Pseudo Element To
-	 * @param {string} payload.pseudo - The Pseudo Element (:hover, :focus, etc)
-	 */
-	function addPseudoElement(payload, updateFn) {
-		updateFn(sheet => {
-			const { targetElement, pseudo } = payload
-			let len = sheet.cssRules.length
-
-			let pseudoExists = false
-
-			let targetIndex = -1 // should always exist, can't add pseudo over non existent element
-
-			for (const i of sheet.cssRules) {
-				if (i.selectorText.includes(targetElement)) {
-					if (i.selectorText.split(':')[1] === 'hover') {
-						pseudoExists = true;
-						break;
-					}
-				}
-			}
-			if (!pseudoExists) {
-				sheet.insertRule(`#${targetElement}:${pseudo} {}`, len)
-			}
-			return sheet
-		})
-	}
-
-
-	if (browser) {
-		const { update, subscribe} = writable(new CSSStyleSheet())
-
-		function log (s) {
-			if (s) {
-				let rules = s.cssRules
-				for (const r of rules) {
-					console.log(r)
-				}
-			} else {
-				update(sheet => {
-					let rules = sheet.cssRules
-					for (const r of rules) {
-						console.log(r)
-					}
-					return sheet
-				})
-			}
-		}
-
-		function addStyleToHover({ t , styles }) {
-			update(sheet => {
-				for (const i of sheet.cssRules) {
-					if (i.selectorText.split(':')[1] == 'hover' && i.selectorText.split(':')[0].includes(t)){
-						styles.map(style => {
-							let [k,v] = style
-							i.style[k] = v
-						})
-					}
-				}
-				return sheet
-			})
-		}
-
-		function addStyle(paylaod) {
-			const { t, styles } = paylaod;
-			update(sheet => {
-				for (const i of sheet.cssRules) {
-					if (i.selectorText === t){
-						styles.map(style => {
-							let [k,v] = style
-							i.style[k] = v
-						})
-					}
-				}
-				return sheet
-			})
-		}
-
-		
-		/**
-		 * @param {string} action
-		 */
-		function dispatch(action, payload) {
-			update(sheet => {
-				switch (action) {
-					case "ADD_PSEUDO":
-						addPseudoElement(payload, update)
-						break;
-					case 'addStyleHover':
-						addStyleToHover(payload)
-						break;
-					case 'addStyle':
-						addStyleToHover(payload)
-						break;
-					case 'deleteStyle':
-						break;
-					case 'updateStyle':
-						break;
-				
-					default:
-						break;
-				}
-				return sheet
-			})
-		}
-
-		return {
-			log, 
-			subscribe,
-			addStyleToHover,
-			dispatch
-		}
-	}
-}
-
-export const stylesheetStore = createStylesheetStore();
-
 export const site = writable({
 	site: {
 		utopia: UTOPIA_DEFAULT,
@@ -177,8 +56,8 @@ export const site = writable({
 					margin: { y: "0", x: "0" },
 					padding: { y: "4", x: "0" },
 					border: {
-						color: "",
-						width: "",
+						color: "red",
+						width: "1",
 						radius: 0,
 						style: 'solid',
 					},

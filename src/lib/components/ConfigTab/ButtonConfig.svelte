@@ -1,6 +1,7 @@
 <script>
-	import SpaceSetting from './Settings/SpaceSetting.svelte';
+	import SpaceSetting from "./Settings/SpaceSetting.svelte";
 	import Switch from "$lib/components/common/Switch.svelte";
+	import { stylesheetStore } from "$lib/sheetStore";
 
 	import ColorInput from "../../components/ColorInput.svelte";
 	import FieldGroup from "./FieldGroup.svelte";
@@ -18,7 +19,25 @@
 	let hoverState = false;
 
 	export let buttonConfig;
-	$: buttonConfig = buttonSchema.parse(buttonConfig);
+	$: {
+		buttonConfig = buttonSchema.parse(buttonConfig);
+		let t = buttonConfig.type + buttonConfig.id;
+		let styles = getStyles("button", buttonConfig.design, "array");
+		let payload = { t, styles };
+		stylesheetStore?.dispatch("ADD_STYLES", payload);
+	}
+	let selectorCurrent = buttonConfig.id + buttonConfig.type;
+	$: {
+		hoverState
+			? stylesheetStore.dispatch("ADD_PSEUDO", {
+					targetElement: selectorCurrent,
+					pseudo: "hover",
+			  })
+			: stylesheetStore.dispatch("DELETE_STYLE", {
+					targetElement: selectorCurrent,
+					pseudo: "hover",
+			  });
+	}
 
 	const buttonPaddingsSizings = [
 		{
@@ -77,11 +96,6 @@
 		}
 	}
 
-	// todo: accomplish text alignemnt
-	const textAlignmentHandler = (e) => {
-		const { value } = e.target;
-	};
-
 	// HOW TO FETCH DEFAULT COLORS FROM CSS VARIABLES??
 	// SITE's GENERAL SETTINGS..?
 	const onColorSelect = (e) => {
@@ -98,7 +112,12 @@
 		</FieldGroup>
 
 		<!-- Button Size -->
-		<FieldGroup label="Button Size" labelFor="btn-size" alignLabel="left" indicator={buttonPaddingsIndex}>
+		<FieldGroup
+			label="Button Size"
+			labelFor="btn-size"
+			alignLabel="left"
+			indicator={buttonPaddingsIndex}
+		>
 			<input
 				type="range"
 				min="0"
@@ -112,7 +131,6 @@
 		</FieldGroup>
 
 		<SpaceSetting onlyMargin bind:margin={buttonConfig.design.box.margin} />
-
 
 		<FieldGroup group={true} label="Color Settings" alignLabel="left">
 			<button
@@ -189,23 +207,23 @@
 		</FieldGroup>
 
 		<!-- ALIGNMENT -->
-		<TypographySetting 
-			settingName="textAlign" 
+		<TypographySetting
+			settingName="textAlign"
 			indicator={textAlignmentIndicator}
 			bind:value={buttonConfig.design.typography.textAlign}
-		 />
-		<TypographySetting 
-			settingName="fontSize" 
+		/>
+		<TypographySetting
+			settingName="fontSize"
 			bind:value={buttonConfig.design.typography.fontSize}
-		 />
-		<TypographySetting 
-			settingName="fontWeight" 
+		/>
+		<TypographySetting
+			settingName="fontWeight"
 			bind:value={buttonConfig.design.typography.fontWeight}
-		 />
-		<TypographySetting 
-			settingName="letterSpacing" 
+		/>
+		<TypographySetting
+			settingName="letterSpacing"
 			bind:value={buttonConfig.design.typography.letterSpacing}
-		 />
+		/>
 
 		<div class="[ field-group flow ] [ flex ]">
 			<!-- BEGINNING OF BORDER GROUP -->

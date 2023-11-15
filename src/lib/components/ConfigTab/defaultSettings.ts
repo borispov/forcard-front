@@ -1,5 +1,3 @@
-import type { CssBackground, CssBox, CssDiv, CssFlexLayout, CssGradient } from "../../../types/types";
-
 import type { ComponentRole, Layout, Text } from "$lib/schemas";
 
 const btnConf = {
@@ -201,14 +199,38 @@ const imgConf = {
 		placeholder_source: "https://images.placeholders.dev/?width=1055&height=100&text=This%20is%20just%20a%20placeholder&bgColor=%239af273&textColor=%236d6e71",
 	},
 	design: {
-		width: "100%",
-		height: "100%",
-		border: {},
-		imgFilter: "",
-		position: "static",
-		space: {
-			margin: {y: '0', x: '0'},
-			padding: {y: '0', x: '0'},
+		imgSettings: {
+			imgFilter: "none",
+			bend: "",
+		},
+		layout: {
+			position: "static",
+			top: "auto",
+			bottom: "auto",
+			right: "auto",
+			left: "auto",
+		},
+		box: {
+			maxWidth: "100%",
+			width: "auto",
+			height: "auto",
+			margin: { y: "0", x: "0" },
+			padding: { y: "4", x: "4" },
+			border: {
+				borderStyle: 'solid',
+				color: "#3d3d3d",
+				width: "",
+				radius: 0,
+			},
+		},
+		effects: {
+			dropShadow: {
+				vertical: 0,
+				horizontal: 0,
+				blur: 0,
+				spread: 0,
+				color: "#0000000A",
+			},
 		},
 	}
 }
