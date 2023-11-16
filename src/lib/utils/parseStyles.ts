@@ -325,9 +325,11 @@ const parseButtonStyles = (r: string | [], design: any) => {
 	return r;
 }
 
+// TODO: get img styles right
 const parseImageStyles = (r: string | [], design: any) => {
 	r = appendStyles(r, transformBoxToCss(design.box))
 	r = appendStyles(r, transformEffectsToCss(design.effects))
+	console.log('inside parser' , r)
 	return r
 }
 

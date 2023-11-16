@@ -139,8 +139,6 @@ const createStylesheetStore = () => {
 		/**
 		 * @param {'DELETE_STYLE'|'ADD_PSEUDO'|'ADD_HOVER_STYLE'|'ADD_STYLES'|'ADD_SINGLE_STYLE'} action
 		 * @param {Object} payload
-		 * @param {string} payload.targetElement
-		 * @param {string} payload.selectorText
 		 */
 		function dispatch(action, payload) {
 			update(sheet => {

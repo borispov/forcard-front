@@ -146,6 +146,7 @@
 			selectedComponentIndex !== null &&
 			isContainer($site.components, selectedComponentIndex)
 		) {
+			console.warn("I am a container?");
 			$site.components[selectedComponentIndex].children.push(e.id);
 		} else {
 			// add to root component

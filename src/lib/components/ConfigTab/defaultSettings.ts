@@ -51,7 +51,7 @@ const btnConf = {
 			margin: { y: "0", x: "0" },
 			padding: { y: "4", x: "6" },
 			border: {
-				borderStyle: 'solid',
+				style: 'solid',
 				color: "#3d3d3d",
 				width: "",
 				radius: 0,
@@ -172,7 +172,7 @@ const divConf = {
 			margin: { y: "0", x: "0" },
 			padding: { y: "4", x: "4" },
 			border: {
-				borderStyle: 'solid',
+				style: 'solid',
 				color: "#3d3d3d",
 				width: "",
 				radius: 0,
@@ -287,25 +287,25 @@ export const populateParagraphDefaults = (id: string, role: ComponentRole = 'p')
 }
 
 
-const pageConf = {
-	design: {
-		"padding-top": "var(--pt)",
-		"padding-bottom": "var(--pb)",
-		dir: "rtl",
-		background: "var(--g-bg-color)",
-		color: "var(--g-text-color)",
-		"font-family": "var(--g-ff)",
-		"font-size": "var(--g-fs)",
-		"font-weight": "var(--g-fw)",
-		"line-height": "var(--g-line-height)",
-		"letter-spacing": "var(--g-ls)",
-		"text-alignment": "var(--g-text-alignment)",
-		"margin-top": "",
-		"margin-bottom": "",
-		"padding-top": "",
-		"padding-bottom": "",
-	},
-};
+// const pageConf = {
+// 	design: {
+// 		"padding-top": "var(--pt)",
+// 		"padding-bottom": "var(--pb)",
+// 		dir: "rtl",
+// 		background: "var(--g-bg-color)",
+// 		color: "var(--g-text-color)",
+// 		"font-family": "var(--g-ff)",
+// 		"font-size": "var(--g-fs)",
+// 		"font-weight": "var(--g-fw)",
+// 		"line-height": "var(--g-line-height)",
+// 		"letter-spacing": "var(--g-ls)",
+// 		"text-alignment": "var(--g-text-alignment)",
+// 		"margin-top": "",
+// 		"margin-bottom": "",
+// 		"padding-top": "",
+// 		"padding-bottom": "",
+// 	},
+// };
 
 
 

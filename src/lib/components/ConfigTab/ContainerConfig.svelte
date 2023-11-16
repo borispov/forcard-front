@@ -28,7 +28,6 @@
 	import AlignMiddle from "../SVG/AlignMiddle.svelte";
 	import AlignBottom from "../SVG/AlignBottom.svelte";
 	import { onMount } from "svelte";
-	import Switch from "../common/Switch.svelte";
 
 	const UI_STEPPED_VALUES = [
 		"None",
@@ -85,20 +84,21 @@
 		currentElement = document.getElementById(divConfig.type + divConfig.id);
 	});
 
-	stylesheetStore &&
-		stylesheetStore?.dispatch("ADD_PSEUDO", {
-			pseudo: "hover",
-			targetElement: "container1",
-		});
-
-	stylesheetStore &&
-		stylesheetStore?.dispatch("ADD_HOVER_STYLE", {
-			targetElement: "container1",
-			styles: [
-				["background", "blue"],
-				["padding", "4em"],
-			],
-		});
+	// an example on how to add pseudo element styles
+	// stylesheetStore &&
+	// 	stylesheetStore?.dispatch("ADD_PSEUDO", {
+	// 		pseudo: "hover",
+	// 		targetElement: "container1",
+	// 	});
+	//
+	// stylesheetStore &&
+	// 	stylesheetStore?.dispatch("ADD_HOVER_STYLE", {
+	// 		targetElement: "container1",
+	// 		styles: [
+	// 			["background", "blue"],
+	// 			["padding", "4em"],
+	// 		],
+	// 	});
 
 	$: backgroundColorIndicator =
 		divConfig.design.background.type == "color" &&

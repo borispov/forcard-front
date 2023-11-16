@@ -2,6 +2,7 @@
 	import SpaceSetting from "./Settings/SpaceSetting.svelte";
 	import Switch from "$lib/components/common/Switch.svelte";
 	import { stylesheetStore } from "$lib/sheetStore";
+	import { getStyles } from "$lib/utils/parseStyles";
 
 	import ColorInput from "../../components/ColorInput.svelte";
 	import FieldGroup from "./FieldGroup.svelte";

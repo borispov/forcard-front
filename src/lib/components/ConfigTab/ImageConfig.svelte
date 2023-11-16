@@ -3,10 +3,20 @@
 	import FieldGroup from "./FieldGroup.svelte";
 	import ColorInput from "../ColorInput.svelte";
 	import ColorPicker from "svelte-awesome-color-picker";
+	import { getStyles } from "$lib/utils/parseStyles";
+	import { stylesheetStore } from "$lib/sheetStore";
 
 	import SpaceSetting from "./Settings/SpaceSetting.svelte";
 
 	export let imgConfig;
+
+	$: {
+		let t = imgConfig.type + imgConfig.id;
+		console.log("changing");
+		let styles = getStyles("img", imgConfig.design, "array");
+		let payload = { t, styles };
+		stylesheetStore?.dispatch("ADD_STYLES", payload);
+	}
 
 	// Localized state/variables
 	let borderOn = imgConfig.design.box.border.width != 0;
