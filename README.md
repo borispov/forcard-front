@@ -149,3 +149,47 @@ I decided: to fuck with it.
 Let's recreate a whole selector's css with EVERY change.
 Why not? I don't have to rewrite a ton of logic to handle and 'parse'
 various css changes.
+
+
+
+# UPDATE: 17.11.23
+Great results, I added a premade services section, need to implement
+ICONS next I think. Afterwards I'll work on forms.
+I think FORMS will take a lot of effort to make it right. lots of
+possibilities too.
+
+- I am proud I found a solution, although not the best but OK for now.
+- I couldn't figure out how to generate correct Id's for a bulk of
+    components so that they can relate to each other and adhere to the
+    general ID hierarchy of existing components. So, I found a simple
+    fix using a temporary variable that I increment and so on.
+
+    ```javascript
+        const addServicesTemplate = () => {
+		var _tmpId = setElementId($site.components);
+
+		// caution; function is NOT recursive. cannot deal with 2 levels of
+		// CONTAINERS!!!
+		servicesLayout.forEach((c, i, a) => {
+			if (c.children) {
+				if (c.id.length > 3) {
+					let prependedId = String(_tmpId);
+					_tmpId++;
+					servicesLayout[i].id = prependedId;
+				}
+
+				c.children.map((child, childId) => {
+					console.log(child);
+					let idInArray = findId(child, servicesLayout);
+					console.log(idInArray);
+
+					let newId = String(_tmpId);
+					_tmpId++;
+					servicesLayout[idInArray].id = newId;
+					servicesLayout[i].children[childId] = newId;
+				});
+			}
+		});
+
+	};
+    ```
