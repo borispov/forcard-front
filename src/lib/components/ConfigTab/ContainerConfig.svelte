@@ -8,6 +8,8 @@
 	import Accordion from "../common/Accordion.svelte";
 
 	import ShadowSetting from "./Fields/ShadowSetting.svelte";
+	import BorderSetting from "./Settings/BorderSetting.svelte";
+	import SpaceSetting from "./Settings/SpaceSetting.svelte";
 
 	import { getStyles } from "$lib/utils/parseStyles";
 	import { stylesheetStore } from "$lib/sheetStore";
@@ -274,89 +276,12 @@
 					/>
 				</div>
 
-				<!-- BEGINNING OF MARGINS GROUP -->
-				<FieldGroup label="Margins" labelFor="space" alignLabel="left">
-					<div class="field-row">
-						<div class="field-row repel">
-							<label for="margin_vertical">X-Axis</label>
-							<div class="indicator">
-								{UI_STEPPED_VALUES[Number(divConfig.design.box.margin.x)]}
-							</div>
-						</div>
-						<div class="field-row repel">
-							<label for="margin_horizontal">Y-Axis</label>
-							<div class="indicator">
-								{UI_STEPPED_VALUES[Number(divConfig.design.box.margin.y)]}
-							</div>
-						</div>
-					</div>
-					<div class="field-row">
-						<input
-							value={divConfig.design.box.margin.x}
-							id="margin_vertical"
-							name="margin_vertical"
-							type="range"
-							min="0"
-							max="8"
-							step="1"
-							on:input={(e) => setSpace("margin", "x", e.currentTarget.value)}
-						/>
-						<input
-							value={divConfig.design.box.margin.y}
-							id="margin_horizontal"
-							name="margin_horizontal"
-							type="range"
-							min="0"
-							max="8"
-							step="1"
-							on:input={(e) => setSpace("margin", "y", e.currentTarget.value)}
-						/>
-					</div>
-					<!-- END OF MARGINS GROUP -->
-
-					<!-- BEGINNING OF PADDINGS GROUP -->
-					<FieldGroup marginTop="var(--space-s)" label="Pad" labelFor="padding">
-						<div class="field-row">
-							<div class="field-row repel">
-								<label for="padding_vertical">X-Axis</label>
-								<div class="indicator">
-									{UI_STEPPED_VALUES[Number(divConfig.design.box.padding.x)]}
-								</div>
-							</div>
-							<div class="field-row repel">
-								<label for="padding_horizontal">Y-Axis</label>
-								<div class="indicator">
-									{UI_STEPPED_VALUES[Number(divConfig.design.box.padding.y)]}
-								</div>
-							</div>
-						</div>
-						<div class="field-row">
-							<input
-								value={divConfig.design.box.padding.x}
-								id="padding_vertical"
-								name="padding_vertical"
-								type="range"
-								min="0"
-								max="8"
-								step="1"
-								on:input={(e) =>
-									setSpace("padding", "x", e.currentTarget.value)}
-							/>
-							<input
-								value={divConfig.design.box.padding.y}
-								id="padding_horizontal"
-								name="padding_horizontal"
-								type="range"
-								min="0"
-								max="8"
-								step="1"
-								on:input={(e) =>
-									setSpace("padding", "y", e.currentTarget.value)}
-							/>
-						</div>
-						<!-- END OF PADDINGS GROUP -->
-					</FieldGroup>
-				</FieldGroup>
+				<Accordion label="Space">
+					<SpaceSetting
+						bind:margin={divConfig.design.box.margin}
+						bind:padding={divConfig.design.box.padding}
+					/>
+				</Accordion>
 
 				<Accordion label="Background">
 					<div>
@@ -496,58 +421,7 @@
 				</Accordion>
 
 				<Accordion label="Border">
-					<!-- START OF BORDER LOGIC -->
-					<FieldGroup labelFor="border">
-						<div class="field-row">
-							<label class="field-label" for="border-color">Color</label>
-							<ColorPicker
-								isPopup={false}
-								on:input={(e) => handleBorderChange(e, "color")}
-								hex={divConfig.design.box.border.color}
-								components={{ input: ColorInput }}
-							/>
-						</div>
-
-						<div class="field-row">
-							<label class="field-label" for="border-color">Width</label>
-							<input
-								type="range"
-								min="0"
-								max="6"
-								on:input={(e) => handleBorderChange(e, "width")}
-								value={divConfig.design.box.border.width}
-							/>
-						</div>
-
-						<div class="field-row">
-							<label class="field-label" for="border-style">Style</label>
-							<select
-								on:input={(e) => handleBorderChange(e, "style")}
-								value={divConfig.design.box.border.style}
-								name="border-style"
-								id="border-style"
-							>
-								<option value="solid">Solid</option>
-								<option value="dotted">Dotted</option>
-							</select>
-						</div>
-					</FieldGroup>
-					<FieldGroup
-						label="Border Radius"
-						labelFor="border-radius"
-						indicator={divConfig.design.box.border.radius}
-					>
-						<input
-							id="border-radius"
-							name="border-radius"
-							type="range"
-							min="0"
-							max="5"
-							step="1"
-							bind:value={divConfig.design.box.border.radius}
-						/>
-					</FieldGroup>
-					<!-- END OF BORDER LOGIC -->
+					<BorderSetting bind:border={divConfig.design.box.border} />
 				</Accordion>
 				<ShadowSetting bind:dropShadow={divConfig.design.effects.dropShadow} />
 			</div>

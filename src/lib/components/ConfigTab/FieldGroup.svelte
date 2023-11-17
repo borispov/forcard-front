@@ -3,7 +3,7 @@
 	export let label, labelFor;
 	export let alignLabel = "start";
 	export let marginTop = "var(--space-l)";
-	export let margins = "var(--space-3xs)";
+	export const margins = "var(--space-3xs)";
 	export let indicator = null;
 	export let suffix = null;
 	export let group = false;
@@ -60,7 +60,7 @@
 		justify-content: space-between;
 		width: 100%;
 		color: var(--text-light);
-		font-size: var(--step--2);
+		font-size: var(--step--1);
 		text-align: var(--align);
 	}
 

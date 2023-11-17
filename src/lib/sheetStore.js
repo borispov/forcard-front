@@ -9,25 +9,6 @@ const createStylesheetStore = () => {
 	 * @param {string} payload.targetElement - The Element To Add Pseudo Element To
 	 * @param {string} payload.pseudo - The Pseudo Element (:hover, :focus, etc)
 	 */
-	function addPseudoElement(payload, updateFn) {
-		updateFn(sheet => {
-			const { targetElement, pseudo } = payload
-			let len = sheet.cssRules.length
-			let pseudoExists = false
-			for (const i of sheet.cssRules) {
-				if (i.selectorText.includes(targetElement)) {
-					if (i.selectorText.split(':')[1] === 'hover') {
-						pseudoExists = true;
-						break;
-					}
-				}
-			}
-			if (!pseudoExists) {
-				sheet.insertRule(`#${targetElement}:${pseudo} {}`, len)
-			}
-			return sheet
-		})
-	}
 
 
 	if (browser) {
@@ -47,6 +28,31 @@ const createStylesheetStore = () => {
 				})
 			}
 		}
+
+
+		function addPseudoElement(payload) {
+			update(sheet => {
+				const { targetElement, pseudo } = payload
+				let len = sheet.cssRules.length
+				let pseudoExists = false
+				for (const i of sheet.cssRules) {
+					if (i.selectorText.includes(targetElement)) {
+						if (i.selectorText.split(':')[1] === 'hover') {
+							pseudoExists = true;
+							break;
+						}
+					}
+				}
+				if (!pseudoExists) {
+					sheet.insertRule(`#${targetElement}:${pseudo} {}`, len)
+				}
+				for (const i of sheet.cssRules) {
+					console.log(i.selectorText)
+				}
+				return sheet
+			})
+		}
+
 
 		/**
 		 * 
@@ -124,7 +130,9 @@ const createStylesheetStore = () => {
 			const { t, style } = payload;
 			update(sheet => {
 				for (const i of sheet.cssRules) {
-					if (i.selectorText === t){
+					console.log(t)
+					console.log(i.selectorText)
+					if (i.selectorText.includes(t)){
 						let [k,v] = style
 						i.style[k] = v
 					}
@@ -132,7 +140,6 @@ const createStylesheetStore = () => {
 				}
 				return sheet
 			})
-
 		}
 
 		
@@ -144,7 +151,7 @@ const createStylesheetStore = () => {
 			update(sheet => {
 				switch (action) {
 					case "ADD_PSEUDO":
-						addPseudoElement(payload, update)
+						addPseudoElement(payload)
 						break;
 					case 'ADD_HOVER_STYLE':
 						addStyleToHover(payload)

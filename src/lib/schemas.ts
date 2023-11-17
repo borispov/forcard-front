@@ -44,7 +44,7 @@ export const typographySchema = z.object({
 
 export const textDesignSchema = z.object({
 	typography: typographySchema,
-	background: backgroundSchema,
+	background: backgroundSchema.optional(),
 	box: z.object({
 		width: z.string(),
 		height: z.string(),
@@ -168,6 +168,8 @@ export const buttonSchema = z.object({
 export type Layout = z.infer<typeof containerSchema>;
 
 export type ComponentType = "button" | "p" | "container" | "text" | "form" | "img"
+
+export type TemplateType = "services"
 
 export type ComponentRole = 'h1' 
 	| 'h2' | 'h3' | 'h4' 

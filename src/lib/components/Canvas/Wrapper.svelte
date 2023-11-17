@@ -20,7 +20,9 @@
 	// helpers
 	let findElementIndex = (id: string) =>
 		components.findIndex((c) => c.id == id);
-	let getElementByIndex = (id: string) => components[findElementIndex(id)];
+	let getElementByIndex = (id: string) => {
+		return components[findElementIndex(id)];
+	};
 
 	onMount(() => {
 		latestContainerIndex = findElementIndex(component.id);
@@ -57,7 +59,7 @@
 				data-name={el.type}
 				draggable={true}
 				ondragover="return false"
-				on:dragstart={(event) =>
+				on:dragsTart={(event) =>
 					dragStart(
 						event,
 						latestContainerIndex,
@@ -95,6 +97,8 @@
 				on:mouseover|self={hoverHandler}
 				on:mouseout={hoverHandler}
 			/>
+		{:else if el.type == "icon"}
+			<span>ICON</span>
 		{:else if el && el.children}
 			<svelte:self
 				component={el}

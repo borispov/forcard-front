@@ -8,7 +8,6 @@
 
 	import { TEXT_ALIGN_VALS } from "$lib/utils/UI-CONSTANTS";
 
-	import type { CssSpaceUnit } from "../../../types/types";
 	import { textSchema } from "$lib/schemas";
 	import { getStyles } from "$lib/utils/parseStyles";
 	import { stylesheetStore } from "$lib/sheetStore";
@@ -28,17 +27,6 @@
 	type Text = z.infer<typeof textSchema>;
 
 	export let textConfig: Text;
-
-	$: textAlignmentIndicator =
-		TEXT_ALIGN_VALS[Number(textConfig.design.typography.textAlign)];
-
-	const setSpace = (spaceUnit: string, vec: string, val: string) => {
-		if (spaceUnit === "margin") {
-			textConfig.design.box.margin[vec as keyof CssSpaceUnit] = val;
-		} else if (spaceUnit === "padding") {
-			textConfig.design.box.padding[vec as keyof CssSpaceUnit] = val;
-		}
-	};
 
 	$: {
 		textConfig = textSchema.parse(textConfig);

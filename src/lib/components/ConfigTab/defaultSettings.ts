@@ -17,8 +17,8 @@ const btnConf = {
 		},
 		typography: {
 			fontFamily: "inherit",
-			color: "var(--text-color)",
-			fontSize: "2",
+			color: "var(--color-dark)",
+			fontSize: "1",
 			fontWeight: "2",
 			textAlign: "center",
 			letterSpacing: "-0.025",
@@ -31,7 +31,7 @@ const btnConf = {
 			type: "color",
 			opacity: 1,
 			blur: 0,
-			backgroundColor: "#ffffff",
+			backgroundColor: "var(--color-primary)",
 			pattern: {},
 			gradient: {
 				gradientStyle: "linear",
@@ -49,7 +49,7 @@ const btnConf = {
 			width: "auto",
 			height: "auto",
 			margin: { y: "0", x: "0" },
-			padding: { y: "4", x: "6" },
+			padding: { y: "2", x: "3" },
 			border: {
 				style: 'solid',
 				color: "#3d3d3d",

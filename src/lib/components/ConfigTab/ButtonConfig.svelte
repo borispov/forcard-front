@@ -1,9 +1,9 @@
 <script>
 	import SpaceSetting from "./Settings/SpaceSetting.svelte";
-	import Switch from "$lib/components/common/Switch.svelte";
 	import { stylesheetStore } from "$lib/sheetStore";
 	import { getStyles } from "$lib/utils/parseStyles";
 
+	import BorderSetting from "./Settings/BorderSetting.svelte";
 	import ColorInput from "../../components/ColorInput.svelte";
 	import FieldGroup from "./FieldGroup.svelte";
 	import ColorPicker from "svelte-awesome-color-picker";
@@ -11,33 +11,48 @@
 
 	import { buttonSchema } from "$lib/schemas";
 
-	import {
-		UI_STEPPED_TEXT_SIZES,
-		UI_STEPPED_TEXT_WEIGHTS,
-		TEXT_ALIGN_VALS,
-	} from "$lib/utils/UI-CONSTANTS";
+	import { TEXT_ALIGN_VALS } from "$lib/utils/UI-CONSTANTS";
+	import { derived, writable } from "svelte/store";
+	import { afterUpdate } from "svelte";
 
 	let hoverState = false;
 
 	export let buttonConfig;
+	let btnStore = writable(buttonConfig);
 	$: {
 		buttonConfig = buttonSchema.parse(buttonConfig);
+		$btnStore = buttonConfig;
 		let t = buttonConfig.type + buttonConfig.id;
 		let styles = getStyles("button", buttonConfig.design, "array");
 		let payload = { t, styles };
 		stylesheetStore?.dispatch("ADD_STYLES", payload);
 	}
-	let selectorCurrent = buttonConfig.id + buttonConfig.type;
+	let selectorCurrent = buttonConfig.type + buttonConfig.id;
+
+	let hoverStyles = derived(btnStore, ($btnStore) => {
+		return {
+			color: $btnStore.design.typography.hover.color,
+			background: $btnStore.design.background.hover.backgroundColor,
+		};
+	});
+
+	// TODO: WRONG approach, must FIX
+	// Probably should add pseudo element if the styles AREN"T EMPTY
+	// AND should only add this if it odesn't exist
+	afterUpdate(() => {
+		if (!$hoverStyles.color && !$hoverStyles.background) {
+			stylesheetStore.dispatch("DELETE_STYLE", {
+				targetElement: selectorCurrent + ":hover",
+			});
+		}
+	});
 	$: {
-		hoverState
-			? stylesheetStore.dispatch("ADD_PSEUDO", {
-					targetElement: selectorCurrent,
-					pseudo: "hover",
-			  })
-			: stylesheetStore.dispatch("DELETE_STYLE", {
-					targetElement: selectorCurrent,
-					pseudo: "hover",
-			  });
+		$hoverStyles.color &&
+			$hoverStyles.background &&
+			stylesheetStore.dispatch("ADD_PSEUDO", {
+				targetElement: selectorCurrent,
+				pseudo: "hover",
+			});
 	}
 
 	const buttonPaddingsSizings = [
@@ -58,34 +73,24 @@
 	// normal
 	$: buttonPaddingsIndex = 1;
 
-	let onPaddingsChange = () => {
+	const onPaddingsChange = () => {
 		buttonConfig.design.box.padding = {
 			y: buttonPaddingsSizings[buttonPaddingsIndex].values[0],
 			x: buttonPaddingsSizings[buttonPaddingsIndex].values[1],
 		};
 	};
 
-	let onMarginsChange = (vec, val) => {
-		buttonConfig.design.box.margin[vec] = val;
+	const onHoverStyleChange = (e, prop) => {
+		const value = e.detail.hex;
+		const payload = {
+			targetElement: selectorCurrent,
+			styles: [[prop, value]],
+		};
+		stylesheetStore.dispatch("ADD_HOVER_STYLE", payload);
 	};
 
 	$: textAlignmentIndicator =
 		TEXT_ALIGN_VALS[Number(buttonConfig.design.typography.textAlign)];
-	$: fsIndicator =
-		UI_STEPPED_TEXT_SIZES[buttonConfig.design.typography.fontSize];
-	$: fwIndicator =
-		UI_STEPPED_TEXT_WEIGHTS[buttonConfig.design.typography.fontWeight] ||
-		"Default";
-	$: borderOn = true;
-
-	$: backgroundColor = null;
-
-	let colorIndicator = buttonConfig.design.typography.color;
-
-	const changeBorderRadius = (val) => {
-		console.log("changing to val: ", val);
-		buttonConfig.design.box.border.radius = val;
-	};
 
 	function updateButtonConfig(event) {
 		const { name, value, type, checked } = event.target;
@@ -152,6 +157,7 @@
 					<ColorPicker
 						bind:hex={buttonConfig.design.background.hover.backgroundColor}
 						isPopup={false}
+						on:input={(e) => onHoverStyleChange(e, "background")}
 						components={{ input: ColorInput }}
 					/>
 				</FieldGroup>
@@ -159,6 +165,7 @@
 				<FieldGroup label="Color" alignLabel="center" labelFor="text-content">
 					<ColorPicker
 						bind:hex={buttonConfig.design.typography.hover.color}
+						on:input={(e) => onHoverStyleChange(e, "color")}
 						isPopup={false}
 						components={{ input: ColorInput }}
 					/>
@@ -226,104 +233,14 @@
 			bind:value={buttonConfig.design.typography.letterSpacing}
 		/>
 
-		<div class="[ field-group flow ] [ flex ]">
-			<!-- BEGINNING OF BORDER GROUP -->
-			<div class="[ field-group ]">
-				<div class="field-row repel">
-					<label for="text-content">Border</label>
-					<div class="indicator">
-						<Switch
-							design="slider"
-							fontSize={14}
-							label=""
-							bind:value={borderOn}
-							actionOnClick={() => {
-								// remove Border-Radius when switched OFF
-								if (!borderOn) {
-									console.log("WE SWITCHED OFF");
-									buttonConfig.design.box.border.radius = 0;
-								}
-							}}
-						/>
-					</div>
-				</div>
-
-				{#if borderOn}
-					<div class="repel border-icons">
-						<button
-							on:click={() => changeBorderRadius(0)}
-							style="border-radius: 0;">0</button
-						>
-						<button
-							on:click={() => changeBorderRadius(1)}
-							style="border-radius: .25em;">0.25</button
-						>
-						<button
-							on:click={() => changeBorderRadius(2)}
-							style="border-radius: .5em;">0.5</button
-						>
-						<button
-							on:click={() => changeBorderRadius(3)}
-							style="border-radius: .75em;">0.75</button
-						>
-						<button
-							on:click={() => changeBorderRadius(4)}
-							style="border-radius: 9999px;">100%</button
-						>
-					</div>
-				{/if}
-			</div>
-		</div>
+		<BorderSetting bind:border={buttonConfig.design.box.border} />
 	</div>
 </section>
 
 <style>
 	.panel {
 		padding-inline: var(--space-s-m);
-	}
-
-	label {
-		display: inline-block;
-		font-size: 1rem;
-		font-weight: bold;
-		margin: 0 0 1em;
-		color: var(--color-light);
-	}
-
-	.field-group {
-		display: flex;
-		flex-wrap: wrap;
-		padding-bottom: var(--space-m);
-		width: 100%;
-	}
-
-	.field-group > * {
-		width: 100%;
-	}
-
-	.field-row {
-		width: 80%;
-	}
-
-	.repel {
-		--repel-vertical-alignment: baseline;
-	}
-
-	.border-icons {
 		font-size: 12px;
-		gap: 0;
-	}
-
-	.border-icons button {
-		border-radius: 0.25em;
-		background-color: var(--color-onyx);
-		padding: 0 var(--space-xs);
-	}
-
-	.border-icons button:hover {
-		background-color: var(--button-background);
-		color: inherit;
-		border-radius: 0.25em;
 	}
 
 	.btn-hover {

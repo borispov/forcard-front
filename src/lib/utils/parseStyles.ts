@@ -131,13 +131,17 @@ export const transformBoxToCss = (o: Box) => {
 				// r += `padding: ${paddingY} ${paddingX};\n` 
 				break;
 			case 'border':
+				if (o.border) {
+					r = appendStyles(r, createCssProp('border-radius', `${o.border.radius}em`))
+				}
 				if (!o.border || !o.border.width || !o.border.color || !o.border.style) break;
 				r = appendStyles(r, createCssProp( 'border', `${o.border.width}px ${o.border.style} ${o.border.color}`))
-				r = appendStyles(r, createCssProp('border-radius', `${o.border.radius}em`))
 				break;
 			case 'width':
 				tmpCssValue = GLOBAL_MODE === 'string'
-					? parseWidth(Number(o.width))
+					? o.width === 'auto' 
+						? createCssProp('width', o.width)
+						: parseWidth(Number(o.width))
 					: parseWidthValue(Number(o.width))
 				r = appendStyles(r, tmpCssValue)
 				// r += parseWidth(Number(o.width));
@@ -249,7 +253,6 @@ const transformEffectsToCss = (o: any) => {
 			const { vertical, horizontal, blur, spread, color } = o.dropShadow;
 			const boxShadowValue = vertical + 'px ' + horizontal + 'px ' + blur + 'px ' + spread + 'px ' + color;
 			tmpCssValue = createCssProp('box-shadow', boxShadowValue)
-			console.log(tmpCssValue)
 			r = appendStyles(r, tmpCssValue)
 			// r += `box-shadow: ${boxShadowValue};\n`
 		}
@@ -326,13 +329,34 @@ const parseButtonStyles = (r: string | [], design: any) => {
 }
 
 // TODO: get img styles right
+// NOTE_TO_SELF: What is not right !?@# how should I remember?!
 const parseImageStyles = (r: string | [], design: any) => {
 	r = appendStyles(r, transformBoxToCss(design.box))
 	r = appendStyles(r, transformEffectsToCss(design.effects))
-	console.log('inside parser' , r)
 	return r
 }
 
+const parseIconStyles = (r: string | [], design: any) => {
+	r = appendStyles(r, transformBoxToCss(design.box))
+	r = appendStyles(r, transformBackgroundToCss(design.background))
+
+	return r
+}
+
+/**
+ * The main parser function to generate CSS rules out of JS objects
+ * @param {string} type 
+ * @param {Object} styles - the styles object, different for each type of element
+ * @param {string} mode - dictates the type of return value
+ * @returns {string|Array.<string[]>}
+ * @example 
+ * ```javascript
+ * [ 
+ *		[ 'background', '#ffffff'],
+ *		[ 'width', '10em'],
+ * ]
+ * ```
+ */
 export const getStyles = (type: string, styles: any, mode: string = 'string') => {
 	GLOBAL_MODE = mode
 	let r = GLOBAL_MODE === 'string' ? '' : [];
@@ -353,6 +377,8 @@ export const getStyles = (type: string, styles: any, mode: string = 'string') =>
 			const buttonStyles = buttonDesignSchema.parse(styles);
 			r = parseButtonStyles(r, buttonStyles)
 			break;
+		case 'icon':
+			r = parseIconStyles(r, styles)
 		default:
 			break;
 	}

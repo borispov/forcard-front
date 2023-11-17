@@ -1,18 +1,10 @@
 <script lang="ts">
 	import ConfigHeader from "./ConfigHeader.svelte";
-	import DivConfig from "./DivConfig.svelte";
 	import ContainerConfig from "./ContainerConfig.svelte";
 	import TextCfg from "./TextCfg.svelte";
-	import TextConfig from "./TextConfig.svelte";
 	import ButtonConfig from "./ButtonConfig.svelte";
 	import ParagraphConfig from "./ParagraphConfig.svelte";
 	import ImageConfig from "./ImageConfig.svelte";
-	import type {
-		ImageElement,
-		ButtonElement,
-		ContainerElement,
-		TextElement,
-	} from "../../../types/components";
 
 	export let component: any;
 	export let removeHandler: Function;
