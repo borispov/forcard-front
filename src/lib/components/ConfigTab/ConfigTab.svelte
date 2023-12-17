@@ -1,4 +1,6 @@
 <script lang="ts">
+	// TODO:
+	// ADD Form elements to be configurable
 	import ConfigHeader from "./ConfigHeader.svelte";
 	import ContainerConfig from "./ContainerConfig.svelte";
 	import TextCfg from "./TextCfg.svelte";

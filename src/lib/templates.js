@@ -120,7 +120,7 @@ const makeIcon = (serviceNum) => ({
 			type: "color",
 			opacity: 1,
 			blur: 0,
-			backgroundColor: "",
+			backgroundColor: "black",
 			pattern: {},
 			hover: {
 				backgroundColor: "",
@@ -149,7 +149,7 @@ const makeHeader = (serviceNum, content) => ({
 	design: {
 		typography: {
 			fontFamily: "inherit",
-			color: "var(--text-color)",
+			color: "#000000",
 			fontSize: "2",
 			fontWeight: "1",
 			textAlign: "center",
@@ -186,7 +186,7 @@ const makeParagraph = (serviceNum, content) => ({
 	design: {
 		typography: {
 			fontFamily: "inherit",
-			color: "var(--text-color)",
+			color: "#000000",
 			fontSize: "0",
 			fontWeight: "0",
 			textAlign: "center",
@@ -213,7 +213,6 @@ const makeParagraph = (serviceNum, content) => ({
 		},
 	}
 })
-
 
 export const servicesLayout = [
 		serviceElement,

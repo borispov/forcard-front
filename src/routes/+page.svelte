@@ -5,6 +5,9 @@
 	import Canvas from "$lib/components/Canvas/Canvas.svelte";
 	import ConfigTab from "$lib/components/ConfigTab/ConfigTab.svelte";
 	import { servicesLayout } from "$lib/templates";
+	import { formTemplate } from "$lib/templates/formTemplate";
+
+	import { mapTemplateToComponents } from "$lib/utils/mapTemplate";
 
 	import Bar from "$lib/components/Bar.svelte";
 	import global from "$lib/styles/global.css";
@@ -158,40 +161,86 @@
 		selectComponentById(e.id);
 	};
 
-	const findId = (id, arr) => {
-		return arr.findIndex((c) => c.id == id);
+	const addFormTemplate = () => {
+		function appendClassNames(element, parentType, parentId) {
+			if (parentType !== element.type) {
+				element.className = `${parentType + parentId}__${element.role}`;
+				return element;
+			}
+			return element;
+		}
+
+		var _tmpId = setElementId($site.components);
+		console.log("my temporary id: ", _tmpId);
+		const mappedServices = mapTemplateToComponents(formTemplate, _tmpId).map(
+			(parent) => appendClassNames(parent, "form", _tmpId)
+		);
+
+		// take the <form> element
+		let formElement = mappedServices[0];
+		console.log(mappedServices);
+		console.log(formElement);
+
+		const formElementCss = getComponentStyles(
+			formElement.id,
+			formElement.type,
+			formElement.design
+		);
+		$stylesheetStore?.insertRule(formElementCss);
+
+		// Create input class styles
+		const inputClassSelector = `.${formElement.type + formElement.id}__input`;
+		const inputClass = generateSelector(
+			null,
+			"input",
+			null,
+			inputClassSelector
+		);
+		const inputRule = generateRule(
+			inputClass,
+			getStyles("input", formElement.design.misc.input)
+		);
+		$stylesheetStore?.insertRule(inputRule);
+
+		// Create Label class styles
+		const labelClassSelector = `.${formElement.type + formElement.id}__label`;
+		const labelClass = generateSelector(
+			null,
+			"label",
+			null,
+			labelClassSelector
+		);
+		const labelRule = generateRule(
+			labelClass,
+			getStyles("label", formElement.design.misc.label)
+		);
+		$stylesheetStore?.insertRule(labelRule);
+
+		// Create Button class styles
+		const buttonClassSelector = `.${formElement.type + formElement.id}__button`;
+		const buttonClass = generateSelector(
+			null,
+			"button",
+			null,
+			buttonClassSelector
+		);
+		let buttonRule = generateRule(
+			buttonClass,
+			getStyles("button", formElement.design.misc.button)
+		);
+		$stylesheetStore?.insertRule(buttonRule);
+
+		// push form components into the component-tree
+		$site.components = [...$site.components, ...mappedServices];
 	};
 
 	const addServicesTemplate = () => {
 		var _tmpId = setElementId($site.components);
 
-		// Great Logic. extract to a function and make templates!!!
-		// Great time to use classnames to control elements uniformly.
-		// caution; function is NOT recursive. cannot deal with 2 levels of
-		// CONTAINERS!!!
-		servicesLayout.forEach((c, i, a) => {
-			if (c.children) {
-				if (c.id.length > 3) {
-					let prependedId = String(_tmpId);
-					_tmpId++;
-					servicesLayout[i].id = prependedId;
-				}
+		const mappedServices = mapTemplateToComponents(servicesLayout, _tmpId);
 
-				c.children.map((child, childId) => {
-					console.log(child);
-					let idInArray = findId(child, servicesLayout);
-					console.log(idInArray);
-
-					let newId = String(_tmpId);
-					_tmpId++;
-					servicesLayout[idInArray].id = newId;
-					servicesLayout[i].children[childId] = newId;
-				});
-			}
-		});
-
-		$site.components = [...$site.components, ...servicesLayout];
-		for (let serviceEl of servicesLayout) {
+		$site.components = [...$site.components, ...mappedServices];
+		for (let serviceEl of mappedServices) {
 			const elementCss = getComponentStyles(
 				serviceEl.id,
 				serviceEl.type,
@@ -301,14 +350,20 @@
 
 	const getComponentStyles = (id, type, designObject) => {
 		const cssRules = getStyles(type, designObject);
+		type == "form" && console.log(cssRules);
 		const selector = generateSelector(id, type);
 		const style = generateRule(selector, cssRules);
 		return style;
 	};
+
+	const templateCallbacks = {
+		addServicesTemplate,
+		addFormTemplate,
+	};
 </script>
 
 <main class="layout u-grid">
-	<Bar {addElement} {addServicesTemplate} />
+	<Bar {addElement} {...templateCallbacks} />
 	<div class="sidebar">
 		{#if selectedComponentId && selectedComponentIndex !== null}
 			<ConfigTab

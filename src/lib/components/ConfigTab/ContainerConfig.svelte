@@ -31,18 +31,6 @@
 	import AlignBottom from "../SVG/AlignBottom.svelte";
 	import { onMount } from "svelte";
 
-	const UI_STEPPED_VALUES = [
-		"None",
-		"2XS",
-		"Extra Small",
-		"Small",
-		"Medium",
-		"Large",
-		"XL",
-		"2XL",
-		"3XL",
-	];
-
 	let currentElement: HTMLElement | null;
 
 	type Layout = z.infer<typeof containerSchema>;
@@ -122,38 +110,7 @@
 		divConfig.design.background.type == "gradient" &&
 		divConfig.design.background.gradient.gradientName;
 
-	let borderOn = false;
-
-	const handleBorderButton = () => {
-		borderOn = !borderOn;
-	};
-
-	const handleBorderChange = (e, borderProp: string) => {
-		switch (borderProp) {
-			case "color":
-				const val = e.detail.hex;
-				divConfig.design.box.border.color = val;
-				break;
-			case "width":
-				divConfig.design.box.border.width = e.target.value;
-				break;
-			case "style":
-				divConfig.design.box.border.style = e.target.value;
-				break;
-			default:
-				break;
-		}
-	};
-
 	let widthIndicator = divConfig.design.box.width;
-
-	const setSpace = (spaceUnit: string, vec: string, val: string) => {
-		if (spaceUnit === "margin") {
-			divConfig.design.box.margin[vec as keyof CssSpaceUnit] = val;
-		} else if (spaceUnit === "padding") {
-			divConfig.design.box.padding[vec as keyof CssSpaceUnit] = val;
-		}
-	};
 
 	const onWidthCustom = (e: Event) => {
 		// maybe store values above 100% as max1, max2, max3?
@@ -181,6 +138,23 @@
 		const gradientCopy = divConfig.design.background.gradient;
 		gradientCopy.stops[index][posOrColor] = value;
 		divConfig.design.background.gradient = gradientCopy;
+	};
+
+	// NEED TO ADD IMAGE TYPE ON SCHEMA
+	const onFileSelect = (e, type) => {
+		if (type === "url") {
+			divConfig.design.background.image.settings.source = e.target.value;
+			return;
+		}
+		const inputTarget = e.target;
+		console.log("trying to upload an image");
+		let image = inputTarget.files[0];
+		let reader = new FileReader();
+		reader.readAsDataURL(image);
+		reader.onload = (e) => {
+			// files[0] = e.target.result;
+			divConfig.design.background.image.settings.source = e.target.result;
+		};
 	};
 </script>
 
@@ -293,11 +267,83 @@
 									{ label: "None", value: "none" },
 									{ label: "Color", value: "color" },
 									{ label: "Gradient", value: "gradient" },
+									{ label: "Image", value: "image" },
 								]}
 								bind:userSelected={divConfig.design.background.type}
 							/>
 						</FieldGroup>
-						<!-- END OF BACKGROUND TYPE PICK -->
+
+						<!-- ... START FILE SELECT ... -->
+						{#if divConfig.design.background.type == "image"}
+							<FieldGroup
+								label="Color"
+								labelFor="backgroundColor"
+								alignLabel="left"
+							>
+								<div class="[ field-group ]">
+									<div class="field-row repel">
+										<label for="text-content">Background Color</label>
+									</div>
+
+									<ColorPicker
+										isPopup={false}
+										bind:hex={divConfig.design.background.image.overlay
+											.backgroundColor}
+										components={{ input: ColorInput }}
+									/>
+
+									<FieldGroup label="Image File / Url" labelFor="img" group>
+										<input
+											accept=".jpg"
+											type="file"
+											alt="Choose Image File"
+											id="img-file"
+											on:change={onFileSelect}
+										/>
+										<input
+											type="url"
+											alt="Choose Image File"
+											id="img-file"
+											on:change={(e) => onFileSelect(e, "url")}
+											placeholder="Image Url"
+										/>
+									</FieldGroup>
+
+									<FieldGroup label="Blend Mode" labelFor="img-blend">
+										<select
+											bind:value={divConfig.design.background.image.overlay
+												.blendMode}
+										>
+											<option value="default">Default</option>
+											<option value="multiply">Multiply</option>
+											<option value="darken">Darken</option>
+											<option value="overlay">Overlay</option>
+										</select>
+									</FieldGroup>
+								</div>
+								<!-- OPACITY -->
+								<div class="field-row repel">
+									<label for="text-content">Opacity (0 to 1)</label>
+									<label for="text-content">Blur (0 to 1)</label>
+								</div>
+								<div class="field-row">
+									<input
+										type="text"
+										name="bg-opacity"
+										oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');"
+										bind:value={divConfig.design.background.opacity}
+									/>
+
+									<input
+										type="text"
+										name="bg-blur"
+										oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');"
+										bind:value={divConfig.design.background.blur}
+									/>
+								</div>
+							</FieldGroup>
+						{/if}
+						<!-- END OF COLOR PICK -->
 
 						<!-- START OF COLOR PICK -->
 						{#if divConfig.design.background.type == "color"}

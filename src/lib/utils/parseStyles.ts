@@ -5,6 +5,7 @@ import { containerDesignSchema, textDesignSchema, typographySchema, backgroundSc
 import { STEPPED_TEXT_VALUES, STEPPED_VALUES, FONT_WEIGHTS } from "$lib/utils/UI-CONSTANTS";
 
 import { parseBorder, parseWidth, parseWidthValue } from "./styleParser";
+import { append } from "svelte/internal";
 
 let GLOBAL_MODE = 'string' // RETURN CSS AS STRING | ARRAY
 
@@ -39,6 +40,7 @@ const appendStyles = (r: any, css: any) => {
 }
 
 const boxMap = {
+	maxWidth: 'max-width',
 	width: 'width',
 	height: 'height',
 	margin: 'margin',
@@ -86,6 +88,7 @@ type TextDesign = z.infer<typeof textDesignSchema>;
 type Box = z.infer<typeof boxSchema>;
 type Typography = z.infer<typeof typographySchema>
 type Background = z.infer<typeof backgroundSchema>
+
 
 
 export const transformImageToCss = (o) => {
@@ -147,6 +150,7 @@ export const transformBoxToCss = (o: Box) => {
 				// r += parseWidth(Number(o.width));
 				break;
 			default:
+				console.log(cssProp)
 				tmpCssValue = createCssProp(boxMap[cssProp], o[cssProp])
 				r = appendStyles(r, tmpCssValue)
 				// r += `${boxMap[cssProp]}: ${o[cssProp]};\n`
@@ -215,7 +219,21 @@ export const parseGradients = (angle:any = '45right', colors: string[], mode = G
 	]
 )
 
-export const parseBackgroundColor = ( o: Background, mode = GLOBAL_MODE ) => {
+export const parseBackgroundColor = ( o: Background, isOverlay = false, mode = GLOBAL_MODE ) => {
+	if (isOverlay) {
+		return mode == 'string'
+			? `background: ${o.image?.overlay.backgroundColor ?? ""};
+			width: 100%; 
+			height: 100%;
+			position: relative;`
+			:[
+					['background', `${o.image?.overlay.backgroundColor ?? ""}` ],
+					['height', '100%'],
+					['width', '100%'],
+					['position', 'relative']
+		]
+	}
+
 	let r = mode == 'string'
 		? `background: ${o.backgroundColor};\n opacity: ${o.opacity};\n blur: ${o.blur};`
 		: [
@@ -225,24 +243,19 @@ export const parseBackgroundColor = ( o: Background, mode = GLOBAL_MODE ) => {
 }
 
 const transformBackgroundToCss = (o: Background) => {
-	var tmpCssValue:string | string[][] = '';
-
 	switch (o.type) {
 		default:
 		case 'gradient':
 			let colors = o.gradient.stops.map(c => c.color + ' ' + c.position ?? '')
 			return parseGradients(o.gradient.angle, colors)
-			tmpCssValue = parseGradients(o.gradient.angle, colors)
-			// r = appendStyles(r, tmpCssValue)
-			// r += tmpCssValue
-			break;
 		case 'color':
 			return parseBackgroundColor(o)
-			tmpCssValue = parseBackgroundColor(o)
-			// r = appendStyles(r, tmpCssValue)
-			// r += tmpCssValue
+		case 'image':
+			// the overlay source image happens on Wrapper Component, it
+			// renders additional nested <div></div> with absolute positin and
+			// puts the source image onto it.
+			return parseBackgroundColor(o, true)
 	}
-	return tmpCssValue
 }
 
 const transformEffectsToCss = (o: any) => {
@@ -304,7 +317,6 @@ const transformLayoutToCss = (o: any) => {
 	return r;
 }
 
-
 const parseTextStyles = (r: string | [], design: TextDesign ) => {
 	r = appendStyles(r, transformTypographyToCss(design.typography))
 	r = appendStyles(r, transformBoxToCss(design.box))
@@ -343,6 +355,22 @@ const parseIconStyles = (r: string | [], design: any) => {
 	return r
 }
 
+const parseFormStyles = (r: string | [], design: any) => {
+	// r = appendStyles(r, transformBackgroundToCss(design))
+	r = appendStyles(r, transformBoxToCss(design.box))
+	r = appendStyles(r, transformLayoutToCss(design.layout))
+	// r = appendStyles(r, transformFormStyles(design))
+
+	return r
+}
+
+const parseInputStyles = (r, design: any) => {
+	r = appendStyles(r, transformTypographyToCss(design.typography))
+	r = appendStyles(r, transformBoxToCss(design.box))
+	// r = appendStyles(r, transformMisc(design.misc))
+	return r
+}
+
 /**
  * The main parser function to generate CSS rules out of JS objects
  * @param {string} type 
@@ -362,6 +390,15 @@ export const getStyles = (type: string, styles: any, mode: string = 'string') =>
 	let r = GLOBAL_MODE === 'string' ? '' : [];
 
 	switch (type) {
+		case 'form':
+			r = parseFormStyles(r, styles)
+			break;
+		case 'input':
+			r = parseInputStyles(r, styles)
+			break;
+		case 'label':
+			r = appendStyles(r, transformTypographyToCss(styles.typography))
+			break;
 		case 'text':
 			const textStyles = textDesignSchema.parse(styles);
 			r = parseTextStyles(r, textStyles)

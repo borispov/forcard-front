@@ -193,3 +193,67 @@ possibilities too.
 
 	};
     ```
+
+
+
+## What's next? Roadmap.
+
+I feel like I'm ignoring an important question for weeks now:
+
+### Why Do I Not Use TailwindCSS?
+
+__I wanted to see if I can implement everything myself, without it,
+supplementing my work with Utopia.fyi tools, etc. Theoretically, or even
+practically like Andy Bell has done, I can merge them together (maybe?)
+.__
+
+
+- I want to focus on user workflow and make sure that I can achieve
+certain things using the app. For instance, can I creat a beautiful Hero Section of a regular, standard, landing page?
+
+- Make sure I got everything I need to make it work:
+    - Image element working as expected.
+    - Containers are able to satisfy the need.
+        - Do I need overlays? Yes. How To?
+        - Add Overlays on containers?
+    - Text elements working as expected.
+    - Buttons too?
+
+- Atomic colors / configurable color palettes.
+- Define unique functionality and setting options for a Submit Button.
+
+
+## Return to coding at 15.12.23:
+
+#### TODO: 
+- Add Form elements to be configurable
+- Tidy up the form styles
+- Hook up form elements data to be saved somehow, somewhere.
+- Add A Hero Section, this would be a major advancement towards first
+    release end goal
+
+
+## What do I need for a launch? Mvp.
+Mvp stands for most viable product. somehitng like that...
+I think I need templates! but they also have to be configurable.
+Forms, timers, counters, stuff like that.
+
+What about placing an absolute image behind a wrapper/container as
+a background image?...
+
+## 18.12.23 - Image Overlay - DONE
+I settled on using img tag for creating an overlay. 
+It's currently only possible to use multiply, darken and overlay mix
+blend modes. I just want to make it work first.
+
+Currently, the situation is quite bad.
+
+I need more fundamental features ASAP.
+
+# TODO:
+- Form is not functional.
+    - Connect forms to some sort of a state. How data will be saved?
+    - Should probably limit 1 form per account
+    - Form inputs, or Form elements themselves, are NOT configurable, yet.
+
+- Build a simple template. Maybe a timedown, a Hero Section with a signup form.

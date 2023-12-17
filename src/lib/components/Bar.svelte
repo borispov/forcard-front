@@ -7,6 +7,7 @@
 	 */
 	export let addElement;
 	export let addServicesTemplate;
+	export let addFormTemplate;
 
 	const openGlobalSettings = () => {};
 	const openPublishSettings = () => {};
@@ -108,6 +109,12 @@
 
 	{#if addMenuOpened}
 		<div class="add-button-wrap" transition:fade>
+			<button
+				class="add-button float-menu-item"
+				on:click={() => addFormTemplate()}
+			>
+				Form
+			</button>
 			<button
 				class="add-button float-menu-item"
 				on:click={() => addServicesTemplate()}

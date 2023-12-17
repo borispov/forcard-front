@@ -162,6 +162,19 @@ const divConf = {
 					{ color: "#89c89a", position: "" },
 				],
 			},
+			image: {
+				overlay: {
+					backgroundColor: "",
+					blendMode: "default",
+				},
+				settings: {
+					source: '',
+					altText: 'alt text is good for accessibility',
+					link: {},
+					placeholder: true,
+					placeholder_source: "https://images.placeholders.dev/?width=1055&height=100&text=This%20is%20just%20a%20placeholder&bgColor=%239af273&textColor=%236d6e71",
+				},
+			},
 			hover: {
 				backgroundColor: "",
 			}

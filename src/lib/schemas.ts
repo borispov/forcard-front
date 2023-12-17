@@ -16,6 +16,18 @@ export const backgroundSchema = z.object({
 		gradientName: z.string().optional(),
 		gradientValue: z.string().optional(),
 	}),
+	image: z.object({
+		overlay: z.object({
+			backgroundColor: z.string().optional(),
+			blendMode: z.string().optional(),
+		}),
+		settings: z.object({ 
+			source: z.string(),
+			altText: z.string().optional(),
+			placeholder: z.boolean(),
+			placeholder_source: z.string(),
+		}),
+	}).optional(),
 	hover: z.object({
 		backgroundColor: z.string().optional(),
 	})
@@ -102,6 +114,7 @@ const layoutSchema = z.object({
 
 const boxSchema = z.object({
 	width: z.string(),
+	maxWidth: z.string().or(z.number()).optional(),
 	height: z.string(),
 	margin: z.object({ x: z.string(), y: z.string() }),
 	padding: z.object({ x: z.string(), y: z.string() }),
@@ -150,6 +163,49 @@ export const buttonDesignSchema = z.object({
 	effects: z.object({
 		dropShadow: dropShadowSchema,
 	}),
+})
+
+export const formSchema = z.object({
+	id: z.string(),
+	role: z.string(),
+	type: z.literal("form"),
+	children: z.array(z.string()),
+	// settings: z.object({
+	// }),
+	design: z.object({
+		layout: layoutSchema,
+		background: backgroundSchema,
+		box: boxSchema,
+	}),
+})
+
+// TODO::
+// add some iput specific properties like focus and outline
+export const inputSchema = z.object({
+	id: z.string(),
+	role: z.string(),
+	type: z.literal("form"),
+	design: z.object({
+		typography: typographySchema,
+		background: backgroundSchema.optional(),
+		box: z.object({
+			width: z.string(),
+			height: z.string(),
+			margin: z.object({ x: z.string(), y: z.string() }),
+			padding: z.object({ x: z.string(), y: z.string() }),
+			border: z
+				.object({
+					radius: z.number(),
+					color: z.string(),
+					width: z.string().or(z.number()),
+					style: z.string(),
+				})
+				.optional(),
+			}),
+	})
+})
+
+export const iconSchema = z.object({
 })
 
 export const buttonSchema = z.object({

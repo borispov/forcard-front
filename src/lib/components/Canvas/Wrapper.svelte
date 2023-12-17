@@ -6,6 +6,7 @@
 	let latestContainerIndex: Number;
 	export let parentIndex: number;
 	export let component: any;
+	let bgOverlay = component?.design.background.image;
 	export let components: any;
 
 	// handlers
@@ -31,7 +32,9 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-<div
+
+<svelte:element
+	this={component.role}
 	id={generateSelector(component.id, component.type).slice(1)}
 	data-name="container"
 	data-id={component.id}
@@ -46,7 +49,16 @@
 	on:mouseout={hoverHandler}
 	on:click|self={hoverHandler}
 	ondragover="return false"
+	style="position: relative: z-index: 1;"
 >
+	{#if component.design.background.type === "image"}
+		<img
+			alt=""
+			src={bgOverlay.settings.source}
+			style="object-fit: cover; mix-blend-mode: {bgOverlay.overlay
+				.blendMode}; position: absolute; top: 0; left: 0; width: 100%; z-index: 0; height: 100%;"
+		/>
+	{/if}
 	{#each component.children as childId, childIndexInContainer (childId)}
 		{@const el = getElementByIndex(childId)}
 		{@const elementIndex = findElementIndex(el.id)}
@@ -99,8 +111,22 @@
 			/>
 		{:else if el.type == "icon"}
 			<span>ICON</span>
+		{:else if el.type == "form-element"}
+			<svelte:element
+				this={el.role}
+				class={(el.role == "form" && "flow") || (el.className && "")}
+				id={generateSelector(el.id, el.type).slice(1)}
+				data-id={childId}
+				data-name={el.type + "_" + el.role}
+				on:click|self={hoverHandler}
+				placeholder={el.role == "input" && el.settings.placeholder}
+				type={el.role == "input" && el.settings.name}
+			>
+				{el.content ?? ""}
+			</svelte:element>
 		{:else if el && el.children}
 			<svelte:self
+				class={el.role == "form" && "flow"}
 				component={el}
 				{components}
 				{hoverHandler}
@@ -110,4 +136,4 @@
 			/>
 		{/if}
 	{/each}
-</div>
+</svelte:element>
